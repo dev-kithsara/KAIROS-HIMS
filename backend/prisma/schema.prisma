@@ -1,0 +1,70 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Use an enum to manage the various states of an Incident
+enum IncidentStatus {
+  OPEN
+  ACCEPTED
+  REJECTED
+  INVESTIGATING
+  PENDING_ACTION
+  UNDER_REVIEW
+  CLOSED
+}
+
+model User {
+  id                Int        @id @default(autoincrement())
+  email             String     @unique
+  password          String
+  name              String
+  role              String     // Admin, Manager, Staff, etc.
+  departmentId      Int
+  department        Department @relation(fields: [departmentId], references: [id])
+  
+  // 2. Use relation names because a single User can have multiple relationships
+  reportedIncidents    Incident[] @relation("Reporter")
+  investigatedIncidents Incident[] @relation("Investigator")
+  ownedActions         Incident[] @relation("ActionOwner")
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Department {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  users     User[]
+  incidents Incident[]
+}
+
+model Incident {
+  id                Int            @id @default(autoincrement())
+  title             String
+  description       String
+  status            IncidentStatus @default(OPEN)
+  rejectionReason   String?        // Value provided only if rejected (optional)
+  
+  // 3. Foreign keys and relationships
+  departmentId      Int
+  department        Department     @relation(fields: [departmentId], references: [id])
+  
+  reporterId        Int
+  reporter          User           @relation("Reporter", fields: [reporterId], references: [id])
+  
+  investigatorId    Int?           // Optional because not assigned initially
+  investigator      User?          @relation("Investigator", fields: [investigatorId], references: [id])
+  
+  actionOwnerId     Int?           // Optional because not assigned initially
+  actionOwner       User?          @relation("ActionOwner", fields: [actionOwnerId], references: [id])
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
