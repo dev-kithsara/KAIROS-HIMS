@@ -1,4 +1,5 @@
 import express from 'express';
+import incidentRoutes from './routes/incident.routes';
 
 const app = express();
 
@@ -7,7 +8,6 @@ const app = express();
 Middleware
 ==========================================
 */
-
 // Parse JSON request body
 app.use(express.json());
 
@@ -16,13 +16,11 @@ app.use(express.json());
 Routes
 ==========================================
 */
+app.use('/api/incidents', incidentRoutes);
 
-// Health Check Route
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "KAIROS Backend is Running",
-  });
+// Basic health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'UP', message: 'KAIROS HIMS Backend is running' });
 });
 
 export default app;

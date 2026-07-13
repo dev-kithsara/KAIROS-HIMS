@@ -1,0 +1,91 @@
+import { PrismaClient } from '@prisma/client';
+
+// Note: In a real enterprise app, we usually import a single Prisma instance from a config file.
+// For now, we instantiate it here. Later we will refactor this to use Dependency Injection.
+const prisma = new PrismaClient();
+
+export class IncidentRepository {
+  
+  /**
+   * Fetch all incidents belonging to a specific department
+   * @param departmentId - The ID of the department
+   * @returns Array of incidents with reporter details
+   */
+  async findByDepartmentId(departmentId: number) {
+    return await prisma.incident.findMany({
+      where: {
+        departmentId: departmentId,
+      },
+      // We use 'include' to perform a SQL JOIN and get related data
+      include: {
+        reporter: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        investigator: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        actionOwner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      // Sort by newest first
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  /**
+   * Find a single incident by its ID
+   * @param id - The ID of the incident
+   * @returns The incident object or null if not found
+   */
+  async findById(id: number) {
+    return await prisma.incident.findUnique({
+      where: { id: id },
+    });
+  }
+
+  /**
+   * Update the status of an incident
+   * @param id - The ID of the incident
+   * @param status - The new status (e.g., ACCEPTED)
+   * @returns The updated incident
+   */
+  async updateStatus(id: number, status: any) {
+    // Note: 'any' is used temporarily for status. We will use the proper Prisma Enum type later.
+    return await prisma.incident.update({
+      where: { id: id },
+      data: { status: status },
+    });
+  }
+
+  /**
+   * Reject an incident and save the reason
+   * @param id - The ID of the incident
+   * @param reason - The reason for rejection
+   * @returns The updated incident
+   */
+  async rejectIncident(id: number, reason: string) {
+    return await prisma.incident.update({
+      where: { id: id },
+      data: { 
+        status: 'REJECTED',
+        rejectionReason: reason 
+      },
+    });
+  }
+
+}
+
+export const incidentRepository = new IncidentRepository();

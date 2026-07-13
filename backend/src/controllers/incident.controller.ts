@@ -1,0 +1,69 @@
+import { Request, Response } from 'express';
+import { incidentService } from '../services/incident.service';
+
+export const getDepartmentIncidents = async (req: Request, res: Response) => {
+  try {
+    // 1. Extracting data from the Request
+    // Note: In a real app, this will come from the logged-in manager's JWT token (req.user.departmentId)
+    // For now, to test this easily, we take it from the URL parameter (e.g., /api/incidents/department/2)
+    const departmentId = parseInt(req.params.departmentId, 10);
+
+    // 2. Input Validation (Basic)
+    if (isNaN(departmentId)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid department ID provided in the URL." 
+      });
+    }
+
+    // 3. Calling the Service Layer
+    const incidents = await incidentService.getIncidentsByDepartment(departmentId);
+
+    // 4. Sending the HTTP Response back to the client
+    return res.status(200).json({
+      success: true,
+      data: incidents,
+    });
+
+  } catch (error: any) {
+    // 5. Global Error Handling for this endpoint
+    return res.status(500).json({
+      success: false,
+      message: error.message || "An unexpected error occurred on the server.",
+    });
+  }
+};
+
+
+export const acceptIncident = async (req: Request, res: Response) => {
+  try {
+    // 1. Extract the incident ID from the URL parameters
+    const incidentId = parseInt(req.params.id, 10);
+
+    // 2. Validate the ID
+    if (isNaN(incidentId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid incident ID provided.",
+      });
+    }
+
+    // 3. Call the Service Layer to perform the business logic
+    const updatedIncident = await incidentService.acceptIncident(incidentId);
+
+    // 4. Send the successful response
+    return res.status(200).json({
+      success: true,
+      message: "Incident accepted successfully.",
+      data: updatedIncident,
+    });
+
+  } catch (error: any) {
+    // 5. Error Handling
+    // Note: Currently all errors return 500. We will improve this later to return 400 for business logic errors.
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to accept incident.",
+    });
+  }
+};
