@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { incidentService } from '../services/incident.service';
+import { z } from 'zod';
+import { rejectIncidentSchema } from '../validators/incident.validator';
 
 export const getDepartmentIncidents = async (req: Request, res: Response) => {
   try {
@@ -64,6 +66,53 @@ export const acceptIncident = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Failed to accept incident.",
+    });
+  }
+};
+
+export const rejectIncident = async (req: Request, res: Response) => {
+  try {
+    // 1. Validate the Request Body using Zod
+    // If validation fails, this will throw an error and go straight to the catch block
+    const validatedData = rejectIncidentSchema.parse({ body: req.body });
+    const reason = validatedData.body.reason;
+
+    // 2. Extract and validate Incident ID
+    const incidentId = parseInt(req.params.id, 10);
+    if (isNaN(incidentId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid incident ID provided.",
+      });
+    }
+
+    // 3. Call the Service Layer
+    const updatedIncident = await incidentService.rejectIncident(incidentId, reason);
+
+    // 4. Send the successful response
+    return res.status(200).json({
+      success: true,
+      message: "Incident rejected successfully.",
+      data: updatedIncident,
+    });
+
+  } catch (error: any) {
+    // 5. Error Handling
+    
+    // Check if the error is a Zod Validation Error
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        // FIX: Changed error.errors to error.issues
+        errors: error.issues?.map(e => e.message) || ["Invalid input data"], 
+      });
+    }
+
+    // Handle other server/business logic errors
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to reject incident.",
     });
   }
 };

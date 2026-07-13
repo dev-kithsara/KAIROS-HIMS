@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getDepartmentIncidents ,acceptIncident} from '../controllers/incident.controller';
+import { getDepartmentIncidents ,acceptIncident , rejectIncident} from '../controllers/incident.controller';
 
 const router = Router();
 
@@ -9,7 +9,10 @@ router.get('/department/:departmentId', getDepartmentIncidents);
 
 // Route: PATCH /api/incidents/:id/accept
 // Description: Accept an OPEN incident
-// Access: Manager
 router.patch('/:id/accept', acceptIncident); 
+
+// Route: PATCH /api/incidents/:id/reject
+// Description: Reject an OPEN incident with a reason
+router.patch('/:id/reject', rejectIncident); 
 
 export default router;
