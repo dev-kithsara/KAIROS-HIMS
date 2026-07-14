@@ -86,6 +86,37 @@ export class IncidentRepository {
     });
   }
 
+  /**
+   * Assign an investigator to an incident and update status to INVESTIGATING
+   * @param id - The ID of the incident
+   * @param investigatorId - The ID of the user assigned to investigate
+   * @returns The updated incident
+   */
+  async assignInvestigator(id: number, investigatorId: number) {
+    return await prisma.incident.update({
+      where: { id: id },
+      data: { 
+        status: 'INVESTIGATING',
+        investigatorId: investigatorId 
+      },
+    });
+  }
+
+  /**
+   * Assign Action Owner
+   * @param id - The ID of the incident
+   * @param actionOwnerId - The ID of the user assigned to own the action
+   * @returns The updated incident
+   */
+  async assignActionOwner(id: number, actionOwnerId: number) {
+    return await prisma.incident.update({
+      where: { id: id },
+      data: {
+        status: 'PENDING_ACTION',
+        actionOwnerId: actionOwnerId
+      }
+    });
+  }
 }
 
 export const incidentRepository = new IncidentRepository();

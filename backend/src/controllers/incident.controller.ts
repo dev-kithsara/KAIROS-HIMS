@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { incidentService } from '../services/incident.service';
 import { z } from 'zod';
-import { rejectIncidentSchema } from '../validators/incident.validator';
+import { rejectIncidentSchema , assignInvestigatorSchema } from '../validators/incident.validator';
 
 export const getDepartmentIncidents = async (req: Request, res: Response) => {
   try {
@@ -113,6 +113,48 @@ export const rejectIncident = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Failed to reject incident.",
+    });
+  }
+};
+
+export const assignInvestigator = async (req: Request, res: Response) => {
+  try {
+    // 1. Validate the Request Body using Zod
+    const validatedData = assignInvestigatorSchema.parse({ body: req.body });
+    const investigatorId = validatedData.body.investigatorId;
+
+    // 2. Extract and validate Incident ID from URL
+    const incidentId = parseInt(req.params.id, 10);
+    if (isNaN(incidentId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid incident ID provided.",
+      });
+    }
+
+    // 3. Call the Service Layer
+    const updatedIncident = await incidentService.assignInvestigator(incidentId, investigatorId);
+
+    // 4. Send the successful response
+    return res.status(200).json({
+      success: true,
+      message: "Investigator assigned successfully.",
+      data: updatedIncident,
+    });
+
+  } catch (error: any) {
+    // 5. Error Handling
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: error.issues?.map(e => e.message) || ["Invalid input data"],
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to assign investigator.",
     });
   }
 };
