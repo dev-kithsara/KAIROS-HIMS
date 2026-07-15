@@ -27,7 +27,21 @@ export const assignInvestigatorSchema = z.object({
   }),
 });
 
+// Define the schema for assigning an Action owner to an incident
+export const assignActionOwnerSchema = z.object({
+  body: z.object({
+    actionOwnerId: z
+      .number({
+        required_error: "Action Owner ID is required.",
+        invalid_type_error: "Action Owner ID must be a number.",
+      })
+      .int("Action Owner ID must be an integer.")
+      .positive("Action Owner ID must be a positive number."),
+  }),
+});
+
 // We can infer the TypeScript type directly from the Zod schema
 // This is useful if we need to pass this data around in our code
 export type RejectIncidentInput = z.infer<typeof rejectIncidentSchema>['body'];
 export type AssignInvestigatorInput = z.infer<typeof assignInvestigatorSchema>['body'];
+export type AssignActionOwnerInput = z.infer<typeof assignActionOwnerSchema>['body'];

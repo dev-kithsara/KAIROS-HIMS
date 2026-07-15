@@ -83,7 +83,7 @@ export class IncidentService {
   }
 
   /**
-   * Assign an investigator to an ACCEPTED incident
+   * Assign an investigator to an INVESTIGATING incident
    * @param incidentId - The ID of the incident
    * @param investigatorId - The ID of the user to be assigned
    * @returns The updated incident
@@ -158,7 +158,7 @@ export class IncidentService {
     }
 
     // 5. Update the incident via Repository
-    const updatedIncident = await incidentRepository.assignInvestigator(incidentId, investigatorId);
+    const updatedIncident = await incidentRepository.assignActionOwner(incidentId, actionOwnerId);
 
     return updatedIncident;
   }
