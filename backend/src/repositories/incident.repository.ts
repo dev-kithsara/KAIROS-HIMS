@@ -117,6 +117,35 @@ export class IncidentRepository {
       }
     });
   }
+
+  /**
+   * Mark an incident as UNDER_REVIEW
+   * @param id - The ID of the incident
+   * @returns The updated incident
+   */
+  async reviewIncident(id: number) {
+    return await prisma.incident.update({
+      where: { id: id },
+      data: {
+        status: 'UNDER_REVIEW',
+      },
+    });
+  }
+
+  /**
+   * Close the incident
+   * @param id - The ID of the incident
+   * @returns The updated incident
+   */
+  async closeIncident(id: number) {
+    return await prisma.incident.update({
+      where: { id: id },
+      data: {
+        status: 'CLOSED',
+      },
+    });
+  }
+
 }
 
 export const incidentRepository = new IncidentRepository();

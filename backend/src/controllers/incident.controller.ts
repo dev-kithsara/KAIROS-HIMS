@@ -200,3 +200,48 @@ export const assignActionOwner = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+export const reviewIncident = async (req: Request, res: Response) => {
+  try {
+    const incidentId = parseInt(req.params.id, 10);
+    if (isNaN(incidentId)) {
+      return res.status(400).json({ success: false, message: "Invalid incident ID provided." });
+    }
+
+    const updatedIncident = await incidentService.reviewIncident(incidentId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Incident marked as UNDER_REVIEW.",
+      data: updatedIncident,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to review incident.",
+    });
+  }
+};
+
+export const closeIncident = async (req: Request, res: Response) => {
+  try {
+    const incidentId = parseInt(req.params.id, 10);
+    if (isNaN(incidentId)) {
+      return res.status(400).json({ success: false, message: "Invalid incident ID provided." });
+    }
+
+    const updatedIncident = await incidentService.closeIncident(incidentId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Incident closed successfully.",
+      data: updatedIncident,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to close incident.",
+    });
+  }
+};

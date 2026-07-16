@@ -163,6 +163,41 @@ export class IncidentService {
     return updatedIncident;
   }
 
+  /**
+   * Mark an incident as UNDER_REVIEW
+   * @param incidentId - The ID of the incident
+   * @returns The updated incident
+   */
+  async reviewIncident(incidentId: number) {
+    const incident = await incidentRepository.findById(incidentId);
+    if (!incident) throw new Error("Incident not found.");
+
+    // State Validation: Must be 'PENDING_ACTION'
+    if (incident.status !== 'PENDING_ACTION') {
+      throw new Error(`Cannot review incident. Current status is ${incident.status}, but expected PENDING_ACTION.`);
+    }
+
+    return await incidentRepository.reviewIncident(incidentId);
+  }
+
+  /**
+   * Close the incident
+   * @param incidentId - The ID of the incident
+   * @returns The updated incident
+   */
+  async closeIncident(incidentId: number) {
+    const incident = await incidentRepository.findById(incidentId);
+    if (!incident) throw new Error("Incident not found.");
+
+    // State Validation: Must be 'UNDER_REVIEW'
+    if (incident.status !== 'UNDER_REVIEW') {
+      throw new Error(`Cannot close incident. Current status is ${incident.status}, but expected UNDER_REVIEW.`);
+    }
+
+    // Note: In a real system, we would also update the 'closedAt' timestamp here
+    return await incidentRepository.closeIncident(incidentId);
+  }
+
 }
 
 // Export a single instance of the service (Singleton pattern approach for now)

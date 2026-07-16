@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { getDepartmentIncidents ,acceptIncident , rejectIncident, assignInvestigator, assignActionOwner} from '../controllers/incident.controller';
+import {    getDepartmentIncidents ,
+            acceptIncident , 
+            rejectIncident, 
+            assignInvestigator, 
+            assignActionOwner ,
+            reviewIncident, 
+            closeIncident} from '../controllers/incident.controller';
 
 
 const router = Router();
@@ -23,5 +29,15 @@ router.patch('/:id/assign-investigator', assignInvestigator);
 //Route:PATCH /:id/assign-action-owner
 // Description: Assign an action owner to an INVESTIGATING incident
 router.patch('/:id/assign-action-owner' , assignActionOwner);
+
+// Route: PATCH /api/incidents/:id/review
+// Description: Mark an incident as UNDER_REVIEW
+// Access: Manager
+router.patch('/:id/review', reviewIncident);
+
+// Route: PATCH /api/incidents/:id/close
+// Description: Close the incident
+// Access: Manager
+router.patch('/:id/close', closeIncident);
 
 export default router;
