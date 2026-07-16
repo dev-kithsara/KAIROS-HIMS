@@ -4,7 +4,7 @@
     "target": "ESNext",
 
     /* Use Node.js module system */
-    "module": "NodeNext",
+    "module": "CommonJS",
 
     /* Resolve imports like Node.js */
     "moduleResolution": "node",
