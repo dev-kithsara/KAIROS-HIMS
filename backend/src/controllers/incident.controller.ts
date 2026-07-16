@@ -8,7 +8,7 @@ export const getDepartmentIncidents = async (req: Request, res: Response) => {
     // 1. Extracting data from the Request
     // Note: In a real app, this will come from the logged-in manager's JWT token (req.user.departmentId)
     // For now, to test this easily, we take it from the URL parameter (e.g., /api/incidents/department/2)
-    const departmentId = parseInt(req.params.departmentId, 10);
+    const departmentId = parseInt(req.params.departmentId as string, 10);
 
     // 2. Input Validation (Basic)
     if (isNaN(departmentId)) {
@@ -40,7 +40,7 @@ export const getDepartmentIncidents = async (req: Request, res: Response) => {
 export const acceptIncident = async (req: Request, res: Response) => {
   try {
     // 1. Extract the incident ID from the URL parameters
-    const incidentId = parseInt(req.params.id, 10);
+    const incidentId = parseInt(req.params.id as string, 10);
 
     // 2. Validate the ID
     if (isNaN(incidentId)) {
@@ -78,7 +78,7 @@ export const rejectIncident = async (req: Request, res: Response) => {
     const reason = validatedData.body.reason;
 
     // 2. Extract and validate Incident ID
-    const incidentId = parseInt(req.params.id, 10);
+    const incidentId = parseInt(req.params.id as string, 10);
     if (isNaN(incidentId)) {
       return res.status(400).json({
         success: false,
@@ -124,7 +124,7 @@ export const assignInvestigator = async (req: Request, res: Response) => {
     const investigatorId = validatedData.body.investigatorId;
 
     // 2. Extract and validate Incident ID from URL
-    const incidentId = parseInt(req.params.id, 10);
+    const incidentId = parseInt(req.params.id as string, 10);
     if (isNaN(incidentId)) {
       return res.status(400).json({
         success: false,
@@ -166,7 +166,7 @@ export const assignActionOwner = async (req: Request, res: Response) => {
     const actionOwnerId = validatedData.body.actionOwnerId;
 
     // 2. Extract and validate Incident ID from URL
-    const incidentId = parseInt(req.params.id, 10);
+    const incidentId = parseInt(req.params.id as string, 10);
     if (isNaN(incidentId)) {
       return res.status(400).json({
         success: false,
@@ -204,7 +204,7 @@ export const assignActionOwner = async (req: Request, res: Response) => {
 
 export const reviewIncident = async (req: Request, res: Response) => {
   try {
-    const incidentId = parseInt(req.params.id, 10);
+    const incidentId = parseInt(req.params.id as string, 10);
     if (isNaN(incidentId)) {
       return res.status(400).json({ success: false, message: "Invalid incident ID provided." });
     }
@@ -226,7 +226,7 @@ export const reviewIncident = async (req: Request, res: Response) => {
 
 export const closeIncident = async (req: Request, res: Response) => {
   try {
-    const incidentId = parseInt(req.params.id, 10);
+    const incidentId = parseInt(req.params.id as string, 10);
     if (isNaN(incidentId)) {
       return res.status(400).json({ success: false, message: "Invalid incident ID provided." });
     }

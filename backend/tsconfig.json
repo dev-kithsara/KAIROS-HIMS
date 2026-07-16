@@ -7,7 +7,7 @@
     "module": "NodeNext",
 
     /* Resolve imports like Node.js */
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "node",
 
     /* Source code location */
     "rootDir": "./src",
