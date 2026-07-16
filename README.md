@@ -241,6 +241,7 @@ Create a `.env` file in the `backend/` directory:
 
 ```env
 # Database
+<<<<<<< HEAD
 DATABASE_URL=postgresql://USER:PASSWORD@127.0.0.1:5432/kairos_hims
 
 # Authentication
@@ -254,6 +255,18 @@ AI_API_KEY=internal_ai_key
 # Application
 NODE_ENV=development
 PORT=8000
+=======
+
+
+# Authentication
+
+
+# AI Service (Phase 2)
+
+
+# Application
+
+>>>>>>> b0a4648d6876cf0ef88e56d5b961111972c95703
 ```
 
 ---
@@ -332,10 +345,17 @@ User ─────────────────────── Incid
 ## 📈 Project Status
 
 ### Phase 1 (Current Semester) — Core Platform
+<<<<<<< HEAD
 - [] Authentication & JWT Security
 - [] Hospital Domain & 5-Role RBAC
 - [] Incident Submission (Staff)
 - [ ] Manager Dashboard & Approval Workflow
+=======
+- [ ] Authentication & JWT Security
+- [ ] Hospital Domain & 5-Role RBAC
+- [ ] Incident Submission (Staff)
+- [x] Manager Dashboard & Approval Workflow
+>>>>>>> b0a4648d6876cf0ef88e56d5b961111972c95703
 - [ ] Investigator RCA Tool
 - [ ] Action Owner Task Management
 - [ ] Review & Closure Workflow
