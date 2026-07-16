@@ -241,19 +241,16 @@ Create a `.env` file in the `backend/` directory:
 
 ```env
 # Database
-DATABASE_URL=postgresql://USER:PASSWORD@127.0.0.1:5432/kairos_hims
+
 
 # Authentication
-JWT_SECRET=your-super-secret-jwt-key-change-in-production
-JWT_EXPIRES_IN=7d
+
 
 # AI Service (Phase 2)
-AI_SERVICE_URL=http://localhost:8001
-AI_API_KEY=internal_ai_key
+
 
 # Application
-NODE_ENV=development
-PORT=8000
+
 ```
 
 ---
@@ -332,10 +329,10 @@ User ─────────────────────── Incid
 ## 📈 Project Status
 
 ### Phase 1 (Current Semester) — Core Platform
-- [x] Authentication & JWT Security
-- [x] Hospital Domain & 5-Role RBAC
-- [x] Incident Submission (Staff)
-- [ ] Manager Dashboard & Approval Workflow
+- [ ] Authentication & JWT Security
+- [ ] Hospital Domain & 5-Role RBAC
+- [ ] Incident Submission (Staff)
+- [x] Manager Dashboard & Approval Workflow
 - [ ] Investigator RCA Tool
 - [ ] Action Owner Task Management
 - [ ] Review & Closure Workflow
