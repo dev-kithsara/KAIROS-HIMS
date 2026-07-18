@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Incident, ApiResponse } from '../types/incident';
+import type { Incident, ApiResponse } from '../types/incident';
 
 // Base URL for the incidents API. 
 // Note: In Vite, we usually set up a proxy in vite.config.ts to forward '/api' to 'http://localhost:5000'
