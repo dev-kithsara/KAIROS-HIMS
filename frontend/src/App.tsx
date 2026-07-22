@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ManagerDashboard } from './pages/ManagerDashboard';
+import { CreateIncident } from './pages/CreateIncident';
 import { Routes, Route } from 'react-router-dom';
 import { IncidentDetails } from './pages/IncidentDetails';
 
@@ -21,6 +22,9 @@ function App() {
       <Routes>
         {/* Home page shows the dashboard */}
         <Route path="/" element={<ManagerDashboard />} />
+        
+        {/* Staff Incident Submission Form */}
+        <Route path="/submit-incident" element={<CreateIncident />} />
         
         {/* Dynamic route for incident details */}
         <Route path="/incidents/:id" element={<IncidentDetails />} />

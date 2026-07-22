@@ -58,9 +58,19 @@ export const ManagerDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Manager Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage and track incidents in your department.</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Manager Dashboard</h1>
+            <p className="text-gray-600 mt-1">Manage and track incidents in your department.</p>
+          </div>
+
+          <button
+            onClick={() => navigate('/submit-incident')}
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-teal-600 hover:bg-teal-700 active:bg-teal-800 rounded-xl shadow-md shadow-teal-600/20 transition-all cursor-pointer shrink-0"
+          >
+            <span className="text-lg font-bold leading-none">+</span>
+            <span>Report New Incident</span>
+          </button>
         </div>
 
         {/* Grid of Incident Cards */}

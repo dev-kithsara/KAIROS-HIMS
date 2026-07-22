@@ -62,3 +62,19 @@ export const closeIncident = async (id: number): Promise<Incident> => {
   const response = await axios.patch<ApiResponse<Incident>>(`${API_URL}/${id}/close`);
   return response.data.data;
 };
+
+/**
+ * Submit a new incident report with optional evidence attachments
+ */
+export const createIncident = async (formData: FormData): Promise<Incident> => {
+  const response = await axios.post<{ success: boolean; message: string; incident: Incident }>(
+    `${API_URL}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+  return response.data.incident;
+};

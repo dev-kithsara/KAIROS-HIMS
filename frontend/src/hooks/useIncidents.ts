@@ -94,4 +94,16 @@ export const useAssignActionOwner = () => {
   });
 };
 
+// 8. Hook to submit a new incident (Staff Submission)
+export const useCreateIncident = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData: FormData) => incidentApi.createIncident(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incidents'] });
+    },
+  });
+};
+
   
