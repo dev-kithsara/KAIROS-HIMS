@@ -28,13 +28,18 @@ Routes
 */
 
 app.use("/api/v1/incidents", incidentRoutes);
+app.use("/api/incidents", incidentRoutes);
 
-// Health Check Route
+// Health Check Routes
 app.get("/", (req, res) => {
   res.json({
     success: true,
     message: "KAIROS Backend is Running",
   });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "UP", message: "KAIROS HIMS Backend is running" });
 });
 
 export default app;
