@@ -1,8 +1,9 @@
-import app from './app';
+import app from "./app";
 
-const PORT = 5000;
+const PORT = process.env.PORT || 8000;
 
 /*
+==========================================
 Start Express Server
 ==========================================
 */

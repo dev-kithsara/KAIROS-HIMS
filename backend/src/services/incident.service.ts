@@ -1,29 +1,60 @@
-import { incidentRepository } from '../repositories/incident.repository';
-import { PrismaClient } from '@prisma/client';
+import prisma from "../utils/prisma";
+import { incidentRepository } from "../repositories/incident.repository";
 
-const prisma = new PrismaClient();
+/**
+ * Service function for creating an incident (Staff Submission + Attachments)
+ */
+export const createIncidentService = async (
+  data: any,
+  files: Express.Multer.File[]
+) => {
+  const incident = await prisma.incident.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      severity: data.severity,
+      category: data.category,
+      location: data.location,
+      status: "OPEN",
+
+      departmentId: Number(data.departmentId),
+      reporterId: data.reporterId ? Number(data.reporterId) : 2,
+    },
+  });
+
+  if (files && files.length > 0) {
+    await prisma.incidentAttachment.createMany({
+      data: files.map((file) => ({
+        fileName: file.originalname,
+        filePath: file.path,
+        fileType: file.mimetype,
+        incidentId: incident.id,
+      })),
+    });
+  }
+
+  return incident;
+};
 
 export class IncidentService {
-  
+  /**
+   * Create a new incident (Staff Incident Submission)
+   */
+  async createIncident(data: any, files: Express.Multer.File[]) {
+    return createIncidentService(data, files);
+  }
+
   /**
    * Get all incidents for a specific department
    * @param departmentId - The ID of the manager's department
    * @returns Array of incidents
    */
   async getIncidentsByDepartment(departmentId: number) {
-    
-    // 1. Business Logic / Validations can go here.
-    // උදාහරණයක් ලෙස: මෙතනදී අපිට පුළුවන් departmentId එක 0 ට වඩා වැඩිද (valid ද) කියලා බලන්න.
     if (!departmentId || departmentId <= 0) {
-        throw new Error("Invalid Department ID provided"); 
-        // Note: පසුව අපි මේක Custom API Error (උදා: AppError) එකක් විදියට Refactor කරනවා.
+      throw new Error("Invalid Department ID provided");
     }
 
-    // 2. Calling the Repository layer to get data
     const incidents = await incidentRepository.findByDepartmentId(departmentId);
-
-    // 3. Formatting or modifying data before sending to the controller can happen here
-    // For now, we just return the data as it is.
     return incidents;
   }
 
@@ -33,24 +64,17 @@ export class IncidentService {
    * @returns The updated incident
    */
   async acceptIncident(incidentId: number) {
-    
-    // 1. Fetch the incident from the database
     const incident = await incidentRepository.findById(incidentId);
 
-    // 2. Check if the incident exists
     if (!incident) {
       throw new Error("Incident not found.");
     }
 
-    // 3. State Validation (Business Logic)
-    // An incident can only be accepted if it is currently in the 'OPEN' state.
-    if (incident.status !== 'OPEN') {
+    if (incident.status !== "OPEN") {
       throw new Error(`Cannot accept incident. Current status is ${incident.status}, but expected OPEN.`);
     }
 
-    // 4. Update the status to 'ACCEPTED' via Repository
-    const updatedIncident = await incidentRepository.updateStatus(incidentId, 'ACCEPTED');
-
+    const updatedIncident = await incidentRepository.updateStatus(incidentId, "ACCEPTED");
     return updatedIncident;
   }
 
@@ -61,105 +85,81 @@ export class IncidentService {
    * @returns The updated incident
    */
   async rejectIncident(incidentId: number, reason: string) {
-    
-    // 1. Fetch the incident from the database
     const incident = await incidentRepository.findById(incidentId);
 
-    // 2. Check if the incident exists
     if (!incident) {
       throw new Error("Incident not found.");
     }
 
-    // 3. State Validation (Business Logic)
-    // An incident can only be rejected if it is currently in the 'OPEN' state.
-    if (incident.status !== 'OPEN') {
+    if (incident.status !== "OPEN") {
       throw new Error(`Cannot reject incident. Current status is ${incident.status}, but expected OPEN.`);
     }
 
-    // 4. Update the status to 'REJECTED' and save the reason via Repository
     const updatedIncident = await incidentRepository.rejectIncident(incidentId, reason);
-
     return updatedIncident;
   }
 
   /**
-   * Assign an investigator to an INVESTIGATING incident
+   * Assign an investigator to an ACCEPTED incident
    * @param incidentId - The ID of the incident
    * @param investigatorId - The ID of the user to be assigned
    * @returns The updated incident
    */
   async assignInvestigator(incidentId: number, investigatorId: number) {
-    
-    // 1. Fetch the incident
     const incident = await incidentRepository.findById(incidentId);
     if (!incident) {
       throw new Error("Incident not found.");
     }
 
-    // 2. State Validation: Must be 'ACCEPTED'
-    if (incident.status !== 'ACCEPTED') {
+    if (incident.status !== "ACCEPTED") {
       throw new Error(`Cannot assign investigator. Current status is ${incident.status}, but expected ACCEPTED.`);
     }
 
-    // 3. Fetch the user (Investigator)
-    // Note: Ideally, this should go through a UserRepository. We will refactor this later.
     const investigator = await prisma.user.findUnique({
-      where: { id: investigatorId }
+      where: { id: investigatorId },
     });
 
     if (!investigator) {
       throw new Error("The specified investigator does not exist.");
     }
 
-    // 4. RBAC Validation: Check if the user has the correct role
-    if (investigator.role !== 'INVESTIGATOR' && investigator.role !== 'MANAGER') {
+    if (investigator.role !== "INVESTIGATOR" && investigator.role !== "MANAGER") {
       throw new Error("The specified user does not have the required role to be an investigator.");
     }
 
-    // 5. Update the incident via Repository
     const updatedIncident = await incidentRepository.assignInvestigator(incidentId, investigatorId);
-
     return updatedIncident;
   }
 
-
   /**
-   * Assign Action Owner to an ACCEPTED incident
-   * @param id - The ID of the incident
+   * Assign Action Owner to an INVESTIGATING incident
+   * @param incidentId - The ID of the incident
    * @param actionOwnerId - The ID of the user assigned to own the action
    * @returns The updated incident
    */
   async assignActionOwner(incidentId: number, actionOwnerId: number) {
-    
-    // 1. Fetch the incident
     const incident = await incidentRepository.findById(incidentId);
     if (!incident) {
       throw new Error("Incident not found.");
     }
 
-    // 2. State Validation: Must be 'INVESTIGATING'
-    if (incident.status !== 'INVESTIGATING') {
+    if (incident.status !== "INVESTIGATING") {
       throw new Error(`Cannot assign action owner. Current status is ${incident.status}, but expected INVESTIGATING.`);
     }
 
-    // 3. Fetch the user (Action Owner)
-    // Note: Ideally, this should go through a UserRepository. We will refactor this later.
     const actionOwner = await prisma.user.findUnique({
-      where: { id: actionOwnerId }
+      where: { id: actionOwnerId },
     });
 
     if (!actionOwner) {
       throw new Error("The specified action owner does not exist.");
     }
 
-    // 4. RBAC Validation: Check if the user has the correct role
-    if (actionOwner.role !== 'ACTION_OWNER' && actionOwner.role !== 'MANAGER') {
+    if (actionOwner.role !== "ACTION_OWNER" && actionOwner.role !== "MANAGER") {
       throw new Error("The specified user does not have the required role to be an action owner.");
     }
 
-    // 5. Update the incident via Repository
     const updatedIncident = await incidentRepository.assignActionOwner(incidentId, actionOwnerId);
-
     return updatedIncident;
   }
 
@@ -172,8 +172,7 @@ export class IncidentService {
     const incident = await incidentRepository.findById(incidentId);
     if (!incident) throw new Error("Incident not found.");
 
-    // State Validation: Must be 'PENDING_ACTION'
-    if (incident.status !== 'PENDING_ACTION') {
+    if (incident.status !== "PENDING_ACTION") {
       throw new Error(`Cannot review incident. Current status is ${incident.status}, but expected PENDING_ACTION.`);
     }
 
@@ -189,16 +188,13 @@ export class IncidentService {
     const incident = await incidentRepository.findById(incidentId);
     if (!incident) throw new Error("Incident not found.");
 
-    // State Validation: Must be 'UNDER_REVIEW'
-    if (incident.status !== 'UNDER_REVIEW') {
+    if (incident.status !== "UNDER_REVIEW") {
       throw new Error(`Cannot close incident. Current status is ${incident.status}, but expected UNDER_REVIEW.`);
     }
 
-    // Note: In a real system, we would also update the 'closedAt' timestamp here
     return await incidentRepository.closeIncident(incidentId);
   }
-
 }
 
-// Export a single instance of the service (Singleton pattern approach for now)
+// Export a single instance of the service (Singleton pattern)
 export const incidentService = new IncidentService();

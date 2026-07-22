@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* Target modern JavaScript */
-    "target": "ESNext",
+    "target": "ES2022",
 
     /* Use Node.js module system */
     "module": "CommonJS",
