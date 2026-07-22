@@ -1,20 +1,22 @@
 import React from 'react';
 import { useDepartmentIncidents } from '../hooks/useIncidents';
 import { IncidentCard } from '../components/IncidentCard';
+import { useNavigate } from 'react-router-dom';
 
 export const ManagerDashboard: React.FC = () => {
   // Hardcoding department ID to 1 for now. 
   // In a real app, this comes from the logged-in user's Context/Redux store.
   const departmentId = 1;
+  
+  // React Router's navigation hook
+  const navigate = useNavigate();
 
   // Using our Custom Hook to fetch data
   const { data: incidents, isLoading, isError, error } = useDepartmentIncidents(departmentId);
 
   // Handle click on a card
   const handleIncidentClick = (incidentId: number) => {
-    // For now, we just log it. Later we will navigate to the details page.
-    console.log(`Clicked on incident: ${incidentId}`);
-    // Example: navigate(`/incidents/${incidentId}`);
+    navigate(`/incidents/${incidentId}`);
   };
 
   // UI for Loading State

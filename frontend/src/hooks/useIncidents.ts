@@ -39,3 +39,59 @@ export const useRejectIncident = () => {
     },
   });
 };
+
+// 4. Hook to review an incident
+export const useReviewIncident = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (incidentId: number) => incidentApi.reviewIncident(incidentId),
+    // When successful, tell React Query to refresh the incidents list
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incidents'] });
+    },
+  });
+};
+
+// 5. Hook to close an incident
+export const useCloseIncident = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (incidentId: number) => incidentApi.closeIncident(incidentId),
+    // When successful, tell React Query to refresh the incidents list
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incidents'] });
+    },
+  });
+};
+
+// 6. Hook to assign an investigator to an incident
+export const useAssignInvestigator = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // We pass an object because mutationFn only accepts one argument
+    mutationFn: ({ id, investigatorId }: { id: number; investigatorId: number }) => 
+      incidentApi.assignInvestigator(id, investigatorId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incidents'] });
+    },
+  });
+};
+
+// 7. Hook to assign an action owner to an incident
+export const useAssignActionOwner = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    // We pass an object because mutationFn only accepts one argument
+    mutationFn: ({ id, actionOwnerId }: { id: number; actionOwnerId: number }) => 
+      incidentApi.assignActionOwner(id, actionOwnerId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incidents'] });
+    },
+  });
+};
+
+  
