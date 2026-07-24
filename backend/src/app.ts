@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import incidentRoutes from "./routes/incident.routes";
+import authRoutes from "./routes/auth.routes";
 
 const app = express();
 
@@ -27,8 +28,8 @@ Routes
 ==========================================
 */
 
-app.use("/api/v1/incidents", incidentRoutes);
 app.use("/api/incidents", incidentRoutes);
+app.use("/api/auth", authRoutes);
 
 // Health Check Routes
 app.get("/", (req, res) => {
