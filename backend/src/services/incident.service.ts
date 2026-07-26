@@ -194,6 +194,55 @@ export class IncidentService {
 
     return await incidentRepository.closeIncident(incidentId);
   }
+
+    /**
+   * Get incidents assigned to investigator
+   */
+  async getAssignedIncidents(investigatorId: number) {
+
+      if (!investigatorId) {
+          throw new Error("Invalid investigator ID");
+      }
+
+      return await incidentRepository.findAssignedIncidents(
+          investigatorId
+      );
+
+  }
+
+  /**
+ * Submit Root Cause Analysis findings
+ * @param incidentId - Incident ID
+ * @param rootCause - RCA explanation
+ * @param rootCauseCategory - RCA category
+ */
+async submitRootCause(
+  incidentId: number,
+  rootCause: string,
+  rootCauseCategory: string
+) {
+  const incident = await incidentRepository.findById(incidentId);
+
+  if (!incident) {
+    throw new Error("Incident not found.");
+  }
+
+  if (incident.status !== "INVESTIGATING") {
+    throw new Error(
+      `Cannot submit root cause. Current status is ${incident.status}.`
+    );
+  }
+
+  const updatedIncident =
+    await incidentRepository.updateRootCause(
+      incidentId,
+      rootCause,
+      rootCauseCategory
+    );
+
+  return updatedIncident;
+}
+
 }
 
 // Export a single instance of the service (Singleton pattern)

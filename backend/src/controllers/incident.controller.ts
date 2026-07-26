@@ -7,6 +7,7 @@ import {
   assignActionOwnerSchema,
 } from "../validators/incident.validator";
 import { incidentService, createIncidentService } from "../services/incident.service";
+import { rootCauseSchema } from "../validators/rootCause.validator";
 
 /**
  * Controller for creating a new incident report (Staff submission + attachments)
@@ -263,6 +264,102 @@ export const closeIncident = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: error.message || "Failed to close incident.",
+    });
+  }
+};
+
+/**
+ * Get incidents assigned to investigator
+ * Feature 4 - Investigator Workspace
+ */
+export const getAssignedIncidents = async (
+    req: Request,
+    res: Response
+) => {
+
+    try {
+
+        // Temporary hardcoded investigator ID
+        // Replace with req.user.id after JWT integration
+        const investigatorId = 2;
+
+        const incidents =
+            await incidentService.getAssignedIncidents(
+                investigatorId
+            );
+
+        return res.status(200).json({
+            success: true,
+            data: incidents,
+        });
+
+    } catch (error: any) {
+
+        console.error(
+            "Error fetching investigator incidents:",
+            error
+        );
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+        });
+
+    }
+};
+
+/**
+ * Submit Root Cause Analysis findings
+ * Investigator submits RCA details
+ */
+export const submitRootCause = async (req: Request, res: Response) => {
+  try {
+
+    // Validate request body
+    const validatedData = rootCauseSchema.parse(req.body);
+
+    const incidentId = Number(req.params.id);
+
+    if (isNaN(incidentId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid incident ID",
+      });
+    }
+
+
+    const updatedIncident =
+      await incidentService.submitRootCause(
+        incidentId,
+        validatedData.rootCause,
+        validatedData.rootCauseCategory
+      );
+
+
+    return res.status(200).json({
+      success: true,
+      message: "Root cause submitted successfully",
+      data: updatedIncident,
+    });
+
+
+  } catch (error: any) {
+
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: error.issues.map(
+          (issue) => issue.message
+        ),
+      });
+    }
+
+
+    return res.status(500).json({
+      success: false,
+      message:
+        error.message || "Failed to submit root cause",
     });
   }
 };
