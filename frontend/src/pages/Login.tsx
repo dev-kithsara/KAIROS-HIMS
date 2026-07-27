@@ -119,35 +119,6 @@ export const Login: React.FC = () => {
               </button>
             </div>
           </form>
-
-          {/* Quick Demo Credentials Section */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 text-center">
-              ⚡ Quick Demo Credentials
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail('manager@hospital.com');
-                  setPassword('password123');
-                }}
-                className="px-3 py-2 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md border border-blue-200 text-center transition-colors"
-              >
-                👨‍💼 Manager Demo
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail('staff@hospital.com');
-                  setPassword('password123');
-                }}
-                className="px-3 py-2 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-md border border-emerald-200 text-center transition-colors"
-              >
-                👩‍⚕️ Staff Demo
-              </button>
-            </div>
-          </div>
           
         </div>
       </div>

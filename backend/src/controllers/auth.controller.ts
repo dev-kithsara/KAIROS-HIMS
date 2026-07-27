@@ -24,6 +24,7 @@ export const login =  async (req: Request, res: Response) => {
         });
     }
     catch (error: any) {
+        console.error(" LOGIN ERROR DETAILS:", error);
         // 4. Error Handling
         if (error instanceof z.ZodError) {
             return res.status(400).json({
