@@ -1,36 +1,62 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // 1. Create Department
-  const dept = await prisma.department.create({
-    data: { name: 'Cardiology' },
+  const hashedPassword = await bcrypt.hash('password123', 10);
+
+  // 1. Ensure Department exists
+  const dept = await prisma.department.upsert({
+    where: { name: 'Cardiology' },
+    update: {},
+    create: { name: 'Cardiology' },
   });
 
-  // 2. Create User
-  const user = await prisma.user.create({
-    data: {
-      email: 'test@test.com',
-      password: 'hashedpassword123', // Bcrypt කරපු එකක් බව සලකන්න
-      name: 'Kamal',
+  // 2. Seed Demo Users
+  const users = [
+    {
+      email: 'manager@hospital.com',
+      password: hashedPassword,
+      name: 'Dr. Manager',
+      role: 'MANAGER',
+      departmentId: dept.id,
+    },
+    {
+      email: 'staff@hospital.com',
+      password: hashedPassword,
+      name: 'Kamal Perera',
       role: 'STAFF',
       departmentId: dept.id,
     },
-  });
-
-  // 3. Create Incident
-  await prisma.incident.create({
-    data: {
-      title: 'Slippery Floor',
-      description: 'Water leaked near ward 2',
-      status: 'OPEN',
+    {
+      email: 'investigator@hospital.com',
+      password: hashedPassword,
+      name: 'Nimal Investigator',
+      role: 'INVESTIGATOR',
       departmentId: dept.id,
-      reporterId: user.id,
     },
-  });
+    {
+      email: 'actionowner@hospital.com',
+      password: hashedPassword,
+      name: 'Sunil Action Owner',
+      role: 'ACTION_OWNER',
+      departmentId: dept.id,
+    },
+  ];
 
-  console.log('Seeding finished!');
+  for (const userData of users) {
+    await prisma.user.upsert({
+      where: { email: userData.email },
+      update: {
+        password: userData.password,
+        role: userData.role,
+      },
+      create: userData,
+    });
+  }
+
+  console.log('✅ Demo users seeded successfully!');
 }
 
 main()
