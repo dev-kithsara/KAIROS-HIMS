@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '../hooks/useAuth';
+import { useAuthContext } from '../context/AuthContext';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,9 @@ export const Login: React.FC = () => {
   const navigate = useNavigate();
   const loginMutation = useLogin();
 
+  // 2. Destructure the 'login' function from our Auth Context
+  const { login: contextLogin } = useAuthContext();
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default form submission (page reload)
     setErrorMsg(''); // Clear any previous errors
@@ -25,6 +29,10 @@ export const Login: React.FC = () => {
       { email, password },
       {
         onSuccess: (data) => {
+          // 4. Call the context login function instead of manual localStorage
+          // This updates the global state and saves to localStorage internally
+          contextLogin(data.user, data.token);
+          
           // If login is successful, check the role and navigate accordingly
           if (data.user.role === 'MANAGER') {
             navigate('/'); // Go to Manager Dashboard

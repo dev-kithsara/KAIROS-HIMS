@@ -1,37 +1,44 @@
+// frontend/src/App.tsx
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ManagerDashboard } from './pages/ManagerDashboard';
-import { CreateIncident } from './pages/CreateIncident';
 import { Routes, Route } from 'react-router-dom';
+import { CreateIncident } from './pages/CreateIncident';
+import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
 import { Login } from './pages/Login';
 
-// Create a client for React Query
+// 1. Import the AuthProvider and ProtectedRoute components
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
+  defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
 });
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Routes>
-      <Route path="/login" element={<Login />} />
-         
-        {/* Protected Routes (We will add route guards later) */}
-        {/* Home page shows the dashboard */}
-        <Route path="/" element={<ManagerDashboard />} />
-        
-        {/* Staff Incident Submission Form */}
-        <Route path="/submit-incident" element={<CreateIncident />} />
-        
-        {/* Dynamic route for incident details */}
-        <Route path="/incidents/:id" element={<IncidentDetails />} />
-      </Routes>
-      
+      {/* 2. Wrap the entire routing system with AuthProvider. 
+             This makes the 'user' state available to all components inside. */}
+      <AuthProvider>
+        <Routes>
+          {/* 3. Public Route: Anyone can access the login page */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* 4. Protected Routes: We use a layout route structure.
+                 The <ProtectedRoute /> acts as a gatekeeper. 
+                 If it passes, it renders the <Outlet /> which contains the child routes. */}
+          <Route element={<ProtectedRoute allowedRoles={['MANAGER', 'STAFF', 'INVESTIGATOR', 'ACTION_OWNER']} />}>
+            
+            {/* 5. These routes are only accessible if the user is authenticated */}
+            <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<ManagerDashboard />} />
+            <Route path="/incidents/:id" element={<IncidentDetails />} />
+            <Route path="/submit-incident" element={<CreateIncident />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
