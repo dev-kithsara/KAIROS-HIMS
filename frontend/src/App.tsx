@@ -3,6 +3,8 @@ import { ManagerDashboard } from './pages/ManagerDashboard';
 import { CreateIncident } from './pages/CreateIncident';
 import { Routes, Route } from 'react-router-dom';
 import { IncidentDetails } from './pages/IncidentDetails';
+import InvestigatorDashboard from "./pages/InvestigatorDashboard";
+
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -28,6 +30,9 @@ function App() {
         
         {/* Dynamic route for incident details */}
         <Route path="/incidents/:id" element={<IncidentDetails />} />
+
+        {/* Investigator Dashboard */}
+        <Route path="/investigator" element={<InvestigatorDashboard />} />
       </Routes>
       
     </QueryClientProvider>

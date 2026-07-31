@@ -45,11 +45,30 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
       <p className="text-gray-600 text-sm line-clamp-2 mb-4">
         {incident.description}
       </p>
+      <div className="mb-4 space-y-1 text-sm">
+        <p>
+          <span className="font-semibold text-gray-700">Severity:</span>{" "}
+          {incident.severity}
+        </p>
+
+        <p>
+          <span className="font-semibold text-gray-700">Category:</span>{" "}
+          {incident.category}
+        </p>
+    </div>
       
       <div className="flex justify-between items-center text-xs text-gray-500">
         <div>
-          <span className="font-medium">Reporter:</span> {incident.reporter?.name || 'Unknown'}
-        </div>
+          <p>
+            <span className="font-medium">Reporter:</span>{" "}
+            {incident.reporter?.name || "Unknown"}
+          </p>
+
+          <p>
+            <span className="font-medium">Department:</span>{" "}
+            {incident.department?.name || "N/A"}
+          </p>
+      </div>
         <div>
           {formattedDate}
         </div>
