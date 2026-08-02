@@ -4,6 +4,7 @@ import { CreateIncident } from './pages/CreateIncident';
 import { Routes, Route } from 'react-router-dom';
 import { IncidentDetails } from './pages/IncidentDetails';
 import InvestigatorDashboard from "./pages/InvestigatorDashboard";
+import InvestigatorWorkspace from "./pages/InvestigatorWorkspace";
 
 
 // Create a client for React Query
@@ -33,6 +34,9 @@ function App() {
 
         {/* Investigator Dashboard */}
         <Route path="/investigator" element={<InvestigatorDashboard />} />
+
+        <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />
+        
       </Routes>
       
     </QueryClientProvider>

@@ -4,7 +4,7 @@ import type { Incident } from '../types/incident';
 // Define the Props (inputs) this component expects
 interface IncidentCardProps {
   incident: Incident;
-  onClick: (incidentId: number) => void; // Function to run when the card is clicked
+  onClick: () => void; // Function to run when the card is clicked
 }
 
 export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick }) => {
@@ -29,50 +29,94 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
   });
 
   return (
-    <div 
-      onClick={() => onClick(incident.id)}
-      className="bg-white rounded-lg shadow-md p-5 border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow duration-200"
-    >
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="text-lg font-semibold text-gray-900 truncate pr-4">
-          {incident.title}
-        </h3>
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(incident.status)}`}>
-          {incident.status.replace('_', ' ')}
+   
+  <div
+    onClick={onClick}
+    className="group cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl"
+  >
+    {/* Header */}
+    <div className="border-b border-slate-100 p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
+            {incident.title}
+          </h3>
+
+          <p className="mt-2 text-sm text-slate-500 line-clamp-2">
+            {incident.description}
+          </p>
+        </div>
+
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap ${getStatusColor(
+            incident.status
+          )}`}
+        >
+          {incident.status.replace("_", " ")}
         </span>
       </div>
-      
-      <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-        {incident.description}
-      </p>
-      <div className="mb-4 space-y-1 text-sm">
-        <p>
-          <span className="font-semibold text-gray-700">Severity:</span>{" "}
+    </div>
+
+    {/* Body */}
+    <div className="space-y-3 p-5 text-sm">
+
+      <div className="flex items-center justify-between">
+        <span className="text-slate-500">Severity</span>
+
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            incident.severity === "HIGH"
+              ? "bg-red-100 text-red-700"
+              : incident.severity === "MEDIUM"
+              ? "bg-amber-100 text-amber-700"
+              : "bg-green-100 text-green-700"
+          }`}
+        >
           {incident.severity}
-        </p>
+        </span>
+      </div>
 
-        <p>
-          <span className="font-semibold text-gray-700">Category:</span>{" "}
+      <div className="flex justify-between">
+        <span className="text-slate-500">Category</span>
+        <span className="font-medium text-slate-800">
           {incident.category}
-        </p>
-    </div>
-      
-      <div className="flex justify-between items-center text-xs text-gray-500">
-        <div>
-          <p>
-            <span className="font-medium">Reporter:</span>{" "}
-            {incident.reporter?.name || "Unknown"}
-          </p>
+        </span>
+      </div>
 
-          <p>
-            <span className="font-medium">Department:</span>{" "}
-            {incident.department?.name || "N/A"}
-          </p>
+      <div className="flex justify-between">
+        <span className="text-slate-500">Reporter</span>
+        <span className="font-medium text-slate-800">
+          {incident.reporter?.name || "Unknown"}
+        </span>
       </div>
-        <div>
+
+      <div className="flex justify-between">
+        <span className="text-slate-500">Department</span>
+        <span className="font-medium text-slate-800">
+          {incident.department?.name || "N/A"}
+        </span>
+      </div>
+
+      <div className="flex justify-between">
+        <span className="text-slate-500">Created</span>
+        <span className="font-medium text-slate-800">
           {formattedDate}
-        </div>
+        </span>
       </div>
     </div>
-  );
-};
+
+    {/* Footer */}
+    <div className="border-t border-slate-100 bg-slate-50 px-5 py-4">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-blue-700">
+          View Investigation
+        </span>
+
+        <span className="text-blue-700 transition-transform duration-300 group-hover:translate-x-1">
+          →
+        </span>
+      </div>
+    </div>
+  </div>
+);
+}
