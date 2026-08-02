@@ -4,7 +4,7 @@ import { CreateIncident } from './pages/CreateIncident';
 import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
 import { Login } from './pages/Login';
-
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/MainLayout'; 
@@ -19,6 +19,8 @@ function App() {
       {/* 2. Wrap the entire routing system with AuthProvider. 
              This makes the 'user' state available to all components inside. */}
       <AuthProvider>
+        {/* 2. Add the Toaster component here. It will render notifications globally. */}
+        <Toaster position="top-right" reverseOrder={false} />
         <Routes>
           {/* 3. Public Route: Anyone can access the login page */}
           <Route path="/login" element={<Login />} />
