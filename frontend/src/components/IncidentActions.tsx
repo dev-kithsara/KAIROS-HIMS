@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Incident } from '../types/incident';
+import { useAuthContext } from '../context/AuthContext';
 
 interface IncidentActionsProps {
   incident: Incident;
@@ -22,9 +23,25 @@ export const IncidentActions: React.FC<IncidentActionsProps> = ({
   onClose 
 }) => {
 
+  // 2. Get the current logged-in user
+  const { user } = useAuthContext();
+
+   // 3. Helper function to check if the user is a Manager
+  const isManager = user?.role === 'MANAGER';
+
   // Helper function to render buttons based on the current status
   const renderButtons = () => {
-    switch (incident.status) {
+    // 4. If the user is NOT a manager, they shouldn't see any of these workflow buttons
+     // In the future, we will add specific buttons for Investigators and Action Owners here
+    if (!isManager) {
+      return (
+        <p className="text-gray-500 italic text-sm">
+          You do not have permission to perform workflow actions on this incident.
+        </p>
+      );
+    }
+      // 5. Manager's view (Same as before)
+     switch (incident.status) {
       case 'OPEN':
         return (
           <>
@@ -88,16 +105,16 @@ export const IncidentActions: React.FC<IncidentActionsProps> = ({
       <p className="text-gray-500 italic">No further actions can be taken on this incident.</p>
     );
 
-  default:
-    return null;
-}
+    default:
+      return null;
+    }
 
 };
-return (
-<div className="flex gap-4 mt-6 border-t pt-6">
-{renderButtons()}
-</div>
-);
+  return (
+    <div className="flex gap-4 mt-6 border-t border-gray-200 pt-6">
+        {renderButtons()}
+    </div>
+  );
 };
 
 export default IncidentActions;

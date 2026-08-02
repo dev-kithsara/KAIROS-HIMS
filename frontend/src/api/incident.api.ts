@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { apiClient } from './axios';
 import type { Incident, ApiResponse } from '../types/incident';
 
 // Base URL for the incidents API. 
@@ -9,8 +9,8 @@ const API_URL = '/api/incidents';
  * Fetch all incidents for a specific department
  */
 export const getDepartmentIncidents = async (departmentId: number): Promise<Incident[]> => {
-  // We use axios.get<ApiResponse<Incident[]>> to tell TypeScript what shape of data to expect back
-  const response = await axios.get<ApiResponse<Incident[]>>(`${API_URL}/department/${departmentId}`);
+  // We use apiClient.get<ApiResponse<Incident[]>> to tell TypeScript what shape of data to expect back
+  const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/department/${departmentId}`);
   return response.data.data;
 };
 
@@ -18,7 +18,7 @@ export const getDepartmentIncidents = async (departmentId: number): Promise<Inci
  * Accept an OPEN incident
  */
 export const acceptIncident = async (id: number): Promise<Incident> => {
-  const response = await axios.patch<ApiResponse<Incident>>(`${API_URL}/${id}/accept`);
+  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/accept`);
   return response.data.data;
 };
 
@@ -26,8 +26,8 @@ export const acceptIncident = async (id: number): Promise<Incident> => {
  * Reject an OPEN incident with a reason
  */
 export const rejectIncident = async (id: number, reason: string): Promise<Incident> => {
-  // The second argument in axios.patch is the Request Body
-  const response = await axios.patch<ApiResponse<Incident>>(`${API_URL}/${id}/reject`, { reason });
+  // The second argument in apiClient.patch is the Request Body
+  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/reject`, { reason });
   return response.data.data;
 };
 
@@ -35,7 +35,7 @@ export const rejectIncident = async (id: number, reason: string): Promise<Incide
  * Assign an investigator to an ACCEPTED incident
  */
 export const assignInvestigator = async (id: number, investigatorId: number): Promise<Incident> => {
-  const response = await axios.patch<ApiResponse<Incident>>(`${API_URL}/${id}/assign-investigator`, { investigatorId });
+  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/assign-investigator`, { investigatorId });
   return response.data.data;
 };
 
@@ -43,7 +43,7 @@ export const assignInvestigator = async (id: number, investigatorId: number): Pr
  * Assign an action owner to an INVESTIGATING incident
  */
 export const assignActionOwner = async (id: number, actionOwnerId: number): Promise<Incident> => {
-  const response = await axios.patch<ApiResponse<Incident>>(`${API_URL}/${id}/assign-action-owner`, { actionOwnerId });
+  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/assign-action-owner`, { actionOwnerId });
   return response.data.data;
 };
 
@@ -51,7 +51,7 @@ export const assignActionOwner = async (id: number, actionOwnerId: number): Prom
  * Mark an incident as UNDER_REVIEW
  */
 export const reviewIncident = async (id: number): Promise<Incident> => {
-  const response = await axios.patch<ApiResponse<Incident>>(`${API_URL}/${id}/review`);
+  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/review`);
   return response.data.data;
 };
 
@@ -59,7 +59,7 @@ export const reviewIncident = async (id: number): Promise<Incident> => {
  * Close the incident
  */
 export const closeIncident = async (id: number): Promise<Incident> => {
-  const response = await axios.patch<ApiResponse<Incident>>(`${API_URL}/${id}/close`);
+  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/close`);
   return response.data.data;
 };
 
@@ -67,7 +67,7 @@ export const closeIncident = async (id: number): Promise<Incident> => {
  * Submit a new incident report with optional evidence attachments
  */
 export const createIncident = async (formData: FormData): Promise<Incident> => {
-  const response = await axios.post<{ success: boolean; message: string; incident: Incident }>(
+  const response = await apiClient.post<{ success: boolean; message: string; incident: Incident }>(
     `${API_URL}`,
     formData,
     {

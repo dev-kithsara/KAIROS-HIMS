@@ -227,7 +227,18 @@ npm run dev
 Application URLs:
 - **Manager Dashboard**: `http://localhost:5173/`
 - **Staff Incident Submission Form**: `http://localhost:5173/submit-incident`
-- **Backend API Base**: `http://localhost:8000/api/v1/incidents`
+---
+
+## 🧪 Demo Credentials
+
+To test the application locally or after running `npx prisma db seed`, use the following pre-configured demo accounts:
+
+| Role | Email | Password | Description |
+| :--- | :--- | :--- | :--- |
+| **Department Manager** | `manager@hospital.com` | `password123` | Access to Manager Dashboard, approval workflow, assignment & closure |
+| **Frontline Staff** | `staff@hospital.com` | `password123` | Submit safety incident reports with evidence attachments |
+| **Investigator** | `investigator@hospital.com` | `password123` | Root Cause Analysis (RCA) & investigation tracking |
+| **Action Owner** | `actionowner@hospital.com` | `password123` | Implement and update status on assigned corrective actions |
 
 ---
 

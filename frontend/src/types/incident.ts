@@ -6,6 +6,8 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  role?: string;
+  departmentId?: number;
 }
 
 // 3. Define the main Incident interface matching the Backend response
