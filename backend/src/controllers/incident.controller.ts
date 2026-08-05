@@ -279,9 +279,14 @@ export const getAssignedIncidents = async (
 
     try {
 
-        // Temporary hardcoded investigator ID
-        // Replace with req.user.id after JWT integration
-        const investigatorId = 2;
+        if (!req.user) {
+          return res.status(401).json({
+            success: false,
+            message: "User not authenticated.",
+          });
+        }
+
+        const investigatorId = req.user.id;
 
         const incidents =
             await incidentService.getAssignedIncidents(
