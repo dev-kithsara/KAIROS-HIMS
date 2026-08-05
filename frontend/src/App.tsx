@@ -1,44 +1,41 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ManagerDashboard } from './pages/ManagerDashboard';
-import { CreateIncident } from './pages/CreateIncident';
 import { Routes, Route } from 'react-router-dom';
+import { CreateIncident } from './pages/CreateIncident';
+import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
 import InvestigatorDashboard from "./pages/InvestigatorDashboard";
 import InvestigatorWorkspace from "./pages/InvestigatorWorkspace";
+import { Login } from './pages/Login';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { MainLayout } from './components/MainLayout';
 
-
-// Create a client for React Query
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
+  defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
 });
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      
-      {/* React Router Configuration */}
-      <Routes>
-        {/* Home page shows the dashboard */}
-        <Route path="/" element={<ManagerDashboard />} />
-        
-        {/* Staff Incident Submission Form */}
-        <Route path="/submit-incident" element={<CreateIncident />} />
-        
-        {/* Dynamic route for incident details */}
-        <Route path="/incidents/:id" element={<IncidentDetails />} />
-
-        {/* Investigator Dashboard */}
-        <Route path="/investigator" element={<InvestigatorDashboard />} />
-
-        <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />
-        
-      </Routes>
-      
+      <AuthProvider>
+        <Toaster position="top-right" reverseOrder={false} />
+        <Routes>
+          {/* Public Route */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['MANAGER', 'STAFF', 'INVESTIGATOR', 'ACTION_OWNER']} />}>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<ManagerDashboard />} />
+              <Route path="/incidents/:id" element={<IncidentDetails />} />
+              <Route path="/submit-incident" element={<CreateIncident />} />
+              <Route path="/investigator" element={<InvestigatorDashboard />} />
+              <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
