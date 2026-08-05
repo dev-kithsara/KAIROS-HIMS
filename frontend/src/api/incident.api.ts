@@ -78,3 +78,12 @@ export const createIncident = async (formData: FormData): Promise<Incident> => {
   );
   return response.data.incident;
 };
+
+// Get incidents assigned to the investigator
+export const getAssignedIncidents = async (): Promise<Incident[]> => {
+  const response = await axios.get<ApiResponse<Incident[]>>(
+    `${API_URL}/investigator`
+  );
+
+  return response.data.data;
+};

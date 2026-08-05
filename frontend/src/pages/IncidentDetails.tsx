@@ -164,6 +164,51 @@ export const IncidentDetails: React.FC = () => {
           </p>
         </div>
 
+                  {/* Incident Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+            <div className="bg-gray-50 p-4 rounded-md border">
+              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
+                Severity
+              </h4>
+
+              <p className="font-medium">
+                {incident.severity}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-md border">
+              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
+                Category
+              </h4>
+
+              <p className="font-medium">
+                {incident.category}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-md border">
+              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
+                Location
+              </h4>
+
+              <p className="font-medium">
+                {incident.location}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-md border">
+              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
+                Department
+              </h4>
+
+              <p className="font-medium">
+                {incident.department?.name || "Not Available"}
+              </p>
+            </div>
+
+          </div>
+
         {/* People Involved Section: Displays assigned personnel */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-blue-50 p-4 rounded-md border border-blue-100">
@@ -179,6 +224,69 @@ export const IncidentDetails: React.FC = () => {
             <p className="text-gray-900 font-medium">{incident.actionOwner?.name || 'Not assigned'}</p>
           </div>
         </div>
+
+        <div className="mb-8">
+
+          <h3 className="text-lg font-semibold mb-3">
+            Root Cause Analysis
+          </h3>
+
+          <div className="bg-gray-50 rounded-md border p-4">
+
+            <p>
+              <strong>Category:</strong>{" "}
+              {incident.rootCauseCategory || "Not submitted"}
+            </p>
+
+            <p className="mt-3">
+              <strong>Root Cause:</strong>
+            </p>
+
+            <p className="text-gray-700 mt-2">
+              {incident.rootCause || "No root cause analysis submitted yet."}
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* Attachments */}
+          <div className="mb-8">
+
+            <h3 className="text-lg font-semibold mb-3">
+              Attachments
+            </h3>
+
+            <div className="bg-gray-50 border rounded-md p-4">
+
+              {incident.attachments && incident.attachments.length > 0 ? (
+
+                <ul className="space-y-2">
+                  {incident.attachments.map((file) => (
+                    <li
+                      key={file.id}
+                      className="flex justify-between items-center border-b pb-2"
+                    >
+                      <span>{file.fileName}</span>
+
+                      <button className="text-blue-600 hover:underline">
+                        View
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+              ) : (
+
+                <p className="text-gray-500">
+                  No attachments uploaded.
+                </p>
+
+              )}
+
+            </div>
+
+          </div>
 
         {/* Action Buttons Component: Renders buttons dynamically based on incident.status */}
         <IncidentActions 

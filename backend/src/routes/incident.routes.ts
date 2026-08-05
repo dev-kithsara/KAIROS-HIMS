@@ -8,6 +8,8 @@ import {
   assignActionOwner,
   reviewIncident,
   closeIncident,
+  getAssignedIncidents,
+  submitRootCause
 } from "../controllers/incident.controller";
 
 import upload from "../middlewares/upload.middleware";
@@ -70,5 +72,13 @@ router.patch("/:id/review", authenticate, authorizeRoles('MANAGER'), reviewIncid
 // Description: Close the incident
 // Access: MANAGER only
 router.patch("/:id/close", authenticate, authorizeRoles('MANAGER'), closeIncident);
+
+// Route: GET /api/v1/incidents/investigator
+// Description: Get incidents assigned to the logged-in investigator
+router.get("/investigator", authenticate, authorizeRoles("INVESTIGATOR"), getAssignedIncidents);
+
+// Route: PATCH /api/v1/incidents/:id/root-cause
+// Description: Investigator submits Root Cause Analysis findings
+router.patch("/:id/root-cause", authenticate, authorizeRoles("INVESTIGATOR"), submitRootCause);
 
 export default router;

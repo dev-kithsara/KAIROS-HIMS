@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as incidentApi from '../api/incident.api';
+import type { Incident } from '../types/incident';
 
 // 1. Hook to fetch all incidents for a department
 export const useDepartmentIncidents = (departmentId: number) => {
@@ -106,4 +107,10 @@ export const useCreateIncident = () => {
   });
 };
 
-  
+// 9. Hook to fetch incidents assigned to the investigator
+export const useAssignedIncidents = () => {
+  return useQuery<Incident[]>({
+    queryKey: ['incidents', 'investigator'],
+    queryFn: () => incidentApi.getAssignedIncidents(),
+  });
+};

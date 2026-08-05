@@ -43,4 +43,6 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "UP", message: "KAIROS HIMS Backend is running" });
 });
 
+app.use("/api/v1/incidents", incidentRoutes);
+
 export default app;
