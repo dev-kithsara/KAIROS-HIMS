@@ -1,5 +1,7 @@
 import prisma from "../utils/prisma";
 import { incidentRepository } from "../repositories/incident.repository";
+import { AppError } from '../utils/AppError';
+
 
 /**
  * Service function for creating an incident (Staff Submission + Attachments)
@@ -51,11 +53,19 @@ export class IncidentService {
    */
   async getIncidentsByDepartment(departmentId: number) {
     if (!departmentId || departmentId <= 0) {
-      throw new Error("Invalid Department ID provided");
+       throw new AppError("Invalid Department ID provided", 400); // Bad Request
     }
 
-    const incidents = await incidentRepository.findByDepartmentId(departmentId);
-    return incidents;
+    // FIX FOR BUG-02: Check if the department actually exists first
+    const departmentExists = await prisma.department.findUnique({
+      where: { id: departmentId }
+    });
+
+    if (!departmentExists) {
+      throw new AppError("Department not found.", 404); // Not Found
+    }
+
+    return await incidentRepository.findByDepartmentId(departmentId);
   }
 
   /**
@@ -67,15 +77,14 @@ export class IncidentService {
     const incident = await incidentRepository.findById(incidentId);
 
     if (!incident) {
-      throw new Error("Incident not found.");
+        throw new AppError("Incident not found.", 404); // Not Found
     }
 
     if (incident.status !== "OPEN") {
-      throw new Error(`Cannot accept incident. Current status is ${incident.status}, but expected OPEN.`);
+      throw new AppError(`Cannot accept incident. Current status is ${incident.status}, but expected OPEN.`, 409);
     }
 
-    const updatedIncident = await incidentRepository.updateStatus(incidentId, "ACCEPTED");
-    return updatedIncident;
+    return await incidentRepository.updateStatus(incidentId, "ACCEPTED");
   }
 
   /**
@@ -88,15 +97,14 @@ export class IncidentService {
     const incident = await incidentRepository.findById(incidentId);
 
     if (!incident) {
-      throw new Error("Incident not found.");
+      throw new AppError("Incident not found.", 404);
     }
 
     if (incident.status !== "OPEN") {
-      throw new Error(`Cannot reject incident. Current status is ${incident.status}, but expected OPEN.`);
+      throw new AppError(`Cannot reject incident. Current status is ${incident.status}, but expected OPEN.`, 409);
     }
 
-    const updatedIncident = await incidentRepository.rejectIncident(incidentId, reason);
-    return updatedIncident;
+     return await incidentRepository.rejectIncident(incidentId, reason);
   }
 
   /**
@@ -108,11 +116,11 @@ export class IncidentService {
   async assignInvestigator(incidentId: number, investigatorId: number) {
     const incident = await incidentRepository.findById(incidentId);
     if (!incident) {
-      throw new Error("Incident not found.");
+      throw new AppError("Incident not found.", 404);
     }
 
     if (incident.status !== "ACCEPTED") {
-      throw new Error(`Cannot assign investigator. Current status is ${incident.status}, but expected ACCEPTED.`);
+      throw new AppError(`Cannot assign investigator. Current status is ${incident.status}, but expected ACCEPTED.`, 409);
     }
 
     const investigator = await prisma.user.findUnique({
@@ -120,15 +128,14 @@ export class IncidentService {
     });
 
     if (!investigator) {
-      throw new Error("The specified investigator does not exist.");
+      throw new AppError("The specified investigator does not exist.", 404);
     }
 
     if (investigator.role !== "INVESTIGATOR" && investigator.role !== "MANAGER") {
-      throw new Error("The specified user does not have the required role to be an investigator.");
+      throw new AppError("The specified user does not have the required role to be an investigator.", 403);
     }
 
-    const updatedIncident = await incidentRepository.assignInvestigator(incidentId, investigatorId);
-    return updatedIncident;
+    return await incidentRepository.assignInvestigator(incidentId, investigatorId);
   }
 
   /**
@@ -140,11 +147,11 @@ export class IncidentService {
   async assignActionOwner(incidentId: number, actionOwnerId: number) {
     const incident = await incidentRepository.findById(incidentId);
     if (!incident) {
-      throw new Error("Incident not found.");
+      throw new AppError("Incident not found.", 404);
     }
 
     if (incident.status !== "INVESTIGATING") {
-      throw new Error(`Cannot assign action owner. Current status is ${incident.status}, but expected INVESTIGATING.`);
+      throw new AppError(`Cannot assign action owner. Current status is ${incident.status}, but expected INVESTIGATING.`, 409);
     }
 
     const actionOwner = await prisma.user.findUnique({
@@ -152,15 +159,14 @@ export class IncidentService {
     });
 
     if (!actionOwner) {
-      throw new Error("The specified action owner does not exist.");
+      throw new AppError("The specified action owner does not exist.", 404);
     }
 
     if (actionOwner.role !== "ACTION_OWNER" && actionOwner.role !== "MANAGER") {
-      throw new Error("The specified user does not have the required role to be an action owner.");
+      throw new AppError("The specified user does not have the required role to be an action owner.", 403);
     }
 
-    const updatedIncident = await incidentRepository.assignActionOwner(incidentId, actionOwnerId);
-    return updatedIncident;
+    return await incidentRepository.assignActionOwner(incidentId, actionOwnerId);
   }
 
   /**
@@ -170,10 +176,10 @@ export class IncidentService {
    */
   async reviewIncident(incidentId: number) {
     const incident = await incidentRepository.findById(incidentId);
-    if (!incident) throw new Error("Incident not found.");
+    if (!incident) throw new AppError("Incident not found.", 404);
 
     if (incident.status !== "PENDING_ACTION") {
-      throw new Error(`Cannot review incident. Current status is ${incident.status}, but expected PENDING_ACTION.`);
+      throw new AppError(`Cannot review incident. Current status is ${incident.status}, but expected PENDING_ACTION.`, 409);
     }
 
     return await incidentRepository.reviewIncident(incidentId);
@@ -186,10 +192,10 @@ export class IncidentService {
    */
   async closeIncident(incidentId: number) {
     const incident = await incidentRepository.findById(incidentId);
-    if (!incident) throw new Error("Incident not found.");
+    if (!incident) throw new AppError("Incident not found.", 404);
 
     if (incident.status !== "UNDER_REVIEW") {
-      throw new Error(`Cannot close incident. Current status is ${incident.status}, but expected UNDER_REVIEW.`);
+      throw new AppError(`Cannot close incident. Current status is ${incident.status}, but expected UNDER_REVIEW.`, 409);
     }
 
     return await incidentRepository.closeIncident(incidentId);
