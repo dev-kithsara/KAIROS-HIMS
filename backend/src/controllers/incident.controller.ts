@@ -7,6 +7,7 @@ import {
   assignInvestigatorSchema,
   assignActionOwnerSchema,
 } from '../validators/incident.validator';
+import { rootCauseSchema } from '../validators/rootCause.validator';
 import { incidentService, createIncidentService } from '../services/incident.service';
 import { catchAsync } from '../utils/catchAsync'; // Import our magic wrapper
 import { AppError } from '../utils/AppError';
@@ -55,7 +56,7 @@ export const getDepartmentIncidents = catchAsync(async (req: Request, res: Respo
 
 export const acceptIncident = catchAsync(async (req: Request, res: Response) => {
   const incidentId = parseInt(req.params.id as string, 10);
-  if (isNaN(incidentId)) throw new Error('Invalid incident ID provided.');
+  if (isNaN(incidentId)) throw new AppError('Invalid incident ID provided.', 400);
 
   const updatedIncident = await incidentService.acceptIncident(incidentId);
   return res
@@ -66,7 +67,7 @@ export const acceptIncident = catchAsync(async (req: Request, res: Response) => 
 export const rejectIncident = catchAsync(async (req: Request, res: Response) => {
   const validatedData = rejectIncidentSchema.parse({ body: req.body });
   const incidentId = parseInt(req.params.id as string, 10);
-  if (isNaN(incidentId)) throw new Error('Invalid incident ID provided.');
+  if (isNaN(incidentId)) throw new AppError('Invalid incident ID provided.', 400);
 
   const updatedIncident = await incidentService.rejectIncident(
     incidentId,
@@ -80,7 +81,7 @@ export const rejectIncident = catchAsync(async (req: Request, res: Response) => 
 export const assignInvestigator = catchAsync(async (req: Request, res: Response) => {
   const validatedData = assignInvestigatorSchema.parse({ body: req.body });
   const incidentId = parseInt(req.params.id as string, 10);
-  if (isNaN(incidentId)) throw new Error('Invalid incident ID provided.');
+  if (isNaN(incidentId)) throw new AppError('Invalid incident ID provided.', 400);
 
   const updatedIncident = await incidentService.assignInvestigator(
     incidentId,
@@ -88,13 +89,13 @@ export const assignInvestigator = catchAsync(async (req: Request, res: Response)
   );
   return res
     .status(200)
-    .json({ success: true, message: 'Investigator assigned.', data: updatedIncident });
+    .json({ success: true, message: 'Investigator assigned successfully.', data: updatedIncident });
 });
 
 export const assignActionOwner = catchAsync(async (req: Request, res: Response) => {
   const validatedData = assignActionOwnerSchema.parse({ body: req.body });
   const incidentId = parseInt(req.params.id as string, 10);
-  if (isNaN(incidentId)) throw new Error('Invalid incident ID provided.');
+  if (isNaN(incidentId)) throw new AppError('Invalid incident ID provided.', 400);
 
   const updatedIncident = await incidentService.assignActionOwner(
     incidentId,
@@ -102,12 +103,12 @@ export const assignActionOwner = catchAsync(async (req: Request, res: Response) 
   );
   return res
     .status(200)
-    .json({ success: true, message: 'Action owner assigned.', data: updatedIncident });
+    .json({ success: true, message: 'Action owner assigned successfully.', data: updatedIncident });
 });
 
 export const reviewIncident = catchAsync(async (req: Request, res: Response) => {
   const incidentId = parseInt(req.params.id as string, 10);
-  if (isNaN(incidentId)) throw new Error('Invalid incident ID provided.');
+  if (isNaN(incidentId)) throw new AppError('Invalid incident ID provided.', 400);
 
   const updatedIncident = await incidentService.reviewIncident(incidentId);
   return res
@@ -117,10 +118,53 @@ export const reviewIncident = catchAsync(async (req: Request, res: Response) => 
 
 export const closeIncident = catchAsync(async (req: Request, res: Response) => {
   const incidentId = parseInt(req.params.id as string, 10);
-  if (isNaN(incidentId)) throw new Error('Invalid incident ID provided.');
+  if (isNaN(incidentId)) throw new AppError('Invalid incident ID provided.', 400);
 
   const updatedIncident = await incidentService.closeIncident(incidentId);
   return res
     .status(200)
     .json({ success: true, message: 'Incident closed.', data: updatedIncident });
+});
+
+/**
+ * Get incidents assigned to investigator
+ * Feature 4 - Investigator Workspace
+ */
+export const getAssignedIncidents = catchAsync(async (req: Request, res: Response) => {
+  if (!req.user) {
+    throw new AppError('User not authenticated.', 401);
+  }
+
+  const investigatorId = req.user.id;
+  const incidents = await incidentService.getAssignedIncidents(investigatorId);
+
+  return res.status(200).json({
+    success: true,
+    data: incidents,
+  });
+});
+
+/**
+ * Submit Root Cause Analysis findings
+ * Investigator submits RCA details
+ */
+export const submitRootCause = catchAsync(async (req: Request, res: Response) => {
+  const validatedData = rootCauseSchema.parse(req.body);
+  const incidentId = Number(req.params.id);
+
+  if (isNaN(incidentId)) {
+    throw new AppError('Invalid incident ID provided.', 400);
+  }
+
+  const updatedIncident = await incidentService.submitRootCause(
+    incidentId,
+    validatedData.rootCause,
+    validatedData.rootCauseCategory
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: 'Root cause submitted successfully',
+    data: updatedIncident,
+  });
 });

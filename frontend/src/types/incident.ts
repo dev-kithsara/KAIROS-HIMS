@@ -10,24 +10,50 @@ export interface User {
   departmentId?: number;
 }
 
+export interface Department {
+  id: number;
+  name: string;
+}
+export interface IncidentAttachment {
+  id: number;
+  fileName: string;
+  filePath: string;
+  fileType: string;
+}
+
+
+
 // 3. Define the main Incident interface matching the Backend response
 export interface Incident {
   id: number;
   title: string;
   description: string;
+
+  severity: string;
+  category: string;
+  location: string;
+
   status: IncidentStatus;
-  rejectionReason?: string; // Optional field (?)
+
+  rejectionReason?: string;
+
+  rootCause?: string;
+  rootCauseCategory?: string;
+
   departmentId: number;
   reporterId: number;
   investigatorId?: number;
   actionOwnerId?: number;
-  createdAt: string; // Dates come as ISO strings in JSON
+
+  createdAt: string;
   updatedAt: string;
-  
-  // Related data that we included using Prisma 'include' in the backend
+
   reporter?: User;
   investigator?: User;
   actionOwner?: User;
+
+  department?: Department;
+  attachments?: IncidentAttachment[];
 }
 
 // 4. Define a generic API Response interface to match our Backend standard response

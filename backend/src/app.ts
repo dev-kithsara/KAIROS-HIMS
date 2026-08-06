@@ -29,7 +29,9 @@ Routes
 ==========================================
 */
 
+// Route mounting
 app.use('/api/incidents', incidentRoutes);
+app.use('/api/v1/incidents', incidentRoutes);
 app.use('/api/auth', authRoutes);
 
 // Health Check Routes
