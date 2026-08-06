@@ -3,9 +3,10 @@
 <img src="https://img.shields.io/badge/KAIROS-HIMS-00B4A0?style=for-the-badge&logoColor=white" alt="KAIROS HIMS Logo" height="60"/>
 
 # 🏥 KAIROS HIMS
+
 ### Hospital Incident Management System
 
-*A production-grade, full-stack, role-based Incident & Risk Management platform engineered for healthcare environments.*
+_A production-grade, full-stack, role-based Incident & Risk Management platform engineered for healthcare environments._
 
 [![React](https://img.shields.io/badge/React_18.3-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript_5.4-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -20,6 +21,7 @@
 ---
 
 ## 📋 Table of Contents
+
 - [✨ Overview](#-overview)
 - [🛡️ Key Features](#️-key-features)
 - [🔄 Incident Lifecycle](#-incident-lifecycle)
@@ -44,18 +46,20 @@
 **KAIROS HIMS** is a modern, enterprise healthcare incident and risk management platform. It empowers frontline hospital staff to quickly report safety incidents with file attachments, department managers to review and manage multi-stage investigation workflows, and investigators to perform root-cause analysis — ensuring patient safety and regulatory compliance.
 
 > **Why KAIROS?**  
-> "Kairos" (καιρός) is an ancient Greek word meaning the *right, critical, or opportune moment*. KAIROS HIMS enables hospital care teams to act on safety risks at the exact moment it matters most.
+> "Kairos" (καιρός) is an ancient Greek word meaning the _right, critical, or opportune moment_. KAIROS HIMS enables hospital care teams to act on safety risks at the exact moment it matters most.
 
 ---
 
 ## 🛡️ Key Features
 
 ### 📋 Staff Incident Submission
+
 - **Structured Incident Reporting**: Staff can log incidents with severity level (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`), category, location, and detailed description.
 - **Evidence Attachment Management**: Drag-and-drop file uploader supporting images (JPG, PNG) and documents (PDF) up to 5 files per incident.
 - **Instant Status Tracking**: Real-time response confirmation with unique Incident Tracking IDs.
 
 ### 👔 Manager Approval & Workflow
+
 - **Department-Scoped Dashboard**: Managers view real-time incidents specific to their department (ICU, ED, Surgery, Pediatrics).
 - **Interactive State Transitions**:
   - **Accept**: Transition OPEN incidents to ACCEPTED for investigation.
@@ -65,6 +69,7 @@
   - **Review & Close**: Formally review pending actions and close resolved incidents.
 
 ### 🔐 Data Safety & Type Safety
+
 - **Full TypeScript Coverage**: End-to-end type safety across backend controllers, services, repositories, and frontend React Query hooks.
 - **Prisma ORM**: Strict PostgreSQL database mapping with automatic migration tracking.
 - **Zod Validation**: Input sanitization and schema enforcement on request payloads.
@@ -121,13 +126,13 @@
 
 ## 👥 User Roles & Permissions
 
-| Role | Scope | Key Capabilities |
-| :--- | :--- | :--- |
-| **Frontline Staff** | Hospital-wide | Submit incident reports with file attachments, view submission feedback |
-| **Department Manager** | Department-Scoped | Accept/Reject incidents, Assign Investigators & Action Owners, Review & Close |
-| **Investigator** | Assigned Incidents | Conduct Root Cause Analysis (RCA), document findings |
-| **Action Owner** | Assigned Actions | Execute and report status on corrective action plans |
-| **System Admin** | Global System | Manage departments, user roles, system metrics, and audit logs |
+| Role                   | Scope              | Key Capabilities                                                              |
+| :--------------------- | :----------------- | :---------------------------------------------------------------------------- |
+| **Frontline Staff**    | Hospital-wide      | Submit incident reports with file attachments, view submission feedback       |
+| **Department Manager** | Department-Scoped  | Accept/Reject incidents, Assign Investigators & Action Owners, Review & Close |
+| **Investigator**       | Assigned Incidents | Conduct Root Cause Analysis (RCA), document findings                          |
+| **Action Owner**       | Assigned Actions   | Execute and report status on corrective action plans                          |
+| **System Admin**       | Global System      | Manage departments, user roles, system metrics, and audit logs                |
 
 ---
 
@@ -160,6 +165,7 @@
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework**: React 18.3 + TypeScript 5.4 + Vite 8
 - **Styling**: Tailwind CSS 3.4
 - **State & Data Fetching**: TanStack React Query v5
@@ -167,6 +173,7 @@
 - **Icons**: Lucide React
 
 ### Backend
+
 - **Runtime**: Node.js 20+
 - **Framework**: Express.js 4.19 + TypeScript 5.7
 - **Database ORM**: Prisma ORM 5.22
@@ -180,6 +187,7 @@
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
+
 - **Node.js** v20.0 or higher
 - **npm** v10.0 or higher
 - **PostgreSQL** 16 instance running locally or on cloud
@@ -205,7 +213,7 @@ npx prisma migrate deploy
 # 5. Generate Prisma Client
 npx prisma generate
 
-# 6. Start backend development server (Runs on Port 8000)
+# 6. Start backend development server (Runs on Port 5000)
 npm run dev
 ```
 
@@ -225,20 +233,22 @@ npm run dev
 ```
 
 Application URLs:
+
 - **Manager Dashboard**: `http://localhost:5173/`
 - **Staff Incident Submission Form**: `http://localhost:5173/submit-incident`
+
 ---
 
 ## 🧪 Demo Credentials
 
 To test the application locally or after running `npx prisma db seed`, use the following pre-configured demo accounts:
 
-| Role | Email | Password | Description |
-| :--- | :--- | :--- | :--- |
-| **Department Manager** | `manager@hospital.com` | `password123` | Access to Manager Dashboard, approval workflow, assignment & closure |
-| **Frontline Staff** | `staff@hospital.com` | `password123` | Submit safety incident reports with evidence attachments |
-| **Investigator** | `investigator@hospital.com` | `password123` | Root Cause Analysis (RCA) & investigation tracking |
-| **Action Owner** | `actionowner@hospital.com` | `password123` | Implement and update status on assigned corrective actions |
+| Role                   | Email                       | Password      | Description                                                          |
+| :--------------------- | :-------------------------- | :------------ | :------------------------------------------------------------------- |
+| **Department Manager** | `manager@hospital.com`      | `password123` | Access to Manager Dashboard, approval workflow, assignment & closure |
+| **Frontline Staff**    | `staff@hospital.com`        | `password123` | Submit safety incident reports with evidence attachments             |
+| **Investigator**       | `investigator@hospital.com` | `password123` | Root Cause Analysis (RCA) & investigation tracking                   |
+| **Action Owner**       | `actionowner@hospital.com`  | `password123` | Implement and update status on assigned corrective actions           |
 
 ---
 
@@ -248,7 +258,7 @@ Create a `.env` file in the `backend/` directory:
 
 ```env
 # Server Configuration
-PORT=8000
+PORT=5000
 NODE_ENV=development
 
 # Database Connection (PostgreSQL)
@@ -267,18 +277,18 @@ AI_API_KEY=internal_ai_key
 
 ## 📡 API Documentation
 
-Base Endpoint: `http://localhost:8000/api/v1/incidents` (or `http://localhost:8000/api/incidents`)
+Base Endpoint: `http://localhost:5000/api/v1/incidents` (or `http://localhost:5000/api/incidents`)
 
-| Method | Route | Description | Payload / Parameters |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/` | Submit a new incident report | `multipart/form-data`: `title`, `description`, `severity`, `category`, `location`, `departmentId`, `evidence` (files) |
-| `GET` | `/department/:departmentId` | Fetch incidents for a department | URL Param: `departmentId` (number) |
-| `PATCH` | `/:id/accept` | Accept an OPEN incident | URL Param: `id` |
-| `PATCH` | `/:id/reject` | Reject an OPEN incident | Body: `{ "reason": "Detailed rejection reason" }` |
-| `PATCH` | `/:id/assign-investigator` | Assign investigator | Body: `{ "investigatorId": 3 }` |
-| `PATCH` | `/:id/assign-action-owner` | Assign action owner | Body: `{ "actionOwnerId": 4 }` |
-| `PATCH` | `/:id/review` | Mark incident as UNDER_REVIEW | URL Param: `id` |
-| `PATCH` | `/:id/close` | Close an incident | URL Param: `id` |
+| Method  | Route                       | Description                      | Payload / Parameters                                                                                                  |
+| :------ | :-------------------------- | :------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `POST`  | `/`                         | Submit a new incident report     | `multipart/form-data`: `title`, `description`, `severity`, `category`, `location`, `departmentId`, `evidence` (files) |
+| `GET`   | `/department/:departmentId` | Fetch incidents for a department | URL Param: `departmentId` (number)                                                                                    |
+| `PATCH` | `/:id/accept`               | Accept an OPEN incident          | URL Param: `id`                                                                                                       |
+| `PATCH` | `/:id/reject`               | Reject an OPEN incident          | Body: `{ "reason": "Detailed rejection reason" }`                                                                     |
+| `PATCH` | `/:id/assign-investigator`  | Assign investigator              | Body: `{ "investigatorId": 3 }`                                                                                       |
+| `PATCH` | `/:id/assign-action-owner`  | Assign action owner              | Body: `{ "actionOwnerId": 4 }`                                                                                        |
+| `PATCH` | `/:id/review`               | Mark incident as UNDER_REVIEW    | URL Param: `id`                                                                                                       |
+| `PATCH` | `/:id/close`                | Close an incident                | URL Param: `id`                                                                                                       |
 
 ---
 
@@ -358,6 +368,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 <div align="center">
 
-**KAIROS HIMS** — *Empowering safer hospital care through real-time incident intelligence.*
+**KAIROS HIMS** — _Empowering safer hospital care through real-time incident intelligence._
 
 </div>

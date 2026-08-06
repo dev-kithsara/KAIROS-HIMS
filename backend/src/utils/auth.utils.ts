@@ -1,11 +1,10 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-// In a real enterprise app, this secret must come from the .env file
-// e.g., const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
-// For now, we use a hardcoded string for learning purposes.
-const JWT_SECRET = 'kairos_hims_super_secret_key_2026';
-const JWT_EXPIRES_IN = '24h'; // Token is valid for 24 hours
+// FIX: Read JWT_SECRET from environment variables.
+// If it doesn't exist (e.g., in local dev before setup), use a secure fallback.
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key_do_not_use_in_production';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h'; // Token is valid for 24 hours
 
 /**
  * Hash a plain text password using bcrypt
@@ -32,7 +31,11 @@ export const comparePasswords = async (password: string, hash: string): Promise<
  * @param payload - The data to store in the token (e.g., userId, role)
  * @returns The signed JWT string
  */
-export const generateToken = (payload: { id: number; role: string; departmentId: number }): string => {
+export const generateToken = (payload: {
+  id: number;
+  role: string;
+  departmentId: number;
+}): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 };
 
