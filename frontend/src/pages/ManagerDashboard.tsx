@@ -1,7 +1,9 @@
-import React from 'react';
+// frontend/src/pages/ManagerDashboard.tsx
+
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDepartmentIncidents } from '../hooks/useIncidents';
 import { IncidentCard } from '../components/IncidentCard';
-import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 
 export const ManagerDashboard: React.FC = () => {
@@ -15,73 +17,149 @@ export const ManagerDashboard: React.FC = () => {
   // Using our Custom Hook to fetch data
   const { data: incidents, isLoading, isError, error } = useDepartmentIncidents(departmentId);
 
-  // UI for Loading State
+  // =========================================================================
+  // STATE MANAGEMENT FOR FILTERS
+  // =========================================================================
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+
+  // =========================================================================
+  // FILTERING LOGIC (useMemo for performance)
+  // =========================================================================
+  const filteredIncidents = useMemo(() => {
+    if (!incidents) return [];
+
+    return incidents.filter((incident) => {
+      // 1. Check if it matches the status filter
+      const matchesStatus = statusFilter === 'ALL' || incident.status === statusFilter;
+
+      // 2. Check if it matches the search term (in title or reporter name)
+      const searchLower = searchTerm.toLowerCase();
+      const matchesSearch =
+        incident.title.toLowerCase().includes(searchLower) ||
+        (incident.reporter?.name || '').toLowerCase().includes(searchLower);
+
+      return matchesStatus && matchesSearch;
+    });
+  }, [incidents, searchTerm, statusFilter]);
+
+  // =========================================================================
+  // UI: LOADING STATE
+  // =========================================================================
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
+      <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  // UI for Error State
+  // =========================================================================
+  // UI: ERROR STATE
+  // =========================================================================
   if (isError) {
     return (
-      <div className="p-8 text-center">
-        <div className="bg-red-100 text-red-700 p-4 rounded-lg inline-block">
-          <h2 className="font-bold text-lg mb-2">Error loading incidents</h2>
-          <p>{error instanceof Error ? error.message : 'Unknown error occurred'}</p>
-        </div>
+      <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+        <h3 className="text-red-800 font-medium">Error loading incidents</h3>
+        <p className="text-red-600 text-sm mt-1">
+          {error instanceof Error ? error.message : 'Unknown error occurred'}
+        </p>
       </div>
     );
   }
 
-  // UI for Empty State
-  if (!incidents || incidents.length === 0) {
-    return (
-      <div className="p-8 text-center bg-gray-50 min-h-screen">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Department Incidents</h1>
-        <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-          <p className="text-gray-500">No incidents found for your department.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Main UI (Success State)
+  // =========================================================================
+  // UI: MAIN DASHBOARD
+  // =========================================================================
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Manager Dashboard</h1>
-            <p className="text-gray-600 mt-1">Manage and track incidents in your department.</p>
-          </div>
-
-          <button
-            onClick={() => navigate('/submit-incident')}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-black rounded-lg shadow-sm transition-all cursor-pointer shrink-0"
-          >
-            <span className="text-base font-bold leading-none">+</span>
-            <span>Report New Incident</span>
-          </button>
+    <div className="space-y-6">
+      {/* Header Section with Filters */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Manager Dashboard</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Manage and track incidents in your department.
+          </p>
         </div>
 
-        {/* Grid of Incident Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {incidents.map((incident) => (
-            <IncidentCard 
-              key={incident.id} 
-              incident={incident} 
-              onClick={() => navigate(`/incidents/${incident.id}`)} 
-            />
+        {/* Filters and Search Bar */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            placeholder="Search incidents..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full sm:w-64 transition-shadow"
+          />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white cursor-pointer transition-shadow"
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="OPEN">Open</option>
+            <option value="ACCEPTED">Accepted</option>
+            <option value="INVESTIGATING">Investigating</option>
+            <option value="PENDING_ACTION">Pending Action</option>
+            <option value="UNDER_REVIEW">Under Review</option>
+            <option value="CLOSED">Closed</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+      </div>
 
+      {/* Conditional Rendering: Empty State vs Grid */}
+      {filteredIncidents.length === 0 ? (
+        // Empty State UI
+        <div className="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center min-h-[300px]">
+          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+            <svg
+              className="w-8 h-8 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">No incidents found</h3>
+          <p className="text-sm text-gray-500 mt-1 max-w-sm">
+            {searchTerm || statusFilter !== 'ALL'
+              ? "We couldn't find any incidents matching your current filters. Try adjusting them."
+              : 'There are currently no incidents reported in your department.'}
+          </p>
+
+          {/* Clear Filters Button (Only shows if a filter is active) */}
+          {(searchTerm || statusFilter !== 'ALL') && (
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setStatusFilter('ALL');
+              }}
+              className="mt-4 text-sm text-blue-600 font-medium hover:text-blue-800"
+            >
+              Clear all filters
+            </button>
+          )}
+        </div>
+      ) : (
+        // Grid of Incident Cards
+        // Updated grid classes to look better on large screens (xl:grid-cols-3)
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredIncidents.map((incident) => (
+            <IncidentCard
+              key={incident.id}
+              incident={incident}
+              onClick={() => navigate(`/incidents/${incident.id}`)}
+            />
           ))}
         </div>
-
-      </div>
+      )}
     </div>
   );
 };
