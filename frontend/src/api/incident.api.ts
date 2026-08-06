@@ -3,7 +3,7 @@ import type { Incident, ApiResponse } from '../types/incident';
 
 // Base URL for the incidents API. 
 // Note: In Vite, we usually set up a proxy in vite.config.ts to forward '/api' to 'http://localhost:5000'
-const API_URL = '/api/incidents';
+const API_URL = '/incidents';
 
 /**
  * Fetch all incidents for a specific department

@@ -1,7 +1,8 @@
-import express from "express";
-import cors from "cors";
-import incidentRoutes from "./routes/incident.routes";
-import authRoutes from "./routes/auth.routes";
+import express from 'express';
+import cors from 'cors';
+import incidentRoutes from './routes/incident.routes';
+import authRoutes from './routes/auth.routes';
+import { globalErrorHandler } from './middlewares/errorHandler.middleware'; // Import the handler
 
 const app = express();
 
@@ -14,7 +15,7 @@ Middleware
 // Allow requests from the React frontend
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: 'http://localhost:5173',
     credentials: true,
   })
 );
@@ -28,21 +29,25 @@ Routes
 ==========================================
 */
 
-app.use("/api/incidents", incidentRoutes);
-app.use("/api/auth", authRoutes);
+// Route mounting
+app.use('/api/incidents', incidentRoutes);
+app.use('/api/v1/incidents', incidentRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health Check Routes
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: "KAIROS Backend is Running",
+    message: 'KAIROS Backend is Running',
   });
 });
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "UP", message: "KAIROS HIMS Backend is running" });
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'UP', message: 'KAIROS HIMS Backend is running' });
 });
 
-app.use("/api/v1/incidents", incidentRoutes);
+// IMPORTANT: The Global Error Handler MUST be the last middleware!
+// If any route or middleware above calls next(error), it will come here.
+app.use(globalErrorHandler);
 
 export default app;
