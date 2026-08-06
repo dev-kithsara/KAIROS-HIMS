@@ -19,6 +19,7 @@ import {
 import { IncidentActions } from '../components/IncidentActions';
 import { RejectModal } from '../components/RejectModal';
 import { AssignUserModal } from '../components/AssignUserModal'; 
+import { useAuthContext } from '../context/AuthContext';
 
 // --- Mock Data ---
 // TODO: Replace these with actual API calls (e.g., useUsersByRole hook) in the future
@@ -30,9 +31,10 @@ export const IncidentDetails: React.FC = () => {
   // Extract the incident ID from the URL (e.g., /incidents/123)
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthContext();
   
-  // Hardcoded department ID for now (will come from Auth/Context later)
-  const departmentId = 1; 
+  // Read departmentId from the logged-in user's context.
+  const departmentId = user?.departmentId ?? 1;
   
   // 2. DATA FETCHING
   // Fetch the cached list of incidents and find the specific one by ID.
