@@ -10,6 +10,15 @@ export class ConflictError extends Error {
     this.statusCode = 409;
   }
 }
+export class NotFoundError extends Error {
+  statusCode: number;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+    this.statusCode = 404;
+  }
+}
 
 /**
  * Service function for creating an incident (Staff Submission + Attachments)
@@ -124,11 +133,11 @@ export class IncidentService {
   async assignInvestigator(incidentId: number, investigatorId: number) {
     const incident = await incidentRepository.findById(incidentId);
     if (!incident) {
-      throw new Error("Incident not found.");
+      throw new NotFoundError("Incident not found.");
     }
 
     if (incident.status !== "ACCEPTED") {
-      throw new Error(`Cannot assign investigator. Current status is ${incident.status}, but expected ACCEPTED.`);
+      throw new ConflictError(`Cannot assign investigator. Current status is ${incident.status}, but expected ACCEPTED.`);
     }
 
     const investigator = await prisma.user.findUnique({
@@ -136,11 +145,12 @@ export class IncidentService {
     });
 
     if (!investigator) {
-      throw new Error("The specified investigator does not exist.");
-    }
-
+  throw new NotFoundError(
+    "The specified investigator does not exist."
+  );
+}
     if (investigator.role !== "INVESTIGATOR" && investigator.role !== "MANAGER") {
-      throw new Error("The specified user does not have the required role to be an investigator.");
+      throw new ConflictError("The specified user does not have the required role to be an investigator.");
     }
 
     const updatedIncident = await incidentRepository.assignInvestigator(incidentId, investigatorId);

@@ -6,7 +6,7 @@ import {
   assignInvestigatorSchema,
   assignActionOwnerSchema,
 } from "../validators/incident.validator";
-import { incidentService, createIncidentService, ConflictError } from "../services/incident.service";
+import { incidentService, createIncidentService, ConflictError, NotFoundError } from "../services/incident.service";
 import { rootCauseSchema } from "../validators/rootCause.validator";
 
 /**
@@ -178,19 +178,36 @@ export const assignInvestigator = async (req: Request, res: Response) => {
       data: updatedIncident,
     });
   } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        errors: error.issues?.map((e) => e.message) || ["Invalid input data"],
-      });
-    }
-
-    return res.status(500).json({
+  if (error instanceof z.ZodError) {
+    return res.status(400).json({
       success: false,
-      message: error.message || "Failed to assign investigator.",
+      message: "Validation failed",
+      errors:
+        error.issues?.map((e) => e.message) ||
+        ["Invalid input data"],
     });
   }
+
+  if (error instanceof NotFoundError) {
+    return res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  if (error instanceof ConflictError) {
+    return res.status(409).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  return res.status(500).json({
+    success: false,
+    message:
+      error.message || "Failed to assign investigator.",
+  });
+}
 };
 
 /**

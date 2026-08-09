@@ -58,6 +58,7 @@ router.patch("/:id/reject", authenticate, authorizeRoles('MANAGER'), rejectIncid
 // Access: MANAGER only
 router.patch("/:id/assign-investigator",authenticate, authorizeRoles('MANAGER'), assignInvestigator);
 
+
 // Route: PATCH /api/incidents/:id/assign-action-owner
 // Description: Assign an action owner to an INVESTIGATING incident
 // Access: MANAGER only
