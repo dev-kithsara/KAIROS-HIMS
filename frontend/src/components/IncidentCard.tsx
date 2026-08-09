@@ -4,7 +4,7 @@ import type { Incident } from '../types/incident';
 // Define the Props (inputs) this component expects
 interface IncidentCardProps {
   incident: Incident;
-  onClick: () => void; // Function to run when the card is clicked
+  onClick: (incidentId: number) => void;
 }
 
 export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick }) => {
@@ -31,7 +31,7 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
   return (
    
   <div
-    onClick={onClick}
+    onClick={() => onClick(incident.id)}
     className="group cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl"
   >
     {/* Header */}

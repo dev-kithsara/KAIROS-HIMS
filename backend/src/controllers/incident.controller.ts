@@ -6,7 +6,7 @@ import {
   assignInvestigatorSchema,
   assignActionOwnerSchema,
 } from "../validators/incident.validator";
-import { incidentService, createIncidentService } from "../services/incident.service";
+import { incidentService, createIncidentService, ConflictError } from "../services/incident.service";
 import { rootCauseSchema } from "../validators/rootCause.validator";
 
 /**
@@ -94,11 +94,18 @@ export const acceptIncident = async (req: Request, res: Response) => {
       data: updatedIncident,
     });
   } catch (error: any) {
-    return res.status(500).json({
+  if (error instanceof ConflictError) {
+    return res.status(409).json({
       success: false,
-      message: error.message || "Failed to accept incident.",
+      message: error.message,
     });
   }
+
+  return res.status(500).json({
+    success: false,
+    message: error.message || "Failed to accept incident.",
+  });
+}
 };
 
 /**
@@ -125,19 +132,26 @@ export const rejectIncident = async (req: Request, res: Response) => {
       data: updatedIncident,
     });
   } catch (error: any) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        errors: error.issues?.map((e) => e.message) || ["Invalid input data"],
-      });
-    }
-
-    return res.status(500).json({
+  if (error instanceof z.ZodError) {
+    return res.status(400).json({
       success: false,
-      message: error.message || "Failed to reject incident.",
+      message: "Validation failed",
+      errors: error.issues?.map((e) => e.message) || ["Invalid input data"],
     });
   }
+
+  if (error instanceof ConflictError) {
+    return res.status(409).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  return res.status(500).json({
+    success: false,
+    message: error.message || "Failed to reject incident.",
+  });
+}
 };
 
 /**

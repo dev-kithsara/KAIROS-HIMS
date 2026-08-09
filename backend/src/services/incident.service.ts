@@ -1,6 +1,16 @@
 import prisma from "../utils/prisma";
 import { incidentRepository } from "../repositories/incident.repository";
 
+export class ConflictError extends Error {
+  statusCode: number;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "ConflictError";
+    this.statusCode = 409;
+  }
+}
+
 /**
  * Service function for creating an incident (Staff Submission + Attachments)
  */
@@ -64,19 +74,25 @@ export class IncidentService {
    * @returns The updated incident
    */
   async acceptIncident(incidentId: number) {
-    const incident = await incidentRepository.findById(incidentId);
+  const incident = await incidentRepository.findById(incidentId);
 
-    if (!incident) {
-      throw new Error("Incident not found.");
-    }
-
-    if (incident.status !== "OPEN") {
-      throw new Error(`Cannot accept incident. Current status is ${incident.status}, but expected OPEN.`);
-    }
-
-    const updatedIncident = await incidentRepository.updateStatus(incidentId, "ACCEPTED");
-    return updatedIncident;
+  if (!incident) {
+    throw new Error("Incident not found.");
   }
+
+  if (incident.status !== "OPEN") {
+    throw new ConflictError(
+      `Cannot accept incident. Current status is ${incident.status}, but expected OPEN.`
+    );
+  }
+
+  const updatedIncident = await incidentRepository.updateStatus(
+    incidentId,
+    "ACCEPTED"
+  );
+
+  return updatedIncident;
+}
 
   /**
    * Reject an OPEN incident with a reason
@@ -91,9 +107,9 @@ export class IncidentService {
       throw new Error("Incident not found.");
     }
 
-    if (incident.status !== "OPEN") {
-      throw new Error(`Cannot reject incident. Current status is ${incident.status}, but expected OPEN.`);
-    }
+   if (incident.status !== "OPEN") {
+      throw new ConflictError(`Cannot reject incident. Current status is ${incident.status}, but expected OPEN.`);
+}
 
     const updatedIncident = await incidentRepository.rejectIncident(incidentId, reason);
     return updatedIncident;
