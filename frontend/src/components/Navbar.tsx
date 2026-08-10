@@ -40,7 +40,7 @@ export const Navbar: React.FC = () => {
               <div className="hidden md:flex flex-col items-end">
                 <span className="text-sm font-medium text-gray-900">{user.name}</span>
                 <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full mt-0.5">
-                  {user.role.replace('_', ' ')}
+                  {user.role?.replace('_', ' ')}
                 </span>
               </div>
             )}
