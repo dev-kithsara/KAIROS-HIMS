@@ -4,10 +4,20 @@ import { useAuthContext } from '../context/AuthContext';
 import { getDepartmentName } from '../utils/constants';
 import logoImage from '../assets/logo.jpeg';
 
+// ── KAIROS Clinical Palette ────────────────────────────────────────────────
+const BG        = '#090F16';
+const PANEL     = '#0E1720';
+const TEXT      = '#EEF7FC';
+const TEAL      = '#45A79A';
+const ACCENT    = '#4DC4B5';
+const MUTED     = '#8FA8B4';
+const BORDER    = '#253642';
+const DANGER    = '#EF4444';
+
 export const Sidebar: React.FC = () => {
   const { user, logout } = useAuthContext();
   const navigate = useNavigate();
-  const location = useLocation(); // To check the current active route
+  const location = useLocation();
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to logout?')) {
@@ -15,16 +25,13 @@ export const Sidebar: React.FC = () => {
     }
   };
 
-  // 1. Define navigation links based on the user's role
-  // This is how we achieve Role-Based UI navigation
   const getNavLinks = () => {
     const role = user?.role;
-
     switch (role) {
       case 'MANAGER':
         return [
           { name: 'Dashboard', path: '/' },
-          { name: 'Analytics', path: '/analytics' }, // Future feature
+          { name: 'Analytics', path: '/analytics' },
         ];
       case 'STAFF':
         return [
@@ -43,34 +50,44 @@ export const Sidebar: React.FC = () => {
   const links = getNavLinks();
 
   return (
-    // Sidebar Container: Fixed width, full height, Dark Slate theme (#111827)
-    <aside className="w-64 bg-[#111827] text-[#F1F5F9] h-screen flex flex-col border-r border-[#1E293B] shadow-xl shrink-0">
+    <aside
+      className="w-64 h-screen flex flex-col shrink-0"
+      style={{ backgroundColor: PANEL, borderRight: `1px solid ${BORDER}` }}
+    >
       {/* Brand / Logo Area */}
-      <div className="h-20 flex items-center px-6 bg-[#0B1120] border-b border-[#1E293B]">
+      <div
+        className="h-20 flex items-center px-6 shrink-0"
+        style={{ backgroundColor: BG, borderBottom: `1px solid ${BORDER}` }}
+      >
         <div className="flex items-center gap-3">
           <img
             src={logoImage}
             alt="KAIROS HIMS Logo"
-            className="w-12 h-12 object-cover rounded-full shadow-md border border-[#1E293B]"
+            className="w-11 h-11 object-cover rounded-full"
+            style={{ border: `2px solid ${TEAL}` }}
           />
-
-          <span className="font-extrabold text-xl tracking-wider text-[#F1F5F9]">KAIROS</span>
+          <span className="font-extrabold text-xl tracking-widest" style={{ color: TEXT }}>
+            KAIROS
+          </span>
         </div>
       </div>
 
       {/* User Profile Area */}
       {user && (
-        <div className="px-6 py-5 border-b border-[#1E293B] bg-[#1E293B]/40">
-          <p className="text-xs font-medium text-[#94A3B8] uppercase tracking-wider mb-1">
+        <div className="px-6 py-5 shrink-0" style={{ borderBottom: `1px solid ${BORDER}` }}>
+          <p className="text-[11px] font-semibold uppercase tracking-widest mb-1" style={{ color: MUTED }}>
             Logged in as:
           </p>
-          <p className="font-bold text-[#F1F5F9] text-base truncate">{user.name}</p>
+          <p className="font-bold text-base truncate" style={{ color: TEXT }}>{user.name}</p>
 
           <div className="mt-2 flex flex-col gap-1">
-            <span className="inline-block px-2.5 py-0.5 bg-[#0D9488] text-white text-[11px] font-bold rounded-md tracking-wide w-max shadow-sm">
+            <span
+              className="inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-md tracking-wide w-max"
+              style={{ backgroundColor: `${TEAL}22`, color: ACCENT, border: `1px solid ${TEAL}55` }}
+            >
               {user.role?.replace('_', ' ')}
             </span>
-            <span className="text-xs font-medium text-[#94A3B8] mt-1">
+            <span className="text-xs font-medium mt-1" style={{ color: MUTED }}>
               {getDepartmentName(user.departmentId)}
             </span>
           </div>
@@ -78,18 +95,38 @@ export const Sidebar: React.FC = () => {
       )}
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
         {links.map((link) => {
           const isActive = location.pathname === link.path;
           return (
             <button
               key={link.name}
               onClick={() => navigate(link.path)}
-              className={`w-full flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all cursor-pointer ${
+              className="w-full flex items-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
+              style={
                 isActive
-                  ? 'bg-[#0D9488] text-white shadow-lg shadow-[#0D9488]/20'
-                  : 'text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#F1F5F9]'
-              }`}
+                  ? {
+                      background: `linear-gradient(135deg, ${TEAL}33, #4588AB33)`,
+                      color: ACCENT,
+                      border: `1px solid ${TEAL}55`,
+                    }
+                  : {
+                      color: MUTED,
+                      border: '1px solid transparent',
+                    }
+              }
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor = `${BORDER}`;
+                  (e.currentTarget as HTMLElement).style.color = TEXT;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                  (e.currentTarget as HTMLElement).style.color = MUTED;
+                }
+              }}
             >
               {link.name}
             </button>
@@ -97,11 +134,14 @@ export const Sidebar: React.FC = () => {
         })}
       </nav>
 
-      {/* Logout Area */}
-      <div className="p-4 border-t border-[#1E293B] bg-[#0B1120]/50">
+      {/* Logout Button */}
+      <div className="p-4 shrink-0" style={{ borderTop: `1px solid ${BORDER}` }}>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/30 rounded-xl transition-all cursor-pointer"
+          className="w-full flex items-center justify-center px-4 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
+          style={{ color: DANGER, backgroundColor: `${DANGER}15`, border: `1px solid ${DANGER}40` }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = `${DANGER}25`; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = `${DANGER}15`; }}
         >
           Logout
         </button>
