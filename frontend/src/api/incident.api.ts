@@ -1,9 +1,9 @@
 import { apiClient } from './axios';
 import type { Incident, ApiResponse } from '../types/incident';
 
-// Base URL for the incidents API. 
-// Note: In Vite, we usually set up a proxy in vite.config.ts to forward '/api' to 'http://localhost:5000'
-const API_URL = '/api/incidents';
+// Base URL for the incidents API.
+// apiClient already has baseURL '/api', so we only add the '/incidents' prefix here.
+const API_URL = '/incidents';
 
 /**
  * Fetch all incidents for a specific department
@@ -81,7 +81,7 @@ export const createIncident = async (formData: FormData): Promise<Incident> => {
 
 // Get incidents assigned to the investigator
 export const getAssignedIncidents = async (): Promise<Incident[]> => {
-  const response = await axios.get<ApiResponse<Incident[]>>(
+  const response = await apiClient.get<ApiResponse<Incident[]>>(
     `${API_URL}/investigator`
   );
 

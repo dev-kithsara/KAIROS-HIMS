@@ -34,12 +34,12 @@ export const Login: React.FC = () => {
           contextLogin(data.user, data.token);
           
           // If login is successful, check the role and navigate accordingly
-          if (data.user.role === 'MANAGER') {
-            navigate('/'); // Go to Manager Dashboard
+          if (data.user.role === 'INVESTIGATOR') {
+            navigate('/investigator');
+          } else if (data.user.role === 'ACTION_OWNER') {
+            navigate('/action-owner');
           } else {
-            // For now, if it's not a manager, just go to a generic route
-            // Later we will add Staff and Investigator dashboards
-            navigate('/'); 
+            navigate('/');
           }
         },
         onError: (error: any) => {
