@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* ── Core Theme ─────────────────── */
+  --kairos-bg:        #090F16;
+  --kairos-panel:     #0E1720;
+  --kairos-text:      #EEF7FC;
+  --kairos-teal:      #45A79A;
+  --kairos-blue:      #4588AB;
+  --kairos-accent:    #4DC4B5;
+  --kairos-muted:     #8FA8B4;
+  --kairos-border:    #253642;
+  --kairos-danger:    #EF4444;
+  /* ── Gradient ───────────────────── */
+  --gradient-from:    #55B5A7;
+  --gradient-to:      #5593B5;
+  /* ── Severity ───────────────────── */
+  --sev-low:          #22C55E;
+  --sev-medium:       #EAB308;
+  --sev-high:         #F97316;
+  --sev-critical:     #EF4444;
+  /* ── Status ─────────────────────── */
+  --status-open:      #38BDF8;
+  --status-accepted:  #2DD4BF;
+  --status-rejected:  #F87171;
+  --status-investing: #60A5FA;
+  --status-pending:   #FBBF24;
+  --status-progress:  #C084FC;
+  --status-review:    #FDE047;
+  --status-closed:    #4ADE80;
+}

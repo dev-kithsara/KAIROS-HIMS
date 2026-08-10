@@ -6,151 +6,162 @@ import { useDepartmentIncidents } from '../hooks/useIncidents';
 import { IncidentCard } from '../components/IncidentCard';
 import { useAuthContext } from '../context/AuthContext';
 
+// ── KAIROS Clinical Palette ────────────────────────────────────────────────
+const BG     = '#090F16';
+const PANEL  = '#0E1720';
+const TEXT   = '#EEF7FC';
+const TEAL   = '#45A79A';
+const ACCENT = '#4DC4B5';
+const MUTED  = '#8FA8B4';
+const BORDER = '#253642';
+const DANGER = '#EF4444';
+
 export const ManagerDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-
-  // Read departmentId from the logged-in user's context.
-  // Falls back to 1 for backward compatibility during dev.
   const departmentId = user?.departmentId ?? 1;
-
-  // Using our Custom Hook to fetch data
   const { data: incidents, isLoading, isError, error } = useDepartmentIncidents(departmentId);
 
-  // =========================================================================
-  // STATE MANAGEMENT FOR FILTERS
-  // =========================================================================
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm]     = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
-  // =========================================================================
-  // FILTERING LOGIC (useMemo for performance)
-  // =========================================================================
   const filteredIncidents = useMemo(() => {
     if (!incidents) return [];
-
     return incidents.filter((incident) => {
-      // 1. Check if it matches the status filter
-      const matchesStatus = statusFilter === 'ALL' || incident.status === statusFilter;
-
-      // 2. Check if it matches the search term (in title or reporter name)
-      const searchLower = searchTerm.toLowerCase();
+      const matchesStatus =
+        statusFilter === 'ALL' || incident.status === statusFilter;
+      const searchLower  = searchTerm.toLowerCase();
       const matchesSearch =
         incident.title.toLowerCase().includes(searchLower) ||
         (incident.reporter?.name || '').toLowerCase().includes(searchLower);
-
       return matchesStatus && matchesSearch;
     });
   }, [incidents, searchTerm, statusFilter]);
 
-  // =========================================================================
-  // UI: LOADING STATE
-  // =========================================================================
+  // ── Loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div
+          className="animate-spin rounded-full h-12 w-12 border-b-2"
+          style={{ borderColor: TEAL }}
+        />
       </div>
     );
   }
 
-  // =========================================================================
-  // UI: ERROR STATE
-  // =========================================================================
+  // ── Error ────────────────────────────────────────────────────────────────
   if (isError) {
     return (
-      <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-        <h3 className="text-red-800 font-medium">Error loading incidents</h3>
-        <p className="text-red-600 text-sm mt-1">
+      <div
+        className="border-l-4 p-4 rounded-md"
+        style={{ backgroundColor: `${DANGER}15`, borderColor: DANGER }}
+      >
+        <h3 className="font-medium" style={{ color: DANGER }}>Error loading incidents</h3>
+        <p className="text-sm mt-1" style={{ color: MUTED }}>
           {error instanceof Error ? error.message : 'Unknown error occurred'}
         </p>
       </div>
     );
   }
 
-  // =========================================================================
-  // UI: MAIN DASHBOARD
-  // =========================================================================
+  // ── Main UI ──────────────────────────────────────────────────────────────
   return (
     <div className="space-y-6">
-      {/* Header Section with Filters */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+
+      {/* Header + Filters */}
+      <div
+        className="flex flex-col md:flex-row md:items-end justify-between gap-4 p-6 rounded-xl"
+        style={{ backgroundColor: PANEL, border: `1px solid ${BORDER}` }}
+      >
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Manager Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: TEXT }}>
+            Manager Dashboard
+          </h1>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>
             Manage and track incidents in your department.
           </p>
         </div>
 
-        {/* Filters and Search Bar */}
         <div className="flex flex-col sm:flex-row gap-3">
+          {/* Search */}
           <input
             type="text"
             placeholder="Search incidents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full sm:w-64 transition-shadow"
+            className="px-4 py-2 text-sm rounded-lg w-full sm:w-60 outline-none transition-all"
+            style={{
+              backgroundColor: BG,
+              border: `1px solid ${BORDER}`,
+              color: TEXT,
+            }}
+            onFocus={(e) => { (e.target as HTMLElement).style.borderColor = ACCENT; }}
+            onBlur={(e)  => { (e.target as HTMLElement).style.borderColor = BORDER; }}
           />
+
+          {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white cursor-pointer transition-shadow"
+            className="px-4 py-2 text-sm rounded-lg cursor-pointer outline-none transition-all"
+            style={{
+              backgroundColor: BG,
+              border: `1px solid ${BORDER}`,
+              color: TEXT,
+            }}
           >
-            <option value="ALL">All Statuses</option>
-            <option value="OPEN">Open</option>
-            <option value="ACCEPTED">Accepted</option>
-            <option value="INVESTIGATING">Investigating</option>
-            <option value="PENDING_ACTION">Pending Action</option>
-            <option value="UNDER_REVIEW">Under Review</option>
-            <option value="CLOSED">Closed</option>
-            <option value="REJECTED">Rejected</option>
+            {[
+              ['ALL',            'All Statuses'],
+              ['OPEN',           'Open'],
+              ['ACCEPTED',       'Accepted'],
+              ['INVESTIGATING',  'Investigating'],
+              ['PENDING_ACTION', 'Pending Action'],
+              ['UNDER_REVIEW',   'Under Review'],
+              ['CLOSED',         'Closed'],
+              ['REJECTED',       'Rejected'],
+            ].map(([value, label]) => (
+              <option key={value} value={value} style={{ backgroundColor: PANEL }}>
+                {label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
-      {/* Conditional Rendering: Empty State vs Grid */}
+      {/* Grid / Empty State */}
       {filteredIncidents.length === 0 ? (
-        // Empty State UI
-        <div className="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center min-h-[300px]">
-          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-            <svg
-              className="w-8 h-8 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-              />
+        <div
+          className="p-12 rounded-xl text-center flex flex-col items-center justify-center min-h-[300px]"
+          style={{ backgroundColor: PANEL, border: `1px solid ${BORDER}` }}
+        >
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+            style={{ backgroundColor: BG }}
+          >
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: MUTED }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">No incidents found</h3>
-          <p className="text-sm text-gray-500 mt-1 max-w-sm">
+          <h3 className="text-lg font-semibold" style={{ color: TEXT }}>No incidents found</h3>
+          <p className="text-sm mt-1 max-w-sm" style={{ color: MUTED }}>
             {searchTerm || statusFilter !== 'ALL'
-              ? "We couldn't find any incidents matching your current filters. Try adjusting them."
+              ? "We couldn't find any incidents matching your current filters."
               : 'There are currently no incidents reported in your department.'}
           </p>
-
-          {/* Clear Filters Button (Only shows if a filter is active) */}
           {(searchTerm || statusFilter !== 'ALL') && (
             <button
-              onClick={() => {
-                setSearchTerm('');
-                setStatusFilter('ALL');
-              }}
-              className="mt-4 text-sm text-blue-600 font-medium hover:text-blue-800"
+              onClick={() => { setSearchTerm(''); setStatusFilter('ALL'); }}
+              className="mt-4 text-sm font-medium hover:underline"
+              style={{ color: ACCENT }}
             >
               Clear all filters
             </button>
           )}
         </div>
       ) : (
-        // Grid of Incident Cards
-        // Updated grid classes to look better on large screens (xl:grid-cols-3)
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filteredIncidents.map((incident) => (
             <IncidentCard
               key={incident.id}

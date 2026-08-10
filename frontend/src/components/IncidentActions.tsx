@@ -1,10 +1,21 @@
+// frontend/src/components/IncidentActions.tsx
+
 import React from 'react';
 import type { Incident } from '../types/incident';
 import { useAuthContext } from '../context/AuthContext';
 
+// ── KAIROS Clinical Palette ────────────────────────────────────────────────
+const TEAL   = '#45A79A';
+const BLUE   = '#4588AB';
+const ACCENT = '#4DC4B5';
+const MUTED  = '#8FA8B4';
+const BORDER = '#253642';
+const DANGER = '#EF4444';
+const AMBER  = '#FBBF24';
+const VIOLET = '#C084FC';
+
 interface IncidentActionsProps {
   incident: Incident;
-  // We will pass these functions from the parent component later
   onAccept?: () => void;
   onReject?: () => void;
   onAssignInvestigator?: () => void;
@@ -13,106 +24,73 @@ interface IncidentActionsProps {
   onClose?: () => void;
 }
 
-export const IncidentActions: React.FC<IncidentActionsProps> = ({ 
-  incident, 
-  onAccept, 
-  onReject, 
-  onAssignInvestigator, 
-  onAssignActionOwner, 
-  onReview, 
-  onClose 
+const ActionBtn: React.FC<{
+  label: string;
+  onClick?: () => void;
+  bg: string;
+  color?: string;
+}> = ({ label, onClick, bg, color = '#EEF7FC' }) => (
+  <button
+    onClick={onClick}
+    className="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
+    style={{ backgroundColor: bg, color, border: `1px solid ${bg}` }}
+    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
+  >
+    {label}
+  </button>
+);
+
+export const IncidentActions: React.FC<IncidentActionsProps> = ({
+  incident, onAccept, onReject, onAssignInvestigator,
+  onAssignActionOwner, onReview, onClose,
 }) => {
-
-  // 2. Get the current logged-in user
   const { user } = useAuthContext();
-
-   // 3. Helper function to check if the user is a Manager
   const isManager = user?.role === 'MANAGER';
 
-  // Helper function to render buttons based on the current status
   const renderButtons = () => {
-    // 4. If the user is NOT a manager, they shouldn't see any of these workflow buttons
-     // In the future, we will add specific buttons for Investigators and Action Owners here
     if (!isManager) {
       return (
-        <p className="text-gray-500 italic text-sm">
+        <p className="text-sm italic" style={{ color: MUTED }}>
           You do not have permission to perform workflow actions on this incident.
         </p>
       );
     }
-      // 5. Manager's view (Same as before)
-     switch (incident.status) {
+
+    switch (incident.status) {
       case 'OPEN':
         return (
           <>
-            <button 
-              onClick={onAccept}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-            >
-              Accept Incident
-            </button>
-            <button 
-              onClick={onReject}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-            >
-              Reject Incident
-            </button>
+            <ActionBtn label="Accept Incident"  onClick={onAccept} bg={TEAL} />
+            <ActionBtn label="Reject Incident"  onClick={onReject} bg={DANGER} />
           </>
         );
       case 'ACCEPTED':
-    return (
-      <button 
-        onClick={onAssignInvestigator}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-      >
-        Assign Investigator
-      </button>
-    );
-
-  case 'INVESTIGATING':
-    return (
-      <button 
-        onClick={onAssignActionOwner}
-        className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
-      >
-        Assign Action Owner
-      </button>
-    );
-
-  case 'PENDING_ACTION':
-    return (
-      <button 
-        onClick={onReview}
-        className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
-      >
-        Mark as Under Review
-      </button>
-    );
-
-  case 'UNDER_REVIEW':
-    return (
-      <button 
-        onClick={onClose}
-        className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors"
-      >
-        Close Incident
-      </button>
-    );
-
-  case 'CLOSED':
-  case 'REJECTED':
-    return (
-      <p className="text-gray-500 italic">No further actions can be taken on this incident.</p>
-    );
-
-    default:
-      return null;
+        return <ActionBtn label="Assign Investigator" onClick={onAssignInvestigator} bg={BLUE} />;
+      case 'INVESTIGATING':
+        return <ActionBtn label="Assign Action Owner" onClick={onAssignActionOwner} bg={AMBER} color="#0E1720" />;
+      case 'PENDING_ACTION':
+        return <ActionBtn label="Mark as Under Review" onClick={onReview} bg={VIOLET} />;
+      case 'UNDER_REVIEW':
+        return <ActionBtn label="Close Incident" onClick={onClose} bg={ACCENT} color="#090F16" />;
+      case 'CLOSED':
+      case 'REJECTED':
+        return (
+          <p className="text-sm italic" style={{ color: MUTED }}>
+            No further actions can be taken on this incident.
+          </p>
+        );
+      default:
+        return null;
     }
+  };
 
-};
   return (
-    <div className="flex gap-4 mt-6 border-t border-gray-200 pt-6">
-        {renderButtons()}
+    <div
+      className="flex flex-wrap gap-3 mt-6 pt-6"
+      style={{ borderTop: `1px solid ${BORDER}` }}
+    >
+      {renderButtons()}
     </div>
   );
 };
