@@ -12,21 +12,21 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'OPEN':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[#3B82F6]/20 text-[#3B82F6] border border-[#3B82F6]/30';
       case 'ACCEPTED':
-        return 'bg-indigo-100 text-indigo-800';
+        return 'bg-[#8B5CF6]/20 text-[#8B5CF6] border border-[#8B5CF6]/30';
       case 'INVESTIGATING':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30';
       case 'PENDING_ACTION':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30';
       case 'UNDER_REVIEW':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-[#8B5CF6]/20 text-[#8B5CF6] border border-[#8B5CF6]/30';
       case 'CLOSED':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#22C55E]/20 text-[#22C55E] border border-[#22C55E]/30';
       case 'REJECTED':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-[#1E293B] text-[#94A3B8] border border-[#1E293B]';
     }
   };
 
@@ -34,15 +34,15 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'CRITICAL':
-        return 'bg-red-500 text-white';
+        return 'bg-[#EF4444] text-white';
       case 'HIGH':
-        return 'bg-orange-500 text-white';
+        return 'bg-[#EF4444] text-white';
       case 'MEDIUM':
-        return 'bg-yellow-400 text-gray-900';
+        return 'bg-[#F59E0B] text-slate-900';
       case 'LOW':
-        return 'bg-green-500 text-white';
+        return 'bg-[#22C55E] text-white';
       default:
-        return 'bg-gray-200 text-gray-800';
+        return 'bg-[#1E293B] text-[#94A3B8]';
     }
   };
 
@@ -55,35 +55,40 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg shadow-md p-5 border border-gray-200 cursor-pointer hover:shadow-lg transition-shadow duration-200 relative overflow-hidden"
+      className="group bg-[#111827] rounded-xl shadow-lg p-5 border border-[#1E293B] cursor-pointer hover:border-[#0D9488] hover:shadow-xl transition-all duration-200 relative overflow-hidden flex flex-col justify-between"
     >
-      {/* A small color bar at the top indicating severity */}
+      {/* Top indicator bar */}
       <div
         className={`absolute top-0 left-0 w-full h-1 ${getSeverityColor(incident.severity).split(' ')[0]}`}
       ></div>
 
-      <div className="flex justify-between items-start mb-3 mt-1">
-        <h3 className="text-lg font-semibold text-gray-900 truncate pr-4">{incident.title}</h3>
-        <span
-          className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(incident.status)}`}
-        >
-          {incident.status.replace('_', ' ')}
-        </span>
+      <div>
+        <div className="flex justify-between items-start mb-3 mt-1 gap-2">
+          <h3 className="text-lg font-bold text-[#F1F5F9] group-hover:text-[#22D3EE] transition-colors truncate">
+            {incident.title}
+          </h3>
+          <span
+            className={`px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(incident.status)}`}
+          >
+            {incident.status.replace('_', ' ')}
+          </span>
+        </div>
+
+        <p className="text-[#94A3B8] text-sm line-clamp-2 mb-4">{incident.description}</p>
       </div>
 
-      <p className="text-gray-600 text-sm line-clamp-2 mb-4">{incident.description}</p>
-
-      <div className="flex justify-between items-center text-xs text-gray-500 mt-auto">
+      <div className="flex justify-between items-center text-xs text-[#94A3B8] pt-3 border-t border-[#1E293B] mt-auto">
         <div className="flex items-center gap-2">
-          <span className="font-medium">Reporter:</span> {incident.reporter?.name || 'Unknown'}
+          <span className="font-medium text-[#94A3B8]">Reporter:</span>
+          <span className="font-semibold text-[#F1F5F9]">{incident.reporter?.name || 'Unknown'}</span>
           {/* Severity Badge */}
           <span
-            className={`px-2 py-0.5 rounded text-[10px] font-bold ${getSeverityColor(incident.severity)}`}
+            className={`px-2 py-0.5 rounded text-[10px] font-extrabold tracking-wide ${getSeverityColor(incident.severity)}`}
           >
             {incident.severity}
           </span>
         </div>
-        <div>{formattedDate}</div>
+        <div className="font-medium">{formattedDate}</div>
       </div>
     </div>
   );

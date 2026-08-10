@@ -74,10 +74,10 @@ export const ManagerDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Section with Filters */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 bg-[#111827] p-6 rounded-xl shadow-lg border border-[#1E293B]">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Manager Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-[#F1F5F9] tracking-tight">Manager Dashboard</h1>
+          <p className="text-[#94A3B8] text-sm mt-1">
             Manage and track incidents in your department.
           </p>
         </div>
@@ -89,21 +89,21 @@ export const ManagerDashboard: React.FC = () => {
             placeholder="Search incidents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full sm:w-64 transition-shadow"
+            className="px-4 py-2 bg-[#1E293B]/60 border border-[#1E293B] text-[#F1F5F9] placeholder-[#94A3B8] rounded-lg focus:outline-none focus:border-[#22D3EE] text-sm w-full sm:w-64 transition-all"
           />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white cursor-pointer transition-shadow"
+            className="px-4 py-2 bg-[#1E293B] border border-[#1E293B] text-[#F1F5F9] rounded-lg focus:outline-none focus:border-[#22D3EE] text-sm cursor-pointer transition-all"
           >
-            <option value="ALL">All Statuses</option>
-            <option value="OPEN">Open</option>
-            <option value="ACCEPTED">Accepted</option>
-            <option value="INVESTIGATING">Investigating</option>
-            <option value="PENDING_ACTION">Pending Action</option>
-            <option value="UNDER_REVIEW">Under Review</option>
-            <option value="CLOSED">Closed</option>
-            <option value="REJECTED">Rejected</option>
+            <option value="ALL" className="bg-[#111827]">All Statuses</option>
+            <option value="OPEN" className="bg-[#111827]">Open</option>
+            <option value="ACCEPTED" className="bg-[#111827]">Accepted</option>
+            <option value="INVESTIGATING" className="bg-[#111827]">Investigating</option>
+            <option value="PENDING_ACTION" className="bg-[#111827]">Pending Action</option>
+            <option value="UNDER_REVIEW" className="bg-[#111827]">Under Review</option>
+            <option value="CLOSED" className="bg-[#111827]">Closed</option>
+            <option value="REJECTED" className="bg-[#111827]">Rejected</option>
           </select>
         </div>
       </div>
@@ -111,10 +111,10 @@ export const ManagerDashboard: React.FC = () => {
       {/* Conditional Rendering: Empty State vs Grid */}
       {filteredIncidents.length === 0 ? (
         // Empty State UI
-        <div className="bg-white p-12 rounded-xl shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center min-h-[300px]">
-          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+        <div className="bg-[#111827] p-12 rounded-xl shadow-lg border border-[#1E293B] text-center flex flex-col items-center justify-center min-h-[300px]">
+          <div className="w-16 h-16 bg-[#1E293B] rounded-full flex items-center justify-center mb-4">
             <svg
-              className="w-8 h-8 text-gray-400"
+              className="w-8 h-8 text-[#94A3B8]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -127,21 +127,21 @@ export const ManagerDashboard: React.FC = () => {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">No incidents found</h3>
-          <p className="text-sm text-gray-500 mt-1 max-w-sm">
+          <h3 className="text-lg font-semibold text-[#F1F5F9]">No incidents found</h3>
+          <p className="text-sm text-[#94A3B8] mt-1 max-w-sm">
             {searchTerm || statusFilter !== 'ALL'
               ? "We couldn't find any incidents matching your current filters. Try adjusting them."
               : 'There are currently no incidents reported in your department.'}
           </p>
 
-          {/* Clear Filters Button (Only shows if a filter is active) */}
+          {/* Clear Filters Button */}
           {(searchTerm || statusFilter !== 'ALL') && (
             <button
               onClick={() => {
                 setSearchTerm('');
                 setStatusFilter('ALL');
               }}
-              className="mt-4 text-sm text-blue-600 font-medium hover:text-blue-800"
+              className="mt-4 text-sm text-[#22D3EE] font-medium hover:underline"
             >
               Clear all filters
             </button>
@@ -149,7 +149,6 @@ export const ManagerDashboard: React.FC = () => {
         </div>
       ) : (
         // Grid of Incident Cards
-        // Updated grid classes to look better on large screens (xl:grid-cols-3)
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredIncidents.map((incident) => (
             <IncidentCard

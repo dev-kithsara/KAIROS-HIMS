@@ -133,187 +133,158 @@ export const IncidentDetails: React.FC = () => {
   // ---------------------------------------------------------
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-        
+    <div className="min-h-screen bg-[#0B1120] text-[#F1F5F9] p-2 sm:p-4">
+      <div className="max-w-4xl mx-auto bg-[#111827] rounded-xl shadow-xl border border-[#1E293B] p-6">
         {/* Navigation: Back Button */}
-        <button 
+        <button
           onClick={() => navigate('/')}
-          className="mb-6 text-sm text-blue-600 hover:text-blue-800 flex items-center font-medium"
+          className="mb-6 text-sm text-[#22D3EE] hover:underline flex items-center font-medium cursor-pointer"
         >
           &larr; Back to Dashboard
         </button>
 
         {/* Header Section: Title and Current Status */}
-        <div className="border-b pb-4 mb-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">{incident.title}</h1>
-            <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-bold tracking-wider">
-              {/* Replace underscores with spaces for better readability (e.g., PENDING_ACTION -> PENDING ACTION) */}
+        <div className="border-b border-[#1E293B] pb-4 mb-6">
+          <div className="flex justify-between items-center flex-wrap gap-2">
+            <h1 className="text-2xl font-bold text-[#F1F5F9]">{incident.title}</h1>
+            <span className="px-3 py-1 bg-[#1E293B] text-[#22D3EE] border border-[#1E293B] rounded-full text-xs font-bold tracking-wider">
               {incident.status.replace('_', ' ')}
             </span>
           </div>
-          <p className="text-gray-500 text-sm mt-2">
+          <p className="text-[#94A3B8] text-sm mt-2">
             Reported on: {new Date(incident.createdAt).toLocaleString()}
           </p>
         </div>
 
         {/* Description Section */}
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Description</h3>
-          <p className="text-gray-700 bg-gray-50 p-4 rounded-md border border-gray-200 whitespace-pre-wrap">
+          <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">Description</h3>
+          <p className="text-[#F1F5F9] bg-[#1E293B]/40 p-4 rounded-lg border border-[#1E293B] whitespace-pre-wrap text-sm leading-relaxed">
             {incident.description}
           </p>
         </div>
 
-                  {/* Incident Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-
-            <div className="bg-gray-50 p-4 rounded-md border">
-              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
-                Severity
-              </h4>
-
-              <p className="font-medium">
-                {incident.severity}
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-md border">
-              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
-                Category
-              </h4>
-
-              <p className="font-medium">
-                {incident.category}
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-md border">
-              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
-                Location
-              </h4>
-
-              <p className="font-medium">
-                {incident.location}
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-md border">
-              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1">
-                Department
-              </h4>
-
-              <p className="font-medium">
-                {incident.department?.name || "Not Available"}
-              </p>
-            </div>
-
+        {/* Incident Information Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="bg-[#1E293B]/40 p-4 rounded-lg border border-[#1E293B]">
+            <h4 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-1">
+              Severity
+            </h4>
+            <p className="font-semibold text-[#F1F5F9]">{incident.severity}</p>
           </div>
 
-        {/* People Involved Section: Displays assigned personnel */}
+          <div className="bg-[#1E293B]/40 p-4 rounded-lg border border-[#1E293B]">
+            <h4 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-1">
+              Category
+            </h4>
+            <p className="font-semibold text-[#F1F5F9]">{incident.category}</p>
+          </div>
+
+          <div className="bg-[#1E293B]/40 p-4 rounded-lg border border-[#1E293B]">
+            <h4 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-1">
+              Location
+            </h4>
+            <p className="font-semibold text-[#F1F5F9]">{incident.location}</p>
+          </div>
+
+          <div className="bg-[#1E293B]/40 p-4 rounded-lg border border-[#1E293B]">
+            <h4 className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider mb-1">
+              Department
+            </h4>
+            <p className="font-semibold text-[#F1F5F9]">
+              {incident.department?.name || 'Not Available'}
+            </p>
+          </div>
+        </div>
+
+        {/* People Involved Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-blue-50 p-4 rounded-md border border-blue-100">
-            <h4 className="text-xs font-bold text-blue-500 uppercase tracking-wider mb-1">Reporter</h4>
-            <p className="text-gray-900 font-medium">{incident.reporter?.name || 'Unknown'}</p>
+          <div className="bg-[#3B82F6]/10 p-4 rounded-lg border border-[#3B82F6]/30">
+            <h4 className="text-xs font-bold text-[#3B82F6] uppercase tracking-wider mb-1">
+              Reporter
+            </h4>
+            <p className="text-[#F1F5F9] font-semibold">{incident.reporter?.name || 'Unknown'}</p>
           </div>
-          <div className="bg-yellow-50 p-4 rounded-md border border-yellow-100">
-            <h4 className="text-xs font-bold text-yellow-600 uppercase tracking-wider mb-1">Investigator</h4>
-            <p className="text-gray-900 font-medium">{incident.investigator?.name || 'Not assigned'}</p>
+          <div className="bg-[#F59E0B]/10 p-4 rounded-lg border border-[#F59E0B]/30">
+            <h4 className="text-xs font-bold text-[#F59E0B] uppercase tracking-wider mb-1">
+              Investigator
+            </h4>
+            <p className="text-[#F1F5F9] font-semibold">
+              {incident.investigator?.name || 'Not assigned'}
+            </p>
           </div>
-          <div className="bg-orange-50 p-4 rounded-md border border-orange-100">
-            <h4 className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Action Owner</h4>
-            <p className="text-gray-900 font-medium">{incident.actionOwner?.name || 'Not assigned'}</p>
+          <div className="bg-[#0D9488]/10 p-4 rounded-lg border border-[#0D9488]/30">
+            <h4 className="text-xs font-bold text-[#22D3EE] uppercase tracking-wider mb-1">
+              Action Owner
+            </h4>
+            <p className="text-[#F1F5F9] font-semibold">
+              {incident.actionOwner?.name || 'Not assigned'}
+            </p>
           </div>
         </div>
 
+        {/* Root Cause Section */}
         <div className="mb-8">
+          <h3 className="text-lg font-semibold text-[#F1F5F9] mb-3">Root Cause Analysis</h3>
 
-          <h3 className="text-lg font-semibold mb-3">
-            Root Cause Analysis
-          </h3>
-
-          <div className="bg-gray-50 rounded-md border p-4">
-
-            <p>
-              <strong>Category:</strong>{" "}
-              {incident.rootCauseCategory || "Not submitted"}
+          <div className="bg-[#1E293B]/40 rounded-lg border border-[#1E293B] p-4">
+            <p className="text-sm text-[#94A3B8]">
+              <strong className="text-[#F1F5F9]">Category:</strong>{' '}
+              {incident.rootCauseCategory || 'Not submitted'}
             </p>
 
-            <p className="mt-3">
-              <strong>Root Cause:</strong>
-            </p>
+            <p className="mt-3 text-sm font-semibold text-[#F1F5F9]">Root Cause:</p>
 
-            <p className="text-gray-700 mt-2">
-              {incident.rootCause || "No root cause analysis submitted yet."}
+            <p className="text-[#94A3B8] text-sm mt-1">
+              {incident.rootCause || 'No root cause analysis submitted yet.'}
             </p>
-
           </div>
-
         </div>
 
-        {/* Attachments */}
-          <div className="mb-8">
+        {/* Attachments Section */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-[#F1F5F9] mb-3">Attachments</h3>
 
-            <h3 className="text-lg font-semibold mb-3">
-              Attachments
-            </h3>
-
-            <div className="bg-gray-50 border rounded-md p-4">
-
-              {incident.attachments && incident.attachments.length > 0 ? (
-
-                <ul className="space-y-2">
-                  {incident.attachments.map((file) => (
-                    <li
-                      key={file.id}
-                      className="flex justify-between items-center border-b pb-2"
-                    >
-                      <span>{file.fileName}</span>
-
-                      <button className="text-blue-600 hover:underline">
-                        View
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-
-              ) : (
-
-                <p className="text-gray-500">
-                  No attachments uploaded.
-                </p>
-
-              )}
-
-            </div>
-
+          <div className="bg-[#1E293B]/40 border border-[#1E293B] rounded-lg p-4">
+            {incident.attachments && incident.attachments.length > 0 ? (
+              <ul className="space-y-2">
+                {incident.attachments.map((file) => (
+                  <li
+                    key={file.id}
+                    className="flex justify-between items-center border-b border-[#1E293B] pb-2 text-sm text-[#F1F5F9]"
+                  >
+                    <span>{file.fileName}</span>
+                    <button className="text-[#22D3EE] hover:underline font-medium">View</button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[#94A3B8] text-sm">No attachments uploaded.</p>
+            )}
           </div>
+        </div>
 
-        {/* Action Buttons Component: Renders buttons dynamically based on incident.status */}
-        <IncidentActions 
+        {/* Action Buttons Component */}
+        <IncidentActions
           incident={incident}
           onAccept={handleAccept}
           onReview={handleReview}
           onClose={handleClose}
-          // For complex actions, we just open the respective modal here
           onReject={() => setIsRejectModalOpen(true)}
           onAssignInvestigator={() => setIsInvestigatorModalOpen(true)}
           onAssignActionOwner={() => setIsActionOwnerModalOpen(true)}
         />
 
-        {/* Global Loading Indicator: Shows if any of the direct mutations are currently running */}
+        {/* Global Loading Indicator */}
         {(acceptMutation.isPending || reviewMutation.isPending || closeMutation.isPending) && (
-          <div className="mt-4 text-sm font-medium text-blue-600 animate-pulse">
+          <div className="mt-4 text-sm font-medium text-[#22D3EE] animate-pulse">
             Processing action, please wait...
           </div>
         )}
-
       </div>
 
-      {/* --- Modals (Rendered outside the main card flow, controlled by state) --- */}
-
-      <RejectModal 
+      {/* Modals */}
+      <RejectModal
         isOpen={isRejectModalOpen}
         onClose={() => setIsRejectModalOpen(false)}
         onConfirm={handleConfirmReject}
@@ -339,7 +310,6 @@ export const IncidentDetails: React.FC = () => {
         description="Select an action owner to implement corrective actions."
         availableUsers={MOCK_ACTION_OWNERS}
       />
-      
     </div>
   );
 };
