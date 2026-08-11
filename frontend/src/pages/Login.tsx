@@ -35,12 +35,16 @@ export const Login: React.FC = () => {
           
           // If login is successful, check the role and navigate accordingly
           if (data.user.role === 'MANAGER') {
-            navigate('/'); // Go to Manager Dashboard
-          } else {
-            // For now, if it's not a manager, just go to a generic route
-            // Later we will add Staff and Investigator dashboards
-            navigate('/'); 
-          }
+              navigate('/');
+            } else if (data.user.role === 'INVESTIGATOR') {
+              navigate('/investigator');
+            } else if (data.user.role === 'STAFF') {
+              navigate('/submit-incident');
+            } else if (data.user.role === 'ACTION_OWNER') {
+              navigate('/');
+            } else {
+              navigate('/login');
+            }
         },
         onError: (error: any) => {
           // Extract the error message from the Axios response

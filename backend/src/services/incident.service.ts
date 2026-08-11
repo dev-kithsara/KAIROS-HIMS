@@ -6,6 +6,30 @@ import { AppError } from '../utils/AppError';
  * Service function for creating an incident (Staff Submission + Attachments)
  */
 export const createIncidentService = async (data: any, files: Express.Multer.File[]) => {
+  const departmentId = Number(data.departmentId);
+  const reporterId = Number(data.reporterId);
+
+  if (!departmentId || departmentId <= 0) {
+    throw new AppError('Invalid department ID provided.', 400);
+  }
+
+  if (!reporterId || reporterId <= 0) {
+    throw new AppError('Invalid reporter ID provided.', 400);
+  }
+
+  const [departmentExists, reporterExists] = await Promise.all([
+    prisma.department.findUnique({ where: { id: departmentId } }),
+    prisma.user.findUnique({ where: { id: reporterId } }),
+  ]);
+
+  if (!departmentExists) {
+    throw new AppError('The selected department does not exist.', 404);
+  }
+
+  if (!reporterExists) {
+    throw new AppError('The reporter user does not exist.', 404);
+  }
+
   const incident = await prisma.incident.create({
     data: {
       title: data.title,
@@ -14,10 +38,8 @@ export const createIncidentService = async (data: any, files: Express.Multer.Fil
       category: data.category,
       location: data.location,
       status: 'OPEN',
-      departmentId: Number(data.departmentId),
-      // FIX FOR BUG-01: Removed the hardcoded fallback ( ? : 2).
-      // The controller now guarantees this is the authenticated user's ID.
-      reporterId: Number(data.reporterId),
+      departmentId,
+      reporterId,
     },
   });
 

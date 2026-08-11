@@ -86,4 +86,4 @@ export const getAssignedIncidents = async (): Promise<Incident[]> => {
   );
 
   return response.data.data;
-};
+};
