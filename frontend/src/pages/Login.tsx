@@ -41,7 +41,7 @@ export const Login: React.FC = () => {
             } else if (data.user.role === 'STAFF') {
               navigate('/submit-incident');
             } else if (data.user.role === 'ACTION_OWNER') {
-              navigate('/');
+              navigate('/action-owner');
             } else {
               navigate('/login');
             }

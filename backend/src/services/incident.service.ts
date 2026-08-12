@@ -255,6 +255,73 @@ export class IncidentService {
     return await incidentRepository.findAssignedIncidents(investigatorId);
   }
 
+    /**
+   * Get incidents assigned to the logged-in Action Owner
+   * Only returns incidents with PENDING_ACTION status
+   */
+  async getActionOwnerIncidents(actionOwnerId: number) {
+    if (!actionOwnerId || actionOwnerId <= 0) {
+      throw new AppError('Invalid Action Owner ID.', 400);
+    }
+
+    return await incidentRepository.findActionOwnerIncidents(actionOwnerId);
+  }
+
+    /**
+   * Submit corrective action for an incident
+   * Changes status from PENDING_ACTION to UNDER_REVIEW
+   */
+  async submitCorrectiveAction(
+    incidentId: number,
+    actionOwnerId: number,
+    correctiveAction: string
+  ) {
+    if (!incidentId || incidentId <= 0) {
+      throw new AppError('Invalid incident ID.', 400);
+    }
+
+    if (!actionOwnerId || actionOwnerId <= 0) {
+      throw new AppError('Invalid Action Owner ID.', 400);
+    }
+
+    // Validate corrective action
+    if (!correctiveAction || correctiveAction.trim().length < 20) {
+      throw new AppError(
+        'Corrective action must be at least 20 characters long.',
+        400
+      );
+    }
+
+    // Find the incident
+    const incident = await incidentRepository.findById(incidentId);
+
+    if (!incident) {
+      throw new AppError('Incident not found.', 404);
+    }
+
+    // Make sure this incident belongs to the logged-in Action Owner
+    if (incident.actionOwnerId !== actionOwnerId) {
+      throw new AppError(
+        'You are not authorized to submit a corrective action for this incident.',
+        403
+      );
+    }
+
+    // Business rule: incident must be PENDING_ACTION
+    if (incident.status !== 'PENDING_ACTION') {
+      throw new AppError(
+        `Cannot submit corrective action. Current status is ${incident.status}, but expected PENDING_ACTION.`,
+        409
+      );
+    }
+
+    // Save corrective action and change status to UNDER_REVIEW
+    return await incidentRepository.updateCorrectiveAction(
+      incidentId,
+      correctiveAction.trim()
+    );
+  }
+
   /**
    * Submit Root Cause Analysis findings
    * @param incidentId - Incident ID

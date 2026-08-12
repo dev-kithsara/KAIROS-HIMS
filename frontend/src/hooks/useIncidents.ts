@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as incidentApi from '../api/incident.api';
 import type { Incident } from '../types/incident';
+import { getActionOwnerIncidents, submitCorrectiveAction } from '../api/incident.api';
 
 // 1. Hook to fetch all incidents for a department
 export const useDepartmentIncidents = (departmentId: number) => {
@@ -112,5 +113,43 @@ export const useAssignedIncidents = () => {
   return useQuery<Incident[]>({
     queryKey: ['incidents', 'investigator'],
     queryFn: () => incidentApi.getAssignedIncidents(),
+  });
+};
+
+// Get incidents assigned to the logged-in Action Owner
+export const useActionOwnerIncidents = () => {
+  return useQuery({
+    queryKey: ['action-owner-incidents'],
+    queryFn: getActionOwnerIncidents,
+  });
+};
+
+// Submit corrective action for an incident
+export const useSubmitCorrectiveAction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      incidentId,
+      correctiveAction,
+    }: {
+      incidentId: number;
+      correctiveAction: string;
+    }) => submitCorrectiveAction(incidentId, correctiveAction),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['action-owner-incidents'],
+      });
+    },
+  });
+};
+
+// Get a single incident
+export const useIncident = (id: number) => {
+  return useQuery<Incident>({
+    queryKey: ['incident', id],
+    queryFn: () => incidentApi.getIncidentById(id),
+    enabled: !!id,
   });
 };

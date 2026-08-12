@@ -146,6 +146,70 @@ export const getAssignedIncidents = catchAsync(async (req: Request, res: Respons
 });
 
 /**
+ * Get incidents assigned to the logged-in Action Owner
+ * Feature 5 - Action Owner Workspace
+ */
+export const getActionOwnerIncidents = catchAsync(
+  async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError('User not authenticated.', 401);
+    }
+
+    const actionOwnerId = req.user.id;
+
+    const incidents = await incidentService.getActionOwnerIncidents(actionOwnerId);
+
+    return res.status(200).json({
+      success: true,
+      data: incidents,
+    });
+  }
+);
+
+/**
+ * Submit corrective action
+ * Feature 5 - Action Owner Workspace
+ */
+export const submitCorrectiveAction = catchAsync(
+  async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError('User not authenticated.', 401);
+    }
+    const incidentId = Number(req.params.id);
+
+    if (isNaN(incidentId)) {
+      throw new AppError('Invalid incident ID provided.', 400);
+    }
+
+    const correctiveAction = req.body.correctiveAction;
+
+    if (
+      typeof correctiveAction !== 'string' ||
+      correctiveAction.trim().length < 20
+    ) {
+      throw new AppError(
+        'Corrective action must be at least 20 characters long.',
+        400
+      );
+    }
+
+    const updatedIncident =
+      await incidentService.submitCorrectiveAction(
+        incidentId,
+        req.user.id,
+        correctiveAction
+      );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Corrective action submitted successfully.',
+      data: updatedIncident,
+    });
+  }
+);
+
+
+/**
  * Submit Root Cause Analysis findings
  * Investigator submits RCA details
  */

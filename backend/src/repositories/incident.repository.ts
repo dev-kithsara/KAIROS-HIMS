@@ -206,6 +206,76 @@ async updateRootCause(
   });
 }
 
+  /**
+   * Get incidents assigned to an Action Owner
+   * Only returns incidents with PENDING_ACTION status
+   */
+  async findActionOwnerIncidents(actionOwnerId: number) {
+    return await prisma.incident.findMany({
+      where: {
+        actionOwnerId: actionOwnerId,
+        status: "PENDING_ACTION",
+      },
+
+      include: {
+        reporter: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        investigator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        department: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+
+        attachments: true,
+
+        actionOwner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  /**
+   * Save corrective action and move incident to UNDER_REVIEW
+   */
+  async updateCorrectiveAction(
+    id: number,
+    correctiveAction: string
+  ) {
+    return await prisma.incident.update({
+      where: {
+        id: id,
+      },
+      data: {
+        correctiveAction: correctiveAction,
+        status: "UNDER_REVIEW",
+      },
+    });
+  }
+
 
 }
 

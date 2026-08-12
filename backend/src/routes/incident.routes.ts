@@ -9,7 +9,9 @@ import {
   reviewIncident,
   closeIncident,
   getAssignedIncidents,
-  submitRootCause
+  submitRootCause,
+  getActionOwnerIncidents,
+  submitCorrectiveAction
 } from "../controllers/incident.controller";
 
 import upload from "../middlewares/upload.middleware";
@@ -32,6 +34,16 @@ router.post(
   createIncident
 );
 
+
+// Route: GET /api/incidents/action-owner
+// Description: Get incidents assigned to the logged-in Action Owner
+// Access: ACTION_OWNER only
+router.get("/action-owner", authenticate, authorizeRoles("ACTION_OWNER"), getActionOwnerIncidents);
+
+// Route: PATCH /api/incidents/:id/corrective-action
+// Description: Action Owner submits corrective action
+// Access: ACTION_OWNER only
+router.patch("/:id/corrective-action", authenticate, authorizeRoles("ACTION_OWNER"), submitCorrectiveAction);
 
 // Route: GET /api/incidents/department/:departmentId
 // Description: Get all incidents for a specific department

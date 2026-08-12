@@ -87,3 +87,33 @@ export const getAssignedIncidents = async (): Promise<Incident[]> => {
 
   return response.data.data;
 };
+// Feature 5 - Get incidents assigned to the logged-in Action Owner
+export const getActionOwnerIncidents = async (): Promise<Incident[]> => {
+  const response = await apiClient.get<ApiResponse<Incident[]>>(
+    `${API_URL}/action-owner`
+  );
+
+  return response.data.data;
+};
+
+// Get a single incident by ID
+export const getIncidentById = async (id: number): Promise<Incident> => {
+  const response = await apiClient.get<ApiResponse<Incident>>(
+    `${API_URL}/${id}`
+  );
+
+  return response.data.data;
+};
+
+// Feature 5 - Submit corrective action
+export const submitCorrectiveAction = async (
+  id: number,
+  correctiveAction: string
+): Promise<Incident> => {
+  const response = await apiClient.patch<ApiResponse<Incident>>(
+    `${API_URL}/${id}/corrective-action`,
+    { correctiveAction }
+  );
+
+  return response.data.data;
+};
