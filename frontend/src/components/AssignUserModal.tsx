@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
 
+// ── KAIROS Clinical Palette ─────────────────────────────────────────
+const PANEL   = '#0E1720';
+const TEXT    = '#EEF7FC';
+const MUTED   = '#8FA8B4';
+const BORDER  = '#253642';
+const DANGER  = '#EF4444';
+const TEAL    = '#45A79A';
+
 interface AssignUserModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -7,19 +15,11 @@ interface AssignUserModalProps {
   isLoading: boolean;
   title: string;
   description: string;
-  // In a real app, we would fetch this list from the backend (e.g., /api/users?role=INVESTIGATOR)
-  // For now, we pass a hardcoded list of users for testing
   availableUsers: { id: number; name: string; role: string }[];
 }
 
-export const AssignUserModal: React.FC<AssignUserModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  isLoading,
-  title,
-  description,
-  availableUsers
+export const AssignUserModal: React.FC<AssignUserModalProps> = ({
+  isOpen, onClose, onConfirm, isLoading, title, description, availableUsers,
 }) => {
   const [selectedUserId, setSelectedUserId] = useState<number | ''>('');
   const [error, setError] = useState('');
@@ -27,64 +27,69 @@ export const AssignUserModal: React.FC<AssignUserModalProps> = ({
   if (!isOpen) return null;
 
   const handleSubmit = () => {
-    if (selectedUserId === '') {
-      setError('Please select a user from the list.');
-      return;
-    }
+    if (selectedUserId === '') { setError('Please select a user from the list.'); return; }
     setError('');
     onConfirm(Number(selectedUserId));
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-        
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+    <div className="fixed inset-0 flex justify-center items-center z-50" style={{ backgroundColor: 'rgba(9,15,22,0.85)' }}>
+      <div
+        className="rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden"
+        style={{ backgroundColor: PANEL, border: `1px solid ${BORDER}` }}
+      >
+        {/* Header */}
+        <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+          <h3 className="text-lg font-bold" style={{ color: TEXT }}>{title}</h3>
         </div>
 
-        <div className="px-6 py-4">
-          <p className="text-sm text-gray-600 mb-4">{description}</p>
-          
+        {/* Body */}
+        <div className="px-6 py-5">
+          <p className="text-sm mb-4" style={{ color: MUTED }}>{description}</p>
+
           <select
-            className={`w-full border rounded-md p-3 text-sm focus:outline-none focus:ring-2 ${
-              error ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
-            }`}
-            value={selectedUserId}
-            onChange={(e) => {
-              setSelectedUserId(Number(e.target.value));
-              if (error) setError('');
+            className="w-full rounded-lg p-3 text-sm outline-none transition-all cursor-pointer"
+            style={{
+              backgroundColor: '#090F16',
+              border: `1px solid ${error ? DANGER : BORDER}`,
+              color: TEXT,
             }}
+            value={selectedUserId}
+            onChange={(e) => { setSelectedUserId(Number(e.target.value)); if (error) setError(''); }}
             disabled={isLoading}
+            onFocus={(e) => { (e.target as HTMLElement).style.borderColor = error ? DANGER : TEAL; }}
+            onBlur={(e)  => { (e.target as HTMLElement).style.borderColor = error ? DANGER : BORDER; }}
           >
-            <option value="" disabled>-- Select a User --</option>
+            <option value="" disabled style={{ backgroundColor: PANEL }}>-- Select a User --</option>
             {availableUsers.map(user => (
-              <option key={user.id} value={user.id}>
+              <option key={user.id} value={user.id} style={{ backgroundColor: PANEL }}>
                 {user.name} ({user.role})
               </option>
             ))}
           </select>
-          
-          {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+
+          {error && <p className="text-xs mt-1" style={{ color: DANGER }}>{error}</p>}
         </div>
 
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+        {/* Footer */}
+        <div className="px-6 py-4 flex justify-end gap-3" style={{ borderTop: `1px solid ${BORDER}` }}>
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer disabled:opacity-50"
+            style={{ color: MUTED, border: `1px solid ${BORDER}`, backgroundColor: 'transparent' }}
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center"
+            className="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer disabled:opacity-50"
+            style={{ backgroundColor: TEAL, color: '#090F16', border: `1px solid ${TEAL}` }}
           >
             {isLoading ? 'Assigning...' : 'Confirm Assignment'}
           </button>
         </div>
-
       </div>
     </div>
   );

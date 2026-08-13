@@ -9,7 +9,7 @@ export const Header: React.FC = () => {
 
   return (
     <header className="h-16 border-b border-[#253642] bg-[#0E1720] flex items-center justify-end px-6 shrink-0">
-      {/* Right Side: Profile Info and Logout */}
+      {/* Right Side: Profile Info */}
       <div className="flex items-center gap-6">
         {/* User Info */}
         <div className="flex flex-col items-end">
@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
           </span>
           {/* Role Badge */}
           <span className="text-[10px] font-bold tracking-wider text-[#4DC4B5] uppercase bg-[#45A79A]/10 px-2 py-0.5 rounded mt-0.5">
-            {user.role.replace('_', ' ')}
+            {user.role?.replace('_', ' ')}
           </span>
         </div>
 
