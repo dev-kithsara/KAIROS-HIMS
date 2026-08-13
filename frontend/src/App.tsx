@@ -3,8 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import { CreateIncident } from './pages/CreateIncident';
 import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
-import InvestigatorDashboard from "./pages/InvestigatorDashboard";
-import InvestigatorWorkspace from "./pages/InvestigatorWorkspace";
+import InvestigatorDashboard from './pages/InvestigatorDashboard';
+import InvestigatorWorkspace from './pages/InvestigatorWorkspace';
 import { Login } from './pages/Login';
 import { ActionOwnerDashboard } from './pages/ActionOwnerDashboard';
 import { Toaster } from 'react-hot-toast';
@@ -25,11 +25,16 @@ function App() {
         <Routes>
           {/* Public Route */}
           <Route path="/login" element={<Login />} />
-          
+
           {/* Protected Routes */}
-          <Route element={<ProtectedRoute allowedRoles={['MANAGER', 'STAFF', 'INVESTIGATOR', 'ACTION_OWNER']} />}>
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={['MANAGER', 'STAFF', 'INVESTIGATOR', 'ACTION_OWNER']} />
+            }
+          >
             <Route element={<MainLayout />}>
               <Route path="/" element={<ManagerDashboard />} />
+              <Route path="/incidents" element={<IncidentsList />} />
               <Route path="/incidents/:id" element={<IncidentDetails />} />
               <Route path="/submit-incident" element={<CreateIncident />} />
               <Route path="/investigator" element={<InvestigatorDashboard />} />
