@@ -6,6 +6,30 @@ import { AppError } from '../utils/AppError';
  * Service function for creating an incident (Staff Submission + Attachments)
  */
 export const createIncidentService = async (data: any, files: Express.Multer.File[]) => {
+  const departmentId = Number(data.departmentId);
+  const reporterId = Number(data.reporterId);
+
+  if (!departmentId || departmentId <= 0) {
+    throw new AppError('Invalid department ID provided.', 400);
+  }
+
+  if (!reporterId || reporterId <= 0) {
+    throw new AppError('Invalid reporter ID provided.', 400);
+  }
+
+  const [departmentExists, reporterExists] = await Promise.all([
+    prisma.department.findUnique({ where: { id: departmentId } }),
+    prisma.user.findUnique({ where: { id: reporterId } }),
+  ]);
+
+  if (!departmentExists) {
+    throw new AppError('The selected department does not exist.', 404);
+  }
+
+  if (!reporterExists) {
+    throw new AppError('The reporter user does not exist.', 404);
+  }
+
   const incident = await prisma.incident.create({
     data: {
       title: data.title,
@@ -14,10 +38,8 @@ export const createIncidentService = async (data: any, files: Express.Multer.Fil
       category: data.category,
       location: data.location,
       status: 'OPEN',
-      departmentId: Number(data.departmentId),
-      // FIX FOR BUG-01: Removed the hardcoded fallback ( ? : 2).
-      // The controller now guarantees this is the authenticated user's ID.
-      reporterId: Number(data.reporterId),
+      departmentId,
+      reporterId,
     },
   });
 
@@ -41,6 +63,25 @@ export class IncidentService {
    */
   async createIncident(data: any, files: Express.Multer.File[]) {
     return createIncidentService(data, files);
+  }
+
+  /**
+   * Get a single incident by its ID with related data
+   * @param id - The ID of the incident
+   * @returns The incident with relations, or 404 if not found
+   */
+  async getIncidentById(id: number) {
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new AppError('Invalid incident ID provided.', 400);
+    }
+
+    const incident = await incidentRepository.findByIdWithRelations(id);
+
+    if (!incident) {
+      throw new AppError('Incident not found.', 404);
+    }
+
+    return incident;
   }
 
   /**
@@ -231,6 +272,73 @@ export class IncidentService {
     }
 
     return await incidentRepository.findAssignedIncidents(investigatorId);
+  }
+
+    /**
+   * Get incidents assigned to the logged-in Action Owner
+   * Only returns incidents with PENDING_ACTION status
+   */
+  async getActionOwnerIncidents(actionOwnerId: number) {
+    if (!actionOwnerId || actionOwnerId <= 0) {
+      throw new AppError('Invalid Action Owner ID.', 400);
+    }
+
+    return await incidentRepository.findActionOwnerIncidents(actionOwnerId);
+  }
+
+    /**
+   * Submit corrective action for an incident
+   * Changes status from PENDING_ACTION to UNDER_REVIEW
+   */
+  async submitCorrectiveAction(
+    incidentId: number,
+    actionOwnerId: number,
+    correctiveAction: string
+  ) {
+    if (!incidentId || incidentId <= 0) {
+      throw new AppError('Invalid incident ID.', 400);
+    }
+
+    if (!actionOwnerId || actionOwnerId <= 0) {
+      throw new AppError('Invalid Action Owner ID.', 400);
+    }
+
+    // Validate corrective action
+    if (!correctiveAction || correctiveAction.trim().length < 20) {
+      throw new AppError(
+        'Corrective action must be at least 20 characters long.',
+        400
+      );
+    }
+
+    // Find the incident
+    const incident = await incidentRepository.findById(incidentId);
+
+    if (!incident) {
+      throw new AppError('Incident not found.', 404);
+    }
+
+    // Make sure this incident belongs to the logged-in Action Owner
+    if (incident.actionOwnerId !== actionOwnerId) {
+      throw new AppError(
+        'You are not authorized to submit a corrective action for this incident.',
+        403
+      );
+    }
+
+    // Business rule: incident must be PENDING_ACTION
+    if (incident.status !== 'PENDING_ACTION') {
+      throw new AppError(
+        `Cannot submit corrective action. Current status is ${incident.status}, but expected PENDING_ACTION.`,
+        409
+      );
+    }
+
+    // Save corrective action and change status to UNDER_REVIEW
+    return await incidentRepository.updateCorrectiveAction(
+      incidentId,
+      correctiveAction.trim()
+    );
   }
 
   /**

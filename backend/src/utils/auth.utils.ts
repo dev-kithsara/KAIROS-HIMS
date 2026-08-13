@@ -4,7 +4,8 @@ import jwt from 'jsonwebtoken';
 // FIX: Read JWT_SECRET from environment variables.
 // If it doesn't exist (e.g., in local dev before setup), use a secure fallback.
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key_do_not_use_in_production';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h'; // Token is valid for 24 hours
+const JWT_EXPIRES_IN: jwt.SignOptions['expiresIn'] =
+  (process.env.JWT_EXPIRES_IN as jwt.SignOptions['expiresIn']) || '24h';
 
 /**
  * Hash a plain text password using bcrypt

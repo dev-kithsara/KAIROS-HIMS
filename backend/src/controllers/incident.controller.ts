@@ -7,6 +7,7 @@ import {
   rejectIncidentSchema,
   assignInvestigatorSchema,
   assignActionOwnerSchema,
+  departmentParamsSchema,
 } from '../validators/incident.validator';
 import { rootCauseSchema } from '../validators/rootCause.validator';
 import { incidentService, createIncidentService } from '../services/incident.service';
@@ -29,10 +30,15 @@ export const createIncident = catchAsync(async (req: Request, res: Response) => 
 
   // 3. Override the reporterId with the securely verified ID from the JWT token.
   // This prevents malicious users from submitting incidents on behalf of others.
-  validatedData.reporterId = req.user.id;
-
+ const incidentData = {
+  ...validatedData,
+  reporterId: req.user.id,
+};
   // 4. Call service with the securely validated data
-  const incident = await createIncidentService(validatedData, req.files as Express.Multer.File[]);
+ const incident = await createIncidentService(
+  incidentData,
+  req.files as Express.Multer.File[]
+);
 
   // 5. Send response
   return res.status(201).json({
@@ -43,11 +49,18 @@ export const createIncident = catchAsync(async (req: Request, res: Response) => 
 });
 
 export const getDepartmentIncidents = catchAsync(async (req: Request, res: Response) => {
-  const departmentId = parseInt(req.params.departmentId as string, 10);
-  if (isNaN(departmentId)) throw new AppError('Invalid department ID provided in the URL.', 400);
+  const params = departmentParamsSchema.parse(req.params);
+  const departmentId = params.departmentId;
 
   const incidents = await incidentService.getIncidentsByDepartment(departmentId);
   return res.status(200).json({ success: true, data: incidents });
+});
+
+export const getIncidentById = catchAsync(async (req: Request, res: Response) => {
+  const incidentId = Number(req.params.id);
+
+  const incident = await incidentService.getIncidentById(incidentId);
+  return res.status(200).json({ success: true, data: incident });
 });
 
 export const acceptIncident = catchAsync(async (req: Request, res: Response) => {
@@ -139,6 +152,70 @@ export const getAssignedIncidents = catchAsync(async (req: Request, res: Respons
     data: incidents,
   });
 });
+
+/**
+ * Get incidents assigned to the logged-in Action Owner
+ * Feature 5 - Action Owner Workspace
+ */
+export const getActionOwnerIncidents = catchAsync(
+  async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError('User not authenticated.', 401);
+    }
+
+    const actionOwnerId = req.user.id;
+
+    const incidents = await incidentService.getActionOwnerIncidents(actionOwnerId);
+
+    return res.status(200).json({
+      success: true,
+      data: incidents,
+    });
+  }
+);
+
+/**
+ * Submit corrective action
+ * Feature 5 - Action Owner Workspace
+ */
+export const submitCorrectiveAction = catchAsync(
+  async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError('User not authenticated.', 401);
+    }
+    const incidentId = Number(req.params.id);
+
+    if (isNaN(incidentId)) {
+      throw new AppError('Invalid incident ID provided.', 400);
+    }
+
+    const correctiveAction = req.body.correctiveAction;
+
+    if (
+      typeof correctiveAction !== 'string' ||
+      correctiveAction.trim().length < 20
+    ) {
+      throw new AppError(
+        'Corrective action must be at least 20 characters long.',
+        400
+      );
+    }
+
+    const updatedIncident =
+      await incidentService.submitCorrectiveAction(
+        incidentId,
+        req.user.id,
+        correctiveAction
+      );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Corrective action submitted successfully.',
+      data: updatedIncident,
+    });
+  }
+);
+
 
 /**
  * Submit Root Cause Analysis findings

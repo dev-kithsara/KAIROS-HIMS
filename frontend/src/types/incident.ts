@@ -39,6 +39,7 @@ export interface Incident {
 
   rootCause?: string;
   rootCauseCategory?: string;
+  correctiveAction?: string;
 
   departmentId: number;
   reporterId: number;

@@ -60,3 +60,11 @@ export const assignActionOwnerSchema = z.object({
 });
 
 export type AssignActionOwnerInput = z.infer<typeof assignActionOwnerSchema>['body'];
+
+// 4. Department Incidents Params Schema
+export const departmentParamsSchema = z.object({
+  departmentId: z
+    .string()
+    .regex(/^[1-9]\d*$/, "Department ID must be a positive integer.")
+    .transform(Number),
+});

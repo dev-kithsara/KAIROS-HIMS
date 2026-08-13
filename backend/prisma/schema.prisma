@@ -65,8 +65,9 @@ model Incident {
   // Root Cause Analysis (Feature 4)
   rootCause         String?        @map("root_cause")
   rootCauseCategory String?        @map("root_cause_category")
-  
 
+  correctiveAction String?
+  
   // 3. Foreign keys and relationships
   departmentId      Int
   department        Department     @relation(fields: [departmentId], references: [id])

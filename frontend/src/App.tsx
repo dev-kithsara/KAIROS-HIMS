@@ -6,11 +6,12 @@ import { IncidentDetails } from './pages/IncidentDetails';
 import InvestigatorDashboard from './pages/InvestigatorDashboard';
 import InvestigatorWorkspace from './pages/InvestigatorWorkspace';
 import { Login } from './pages/Login';
+import { ActionOwnerDashboard } from './pages/ActionOwnerDashboard';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/MainLayout';
-import { IncidentsList } from './pages/IncidentsList';
+import ActionOwnerIncidentDetails from './pages/ActionOwnerIncidentDetails';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
@@ -38,6 +39,11 @@ function App() {
               <Route path="/submit-incident" element={<CreateIncident />} />
               <Route path="/investigator" element={<InvestigatorDashboard />} />
               <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />
+              <Route path="/action-owner" element={<ActionOwnerDashboard />} />
+              <Route path="/action-owner/:id" element={<ActionOwnerIncidentDetails />} />
+              <Route path="/action-owner/incidents/:id" element={<ActionOwnerIncidentDetails />} 
+              
+/>
             </Route>
           </Route>
         </Routes>
