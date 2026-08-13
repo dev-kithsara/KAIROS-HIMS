@@ -10,13 +10,20 @@ export const Sidebar: React.FC = () => {
   const location = useLocation(); // To check the current active route
 
   const handleLogout = () => {
+<<<<<<< Updated upstream
     if (window.confirm('Are you sure you want to logout?')) {
+=======
+    if (window.confirm('Are you sure you want to sign out?')) {
+>>>>>>> Stashed changes
       logout();
     }
   };
 
+<<<<<<< Updated upstream
   // 1. Define navigation links based on the user's role
   // This is how we achieve Role-Based UI navigation
+=======
+>>>>>>> Stashed changes
   const getNavLinks = () => {
     const role = user?.role;
 
@@ -24,7 +31,12 @@ export const Sidebar: React.FC = () => {
       case 'MANAGER':
         return [
           { name: 'Dashboard', path: '/' },
+<<<<<<< Updated upstream
           { name: 'Analytics', path: '/analytics' }, // Future feature
+=======
+          { name: 'Incidents', path: '/incidents' },
+          { name: 'Analytics', path: '/analytics' },
+>>>>>>> Stashed changes
         ];
       case 'STAFF':
         return [
@@ -51,6 +63,7 @@ export const Sidebar: React.FC = () => {
           <img
             src={logoImage}
             alt="KAIROS HIMS Logo"
+<<<<<<< Updated upstream
             className="w-12 h-12 object-cover rounded-full shadow-md border border-[#1E293B]"
           />
 
@@ -81,6 +94,21 @@ export const Sidebar: React.FC = () => {
       <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
         {links.map((link) => {
           const isActive = location.pathname === link.path;
+=======
+            className="w-8 h-8 object-cover rounded shadow-md"
+          />
+          <span className="font-extrabold text-xl tracking-wider text-[#EEF7FC]">KAIROS</span>
+        </div>
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+        {links.map((link) => {
+          const isActive =
+            location.pathname === link.path ||
+            (link.path !== '/' && location.pathname.startsWith(link.path));
+
+>>>>>>> Stashed changes
           return (
             <button
               key={link.name}
@@ -97,6 +125,7 @@ export const Sidebar: React.FC = () => {
         })}
       </nav>
 
+<<<<<<< Updated upstream
       {/* Logout Area */}
       <div className="p-4 border-t border-[#1E293B] bg-[#0B1120]/50">
         <button
@@ -104,6 +133,24 @@ export const Sidebar: React.FC = () => {
           className="w-full flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/30 rounded-xl transition-all cursor-pointer"
         >
           Logout
+=======
+      {/* Logout Area at the bottom (Styled like the 3rd image) */}
+      <div className="p-4 border-t border-[#253642]">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-[#8FA8B4] hover:text-[#EEF7FC] hover:bg-[#253642]/50 rounded-lg transition-colors cursor-pointer"
+        >
+          {/* Sign Out Icon */}
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          Sign Out
+>>>>>>> Stashed changes
         </button>
       </div>
     </aside>

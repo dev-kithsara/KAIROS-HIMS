@@ -5,12 +5,12 @@ import type { Incident } from '../types/incident';
 // 1. Hook to fetch all incidents for a department
 export const useDepartmentIncidents = (departmentId: number) => {
   return useQuery({
-    // queryKey is like a unique ID for this data in the cache. 
+    // queryKey is like a unique ID for this data in the cache.
     // If departmentId changes, it fetches new data.
     queryKey: ['incidents', 'department', departmentId],
     queryFn: () => incidentApi.getDepartmentIncidents(departmentId),
     // Don't fetch if departmentId is not valid (e.g., 0 or undefined)
-    enabled: !!departmentId, 
+    enabled: !!departmentId,
   });
 };
 
@@ -33,7 +33,7 @@ export const useRejectIncident = () => {
 
   return useMutation({
     // We pass an object because mutationFn only accepts one argument
-    mutationFn: ({ id, reason }: { id: number; reason: string }) => 
+    mutationFn: ({ id, reason }: { id: number; reason: string }) =>
       incidentApi.rejectIncident(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['incidents'] });
@@ -73,7 +73,7 @@ export const useAssignInvestigator = () => {
 
   return useMutation({
     // We pass an object because mutationFn only accepts one argument
-    mutationFn: ({ id, investigatorId }: { id: number; investigatorId: number }) => 
+    mutationFn: ({ id, investigatorId }: { id: number; investigatorId: number }) =>
       incidentApi.assignInvestigator(id, investigatorId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['incidents'] });
@@ -87,7 +87,7 @@ export const useAssignActionOwner = () => {
 
   return useMutation({
     // We pass an object because mutationFn only accepts one argument
-    mutationFn: ({ id, actionOwnerId }: { id: number; actionOwnerId: number }) => 
+    mutationFn: ({ id, actionOwnerId }: { id: number; actionOwnerId: number }) =>
       incidentApi.assignActionOwner(id, actionOwnerId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['incidents'] });
@@ -112,5 +112,14 @@ export const useAssignedIncidents = () => {
   return useQuery<Incident[]>({
     queryKey: ['incidents', 'investigator'],
     queryFn: () => incidentApi.getAssignedIncidents(),
+  });
+};
+
+// 10. Hook to fetch analytics data for a specific department
+export const useDepartmentAnalytics = (departmentId: number) => {
+  return useQuery({
+    queryKey: ['analytics', 'department', departmentId],
+    queryFn: () => incidentApi.getDepartmentAnalytics(departmentId),
+    enabled: !!departmentId,
   });
 };
