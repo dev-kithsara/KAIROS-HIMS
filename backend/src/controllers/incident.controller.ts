@@ -7,6 +7,7 @@ import {
   rejectIncidentSchema,
   assignInvestigatorSchema,
   assignActionOwnerSchema,
+  departmentParamsSchema,
 } from '../validators/incident.validator';
 import { rootCauseSchema } from '../validators/rootCause.validator';
 import { incidentService, createIncidentService } from '../services/incident.service';
@@ -48,11 +49,18 @@ export const createIncident = catchAsync(async (req: Request, res: Response) => 
 });
 
 export const getDepartmentIncidents = catchAsync(async (req: Request, res: Response) => {
-  const departmentId = parseInt(req.params.departmentId as string, 10);
-  if (isNaN(departmentId)) throw new AppError('Invalid department ID provided in the URL.', 400);
+  const params = departmentParamsSchema.parse(req.params);
+  const departmentId = params.departmentId;
 
   const incidents = await incidentService.getIncidentsByDepartment(departmentId);
   return res.status(200).json({ success: true, data: incidents });
+});
+
+export const getIncidentById = catchAsync(async (req: Request, res: Response) => {
+  const incidentId = Number(req.params.id);
+
+  const incident = await incidentService.getIncidentById(incidentId);
+  return res.status(200).json({ success: true, data: incident });
 });
 
 export const acceptIncident = catchAsync(async (req: Request, res: Response) => {

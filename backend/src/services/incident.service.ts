@@ -66,6 +66,25 @@ export class IncidentService {
   }
 
   /**
+   * Get a single incident by its ID with related data
+   * @param id - The ID of the incident
+   * @returns The incident with relations, or 404 if not found
+   */
+  async getIncidentById(id: number) {
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new AppError('Invalid incident ID provided.', 400);
+    }
+
+    const incident = await incidentRepository.findByIdWithRelations(id);
+
+    if (!incident) {
+      throw new AppError('Incident not found.', 404);
+    }
+
+    return incident;
+  }
+
+  /**
    * Get all incidents for a specific department
    * @param departmentId - The ID of the manager's department
    * @returns Array of incidents

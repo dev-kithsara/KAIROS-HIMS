@@ -57,6 +57,48 @@ export class IncidentRepository {
   }
 
   /**
+   * Find a single incident by its ID with related data
+   * (reporter, department, investigator, action owner, attachments)
+   * @param id - The ID of the incident
+   * @returns The incident with relations, or null if not found
+   */
+  async findByIdWithRelations(id: number) {
+    return await prisma.incident.findUnique({
+      where: { id: id },
+      include: {
+        reporter: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        investigator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        actionOwner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        department: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        attachments: true,
+      },
+    });
+  }
+
+  /**
    * Update the status of an incident
    * @param id - The ID of the incident
    * @param status - The new status (e.g., ACCEPTED)

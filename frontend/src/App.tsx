@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/MainLayout';
-import { ActionOwnerIncidentDetails } from './pages/ActionOwnerIncidentDetails';
+import ActionOwnerIncidentDetails from './pages/ActionOwnerIncidentDetails';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },

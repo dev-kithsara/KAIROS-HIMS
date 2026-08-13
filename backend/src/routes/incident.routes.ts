@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createIncident,
   getDepartmentIncidents,
+  getIncidentById,
   acceptIncident,
   rejectIncident,
   assignInvestigator,
@@ -92,5 +93,10 @@ router.get("/investigator", authenticate, authorizeRoles("INVESTIGATOR"), getAss
 // Route: PATCH /api/v1/incidents/:id/root-cause
 // Description: Investigator submits Root Cause Analysis findings
 router.patch("/:id/root-cause", authenticate, authorizeRoles("INVESTIGATOR"), submitRootCause);
+
+// Route: GET /api/v1/incidents/:id
+// Description: Get a single incident by ID with related data
+// NOTE: Registered last so it does not shadow /action-owner or /investigator
+router.get("/:id", authenticate, getIncidentById);
 
 export default router;

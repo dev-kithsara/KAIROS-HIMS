@@ -1,5 +1,6 @@
 import multer from "multer";
 import path from "path";
+import { AppError } from "../utils/AppError";
 
 const storage = multer.diskStorage({
 
@@ -22,17 +23,32 @@ const fileFilter = (
     cb: multer.FileFilterCallback
 ) => {
 
-    const allowedTypes = [
+    const allowedMimeTypes = [
         "image/jpeg",
         "image/png",
         "application/pdf"
     ];
 
-    if (allowedTypes.includes(file.mimetype)) {
+    const allowedExtensions = [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".pdf"
+    ];
+
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    if (
+        allowedMimeTypes.includes(file.mimetype) &&
+        allowedExtensions.includes(ext)
+    ) {
         cb(null, true);
     } else {
         cb(
-            new Error("Only JPG, PNG and PDF files are allowed")
+            new AppError(
+                "Unsupported file type. Only JPG, PNG and PDF files are allowed.",
+                400
+            )
         );
     }
 };
