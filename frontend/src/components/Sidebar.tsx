@@ -4,9 +4,15 @@ import { useAuthContext } from '../context/AuthContext';
 import logoImage from '../assets/logo.jpeg';
 
 export const Sidebar: React.FC = () => {
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to sign out?')) {
+      logout();
+    }
+  };
 
   const getNavLinks = () => {
     const role = user?.role;
@@ -14,10 +20,18 @@ export const Sidebar: React.FC = () => {
       case 'MANAGER':
         return [
           { name: 'Dashboard', path: '/' },
-          // CHANGED: Added 'Incidents' menu
           { name: 'Incidents', path: '/incidents' },
           { name: 'Analytics', path: '/analytics' },
         ];
+      case 'STAFF':
+        return [
+          { name: 'My Incidents', path: '/' },
+          { name: 'Report Incident', path: '/report' },
+        ];
+      case 'INVESTIGATOR':
+        return [{ name: 'My Investigations', path: '/' }];
+      case 'ACTION_OWNER':
+        return [{ name: 'Pending Actions', path: '/' }];
       default:
         return [{ name: 'Dashboard', path: '/' }];
     }
@@ -41,12 +55,9 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* REMOVED: User Profile Area from here */}
-
       {/* Navigation Links */}
       <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
         {links.map((link) => {
-          // Check if the current path starts with the link path (for nested routes like /incidents/1)
           const isActive =
             location.pathname === link.path ||
             (link.path !== '/' && location.pathname.startsWith(link.path));
@@ -66,6 +77,24 @@ export const Sidebar: React.FC = () => {
           );
         })}
       </nav>
+
+      {/* Logout Area */}
+      <div className="p-4 border-t border-[#253642]">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-[#8FA8B4] hover:text-[#EEF7FC] hover:bg-[#253642]/50 rounded-lg transition-colors cursor-pointer"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          Sign Out
+        </button>
+      </div>
     </aside>
   );
 };
