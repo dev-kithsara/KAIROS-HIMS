@@ -7,9 +7,13 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files and install dependencies.
+# NOTE: We use 'npm install' instead of 'npm ci' because the lockfile is
+# generated on Windows and some optional native binaries (@emnapi) resolve
+# differently on Linux/Alpine. 'npm install' lets npm resolve the correct
+# platform-specific packages inside the container.
 COPY package*.json ./
-RUN npm ci
+RUN npm install --no-audit --no-fund --loglevel=error
 
 # Copy the rest of the code and build the app
 COPY . .

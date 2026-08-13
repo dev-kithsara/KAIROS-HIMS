@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 4. Install dependencies
-RUN npm ci
+RUN npm ci --no-audit --no-fund --loglevel=error
 
 # 5. Copy the rest of the application code
 COPY . .
