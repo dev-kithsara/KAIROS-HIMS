@@ -1,7 +1,13 @@
 // This is your Prisma schema file
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Tell Prisma to generate engine binaries for:
+  //  - "native"                    → local Windows dev machine
+  //  - "linux-musl-openssl-3.0.x" → Alpine Linux (Docker) with OpenSSL 3.x
+  // Without this, Prisma downloads the OpenSSL 1.1 engine binary which
+  // doesn't work on Alpine 3.18+ (which ships OpenSSL 3 only).
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {

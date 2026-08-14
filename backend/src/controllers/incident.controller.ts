@@ -27,12 +27,14 @@ export const createIncident = catchAsync(async (req: Request, res: Response) => 
     throw new AppError('User not authenticated', 401);
   }
 
-  // 3. Override the reporterId with the securely verified ID from the JWT token.
-  // This prevents malicious users from submitting incidents on behalf of others.
-  validatedData.reporterId = req.user.id;
+  // 3. FIX: Create a new object instead of modifying validatedData directly
+  const incidentData = {
+    ...validatedData,
+    reporterId: req.user.id,
+  };
 
   // 4. Call service with the securely validated data
-  const incident = await createIncidentService(validatedData, req.files as Express.Multer.File[]);
+  const incident = await createIncidentService(incidentData, req.files as Express.Multer.File[]);
 
   // 5. Send response
   return res.status(201).json({
