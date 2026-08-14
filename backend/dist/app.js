@@ -4,19 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
 const incident_routes_1 = __importDefault(require("./routes/incident.routes"));
+const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
+const errorHandler_middleware_1 = require("./middlewares/errorHandler.middleware"); // Import the handler
+const analytics_routes_1 = __importDefault(require("./routes/analytics.routes"));
 const app = (0, express_1.default)();
 /*
 ==========================================
 Middleware
 ==========================================
 */
-// Allow requests from the React frontend
-app.use((0, cors_1.default)({
-    origin: "http://localhost:5173",
-    credentials: true,
-}));
 // Parse JSON request body
 app.use(express_1.default.json());
 /*
@@ -24,16 +21,22 @@ app.use(express_1.default.json());
 Routes
 ==========================================
 */
-app.use("/api/v1/incidents", incident_routes_1.default);
-app.use("/api/incidents", incident_routes_1.default);
+// Route mounting
+app.use('/api/incidents', incident_routes_1.default);
+app.use('/api/v1/incidents', incident_routes_1.default);
+app.use('/api/auth', auth_routes_1.default);
+app.use('/api/analytics', analytics_routes_1.default);
 // Health Check Routes
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: "KAIROS Backend is Running",
+        message: 'KAIROS Backend is Running',
     });
 });
-app.get("/health", (req, res) => {
-    res.status(200).json({ status: "UP", message: "KAIROS HIMS Backend is running" });
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'UP', message: 'KAIROS HIMS Backend is running' });
 });
+// IMPORTANT: The Global Error Handler MUST be the last middleware!
+// If any route or middleware above calls next(error), it will come here.
+app.use(errorHandler_middleware_1.globalErrorHandler);
 exports.default = app;

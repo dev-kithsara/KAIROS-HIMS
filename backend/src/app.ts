@@ -13,14 +13,6 @@ Middleware
 ==========================================
 */
 
-// Allow requests from the React frontend
-app.use(
-  cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  })
-);
-
 // Parse JSON request body
 app.use(express.json());
 

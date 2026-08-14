@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.assignActionOwnerSchema = exports.assignInvestigatorSchema = exports.rejectIncidentSchema = exports.incidentSchema = void 0;
+exports.departmentParamsSchema = exports.assignActionOwnerSchema = exports.assignInvestigatorSchema = exports.rejectIncidentSchema = exports.incidentSchema = void 0;
 const zod_1 = require("zod");
 exports.incidentSchema = zod_1.z.object({
     title: zod_1.z
@@ -47,4 +47,11 @@ exports.assignActionOwnerSchema = zod_1.z.object({
             .int("Action Owner ID must be an integer.")
             .positive("Action Owner ID must be a positive number."),
     }),
+});
+// 4. Department Incidents Params Schema
+exports.departmentParamsSchema = zod_1.z.object({
+    departmentId: zod_1.z
+        .string()
+        .regex(/^[1-9]\d*$/, "Department ID must be a positive integer.")
+        .transform(Number),
 });
