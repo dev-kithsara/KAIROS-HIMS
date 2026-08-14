@@ -13,6 +13,9 @@
 
 FROM nginx:alpine
 
+# Security: Don't run as root
+USER nginx
+
 # Copy the pre-built static files from the local 'dist/' folder
 COPY dist/ /usr/share/nginx/html
 

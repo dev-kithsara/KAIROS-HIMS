@@ -43,7 +43,19 @@ export const Login: React.FC = () => {
       {
         onSuccess: (data) => {
           contextLogin(data.user, data.token);
-          navigate('/');
+          
+          // If login is successful, check the role and navigate accordingly
+          if (data.user.role === 'MANAGER') {
+              navigate('/');
+            } else if (data.user.role === 'INVESTIGATOR') {
+              navigate('/investigator');
+            } else if (data.user.role === 'STAFF') {
+              navigate('/submit-incident');
+            } else if (data.user.role === 'ACTION_OWNER') {
+              navigate('/action-owner');
+            } else {
+              navigate('/login');
+            }
         },
         onError: (error: any) => {
           const message = error.response?.data?.message || 'Login failed. Please check your credentials.';

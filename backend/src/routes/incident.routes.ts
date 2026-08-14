@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createIncident,
   getDepartmentIncidents,
+  getIncidentById,
   acceptIncident,
   rejectIncident,
   assignInvestigator,
@@ -9,7 +10,9 @@ import {
   reviewIncident,
   closeIncident,
   getAssignedIncidents,
-  submitRootCause
+  submitRootCause,
+  getActionOwnerIncidents,
+  submitCorrectiveAction
 } from "../controllers/incident.controller";
 
 import upload from "../middlewares/upload.middleware";
@@ -32,6 +35,16 @@ router.post(
   createIncident
 );
 
+
+// Route: GET /api/incidents/action-owner
+// Description: Get incidents assigned to the logged-in Action Owner
+// Access: ACTION_OWNER only
+router.get("/action-owner", authenticate, authorizeRoles("ACTION_OWNER"), getActionOwnerIncidents);
+
+// Route: PATCH /api/incidents/:id/corrective-action
+// Description: Action Owner submits corrective action
+// Access: ACTION_OWNER only
+router.patch("/:id/corrective-action", authenticate, authorizeRoles("ACTION_OWNER"), submitCorrectiveAction);
 
 // Route: GET /api/incidents/department/:departmentId
 // Description: Get all incidents for a specific department
@@ -80,5 +93,10 @@ router.get("/investigator", authenticate, authorizeRoles("INVESTIGATOR"), getAss
 // Route: PATCH /api/v1/incidents/:id/root-cause
 // Description: Investigator submits Root Cause Analysis findings
 router.patch("/:id/root-cause", authenticate, authorizeRoles("INVESTIGATOR"), submitRootCause);
+
+// Route: GET /api/v1/incidents/:id
+// Description: Get a single incident by ID with related data
+// NOTE: Registered last so it does not shadow /action-owner or /investigator
+router.get("/:id", authenticate, getIncidentById);
 
 export default router;

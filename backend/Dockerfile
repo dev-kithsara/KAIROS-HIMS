@@ -3,6 +3,9 @@
 # 1. Base Image
 FROM node:20-alpine
 
+# Security: Don't run as root
+USER node
+
 # 2. Set the working directory inside the container
 WORKDIR /app
 
@@ -20,7 +23,7 @@ COPY package*.json ./
 RUN npm config set fetch-retries 5 && \
     npm config set fetch-retry-mintimeout 20000 && \
     npm config set fetch-retry-maxtimeout 120000 && \
-    npm ci --no-audit --no-fund --loglevel=error
+    npm ci --ignore-scripts --no-audit --no-fund --loglevel=error
 
 # 5. Copy the rest of the application code
 COPY . .
