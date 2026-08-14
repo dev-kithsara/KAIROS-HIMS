@@ -1,20 +1,17 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/KAIROS-HIMS-00B4A0?style=for-the-badge&logoColor=white" alt="KAIROS HIMS Logo" height="60"/>
-
 # 🏥 KAIROS HIMS
 
 ### Hospital Incident Management System
 
-_A production-grade, full-stack, role-based Incident & Risk Management platform engineered for healthcare environments._
+**A production-grade, full-stack platform for real-time hospital safety incident tracking, investigation, and resolution.**
 
-[![React](https://img.shields.io/badge/React_18.3-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript_5.4-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js_20+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express_4.19-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Prisma](https://img.shields.io/badge/Prisma_5.22-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://prisma.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-5.22-2D3748?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io/)
 
 </div>
 
@@ -22,239 +19,264 @@ _A production-grade, full-stack, role-based Incident & Risk Management platform 
 
 ## 📋 Table of Contents
 
-- [✨ Overview](#-overview)
-- [🛡️ Key Features](#️-key-features)
-- [🔄 Incident Lifecycle](#-incident-lifecycle)
-- [👥 User Roles & Permissions](#-user-roles--permissions)
-- [🏗️ System Architecture](#️-system-architecture)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [🚀 Quick Start Guide](#-quick-start-guide)
-  - [Prerequisites](#prerequisites)
-  - [Backend Setup](#1-backend-setup)
-  - [Frontend Setup](#2-frontend-setup)
-  - [Database Migrations](#3-database-migrations)
-- [🔐 Environment Variables](#-environment-variables)
-- [📡 API Documentation](#-api-documentation)
-- [🗄️ Database Schema](#️-database-schema)
-- [📈 Project Roadmap](#-project-roadmap)
-- [📄 License](#-license)
+- [Overview](#-overview)
+- [Features](#-features)
+- [Tech Stack](#️-tech-stack)
+- [Architecture](#-architecture)
+- [Quick Start](#-quick-start)
+  - [Option A: Docker (Recommended)](#option-a-docker-recommended-)
+  - [Option B: Local Development](#option-b-local-development)
+- [Demo Credentials](#-demo-credentials)
+- [Environment Variables](#-environment-variables)
+- [API Reference](#-api-reference)
+- [Database Schema](#️-database-schema)
+- [Project Roadmap](#-project-roadmap)
 
 ---
 
-## ✨ Overview
+## 🔍 Overview
 
-**KAIROS HIMS** is a modern, enterprise healthcare incident and risk management platform. It empowers frontline hospital staff to quickly report safety incidents with file attachments, department managers to review and manage multi-stage investigation workflows, and investigators to perform root-cause analysis — ensuring patient safety and regulatory compliance.
+KAIROS HIMS is a comprehensive **Hospital Incident Management System** built as an enterprise-grade university project. It enables healthcare organizations to:
 
-> **Why KAIROS?**  
-> "Kairos" (καιρός) is an ancient Greek word meaning the _right, critical, or opportune moment_. KAIROS HIMS enables hospital care teams to act on safety risks at the exact moment it matters most.
+- 📝 **Report** safety incidents with evidence attachments
+- 🔍 **Investigate** root causes through a structured workflow
+- ✅ **Resolve** incidents with corrective actions and closure tracking
+- 📊 **Analyze** incident trends via an executive analytics dashboard
 
----
-
-## 🛡️ Key Features
-
-### 📋 Staff Incident Submission
-
-- **Structured Incident Reporting**: Staff can log incidents with severity level (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`), category, location, and detailed description.
-- **Evidence Attachment Management**: Drag-and-drop file uploader supporting images (JPG, PNG) and documents (PDF) up to 5 files per incident.
-- **Instant Status Tracking**: Real-time response confirmation with unique Incident Tracking IDs.
-
-### 👔 Manager Approval & Workflow
-
-- **Department-Scoped Dashboard**: Managers view real-time incidents specific to their department (ICU, ED, Surgery, Pediatrics).
-- **Interactive State Transitions**:
-  - **Accept**: Transition OPEN incidents to ACCEPTED for investigation.
-  - **Reject**: Decline invalid reports with compulsory justification reasons.
-  - **Assign Investigator**: Delegate ACCEPTED incidents to qualified investigators.
-  - **Assign Action Owner**: Assign corrective action owners for INVESTIGATING incidents.
-  - **Review & Close**: Formally review pending actions and close resolved incidents.
-
-### 🔐 Data Safety & Type Safety
-
-- **Full TypeScript Coverage**: End-to-end type safety across backend controllers, services, repositories, and frontend React Query hooks.
-- **Prisma ORM**: Strict PostgreSQL database mapping with automatic migration tracking.
-- **Zod Validation**: Input sanitization and schema enforcement on request payloads.
+The system enforces a strict **role-based access control (RBAC)** model across four distinct user roles, each with a dedicated workspace and permissions.
 
 ---
 
-## 🔄 Incident Lifecycle
+## ✨ Features
 
-```
-                     +------------------+
-                     |    STAFF POST    |
-                     |  Submit Incident |
-                     +--------+---------+
-                              |
-                              v
-                     +------------------+
-                     |       OPEN       |
-                     +--------+---------+
-                              |
-                   Manager Decision Point
-                 +------------+------------+
-                 |                         |
-                 v                         v
-        +-----------------+       +-----------------+
-        |    ACCEPTED     |       |    REJECTED     |  (With Mandatory Reason)
-        +--------+--------+       +-----------------+
-                 |
-      Assign Investigator
-                 v
-        +-----------------+
-        |  INVESTIGATING  |  (Root Cause Analysis)
-        +--------+--------+
-                 |
-        Assign Action Owner
-                 v
-        +-----------------+
-        | PENDING_ACTION  |  (Corrective Action Implementation)
-        +--------+--------+
-                 |
-           Manager Review
-                 v
-        +-----------------+
-        |  UNDER_REVIEW   |
-        +--------+--------+
-                 |
-           Formal Closure
-                 v
-        +-----------------+
-        |     CLOSED      |  (Full Audit Trail Preserved)
-        +-----------------+
-```
-
----
-
-## 👥 User Roles & Permissions
-
-| Role                   | Scope              | Key Capabilities                                                              |
-| :--------------------- | :----------------- | :---------------------------------------------------------------------------- |
-| **Frontline Staff**    | Hospital-wide      | Submit incident reports with file attachments, view submission feedback       |
-| **Department Manager** | Department-Scoped  | Accept/Reject incidents, Assign Investigators & Action Owners, Review & Close |
-| **Investigator**       | Assigned Incidents | Conduct Root Cause Analysis (RCA), document findings                          |
-| **Action Owner**       | Assigned Actions   | Execute and report status on corrective action plans                          |
-| **System Admin**       | Global System      | Manage departments, user roles, system metrics, and audit logs                |
-
----
-
-## 🏗️ System Architecture
-
-```
-+-------------------------------------------------------------------------+
-|                              CLIENT LAYER                               |
-|        React 18 + Vite + TypeScript + Tailwind CSS + Lucide Icons       |
-|            (TanStack React Query - React Router DOM v7 - Axios)         |
-+------------------------------------+------------------------------------+
-                                     |  HTTP / REST API
-                                     v
-+-------------------------------------------------------------------------+
-|                             EXPRESS BACKEND                             |
-|                   Node.js + TypeScript + Multer + Zod                   |
-|   App Router (/api/v1/incidents & /api/incidents) -> Controller -> Service |
-+------------------------------------+------------------------------------+
-                                     |  Prisma Client Queries
-                                     v
-+-------------------------------------------------------------------------+
-|                            DATABASE LAYER                               |
-|                       PostgreSQL 16 Database                            |
-|             (User, Department, Incident, IncidentAttachment)            |
-+-------------------------------------------------------------------------+
-```
+| Feature | Status | Description |
+|---|---|---|
+| Staff Incident Submission | ✅ Live | Form with file uploads, Zod validation, JWT auth |
+| Manager Approval Workflow | ✅ Live | Accept / Reject / Assign / Close pipeline |
+| Investigator Workspace | ✅ Live | Root Cause Analysis (RCA) submission |
+| Action Owner Workspace | ✅ Live | Corrective action tracking |
+| Analytics Dashboard | ✅ Live | Severity breakdown, status distribution charts |
+| Docker Compose Deployment | ✅ Live | One-command full-stack deployment |
+| AI Incident Analytics | 🔄 Planned | Severity prediction & vector similarity search |
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-
-- **Framework**: React 18.3 + TypeScript 5.4 + Vite 8
-- **Styling**: Tailwind CSS 3.4
-- **State & Data Fetching**: TanStack React Query v5
-- **Routing**: React Router DOM v7
-- **Icons**: Lucide React
+| Technology | Version | Purpose |
+|---|---|---|
+| React | 19 | UI framework |
+| TypeScript | 5.4 | Type safety |
+| Vite | 8 | Build tool (with Rolldown bundler) |
+| Tailwind CSS | 3.4 | Utility-first styling |
+| TanStack React Query | v5 | Server state management & caching |
+| React Router DOM | v7 | Client-side routing |
+| Recharts | 2.x | Analytics charts & graphs |
+| Lucide React | latest | Icon library |
 
 ### Backend
+| Technology | Version | Purpose |
+|---|---|---|
+| Node.js | 20+ | JavaScript runtime |
+| Express.js | 4.19 | HTTP framework |
+| TypeScript | 5.7 | Type safety |
+| Prisma ORM | 5.22 | Database access & migrations |
+| PostgreSQL | 16 | Primary relational database |
+| Multer | 1.4 | Multipart file upload handling |
+| Zod | 3.24 | Runtime schema validation |
+| JSON Web Tokens | latest | Stateless authentication |
+| bcryptjs | latest | Password hashing |
 
-- **Runtime**: Node.js 20+
-- **Framework**: Express.js 4.19 + TypeScript 5.7
-- **Database ORM**: Prisma ORM 5.22
-- **Database**: PostgreSQL 16
-- **File Uploads**: Multer 1.4
-- **Validation**: Zod 3.24
-- **Dev Server**: `tsx watch`
+### Infrastructure
+| Technology | Purpose |
+|---|---|
+| Docker + Docker Compose | Container orchestration |
+| NGINX (Alpine) | Frontend static file serving |
+| node:20-alpine | Backend container base image |
 
 ---
 
-## 🚀 Quick Start Guide
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          PRESENTATION LAYER                             │
+│                    React 19 + TypeScript + Vite 8                       │
+│         Dashboard │ Incidents │ Analytics Hub │ Lessons Library         │
+│              (TanStack React Query for server state)                    │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │  REST API (JSON over HTTP)
+                             │  http://localhost:5000/api/v1
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           API LAYER (Express.js)                        │
+│                     Route → Middleware → Controller                     │
+│              JWT Auth Guard │ Zod Validation │ catchAsync               │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         SERVICE + REPOSITORY LAYER                      │
+│               Business Logic │ Prisma ORM │ Repository Pattern          │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │  Prisma Client Queries
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            DATABASE LAYER                               │
+│                        PostgreSQL 16 Database                           │
+│          User │ Department │ Incident │ IncidentAttachment              │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Role-Based Workflow
+
+```
+[Staff] → Submit Incident
+              ↓
+[Manager] → Accept / Reject
+              ↓ (if accepted)
+[Manager] → Assign Investigator
+              ↓
+[Investigator] → Submit Root Cause Analysis
+              ↓
+[Manager] → Assign Action Owner
+              ↓
+[Action Owner] → Submit Corrective Action
+              ↓
+[Manager] → Review → Close ✅
+```
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Node.js** v20.0 or higher
-- **npm** v10.0 or higher
-- **PostgreSQL** 16 instance running locally or on cloud
+- **Docker Desktop** v4.x or higher *(for Docker option)*
+- **Node.js** v20.0 or higher *(for local option)*
+- **npm** v10.0 or higher *(for local option)*
 
 ---
 
-### 1. Backend Setup
+### Option A: Docker (Recommended) 🐳
+
+The fastest way to get the full stack running with a single command.
+
+**Step 1 — Build the frontend locally** *(one-time, required before Docker)*
 
 ```bash
-# 1. Navigate to backend folder
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+> **Why?** Vite 8 uses `rolldown` (a Rust-based bundler) with platform-specific native binaries. Building locally avoids cross-platform binary issues inside Docker.
+
+**Step 2 — Start all services**
+
+```bash
+docker-compose up -d --build
+```
+
+**Step 3 — Run database migrations**
+
+```bash
+docker exec kairos_backend npx prisma migrate deploy
+docker exec kairos_backend npx prisma db seed
+```
+
+**Access the application:**
+
+| Service | URL |
+|---|---|
+| 🌐 Frontend | http://localhost |
+| ⚙️ Backend API | http://localhost:5000/api/v1 |
+| 🐘 PostgreSQL | localhost:5432 |
+
+**Useful Docker commands:**
+
+```bash
+# View running containers
+docker ps
+
+# View backend logs
+docker logs kairos_backend -f
+
+# Stop all containers
+docker-compose down
+
+# Rebuild after code changes (frontend must be rebuilt first)
+cd frontend && npm run build && cd ..
+docker-compose up -d --build
+```
+
+---
+
+### Option B: Local Development
+
+**Step 1 — Backend Setup**
+
+```bash
+# Navigate to backend folder
 cd backend
 
-# 2. Install dependencies
+# Install dependencies
 npm install
 
-# 3. Configure environment variables (Create .env file)
-# Edit .env and update DATABASE_URL with your PostgreSQL credentials:
-# DATABASE_URL="postgresql://postgres:password@localhost:5432/kairos_hims?schema=public"
+# Create .env file (see Environment Variables section)
+# Update DATABASE_URL with your local PostgreSQL credentials
 
-# 4. Run Prisma database migrations
+# Run database migrations
 npx prisma migrate deploy
 
-# 5. Generate Prisma Client
-npx prisma generate
+# Seed demo data
+npx prisma db seed
 
-# 6. Start backend development server (Runs on Port 5000)
+# Start backend dev server (Port 5000)
 npm run dev
 ```
 
----
-
-### 2. Frontend Setup
+**Step 2 — Frontend Setup**
 
 ```bash
-# 1. Open a new terminal and navigate to frontend folder
+# Open a new terminal
 cd frontend
 
-# 2. Install dependencies
+# Install dependencies
 npm install
 
-# 3. Start Vite frontend development server (Runs on Port 5173)
+# Start Vite dev server (Port 5173)
 npm run dev
 ```
 
-Application URLs:
+**Application URLs (Local):**
 
-- **Manager Dashboard**: `http://localhost:5173/`
-- **Staff Incident Submission Form**: `http://localhost:5173/submit-incident`
+| Page | URL |
+|---|---|
+| Manager Dashboard | http://localhost:5173/dashboard |
+| Incident Submission | http://localhost:5173/submit-incident |
+| Analytics Hub | http://localhost:5173/analytics |
 
 ---
 
 ## 🧪 Demo Credentials
 
-To test the application locally or after running `npx prisma db seed`, use the following pre-configured demo accounts:
+Use these after running `npx prisma db seed`:
 
-| Role                   | Email                       | Password      | Description                                                          |
-| :--------------------- | :-------------------------- | :------------ | :------------------------------------------------------------------- |
-| **Department Manager** | `manager@hospital.com`      | `password123` | Access to Manager Dashboard, approval workflow, assignment & closure |
-| **Frontline Staff**    | `staff@hospital.com`        | `password123` | Submit safety incident reports with evidence attachments             |
-| **Investigator**       | `investigator@hospital.com` | `password123` | Root Cause Analysis (RCA) & investigation tracking                   |
-| **Action Owner**       | `actionowner@hospital.com`  | `password123` | Implement and update status on assigned corrective actions           |
+| Role | Email | Password | Access |
+|---|---|---|---|
+| **Department Manager** | `manager@hospital.com` | `password123` | Dashboard, approval workflow, assignment & closure |
+| **Frontline Staff** | `staff@hospital.com` | `password123` | Submit incident reports with evidence attachments |
+| **Investigator** | `investigator@hospital.com` | `password123` | Root Cause Analysis (RCA) & investigation workspace |
+| **Action Owner** | `actionowner@hospital.com` | `password123` | Corrective action implementation & status updates |
 
 ---
 
 ## 🔐 Environment Variables
 
-Create a `.env` file in the `backend/` directory:
+Create a `.env` file inside the `backend/` directory:
 
 ```env
 # Server Configuration
@@ -268,82 +290,89 @@ DATABASE_URL="postgresql://postgres:rootpassword@localhost:5432/kairos_hims?sche
 JWT_SECRET=kairos_super_secret_key_2026
 JWT_EXPIRES_IN=7d
 
+# File Upload
+UPLOAD_DIR=uploads
+
 # AI Service Gateway (Phase 2)
 AI_SERVICE_URL=http://localhost:8001
 AI_API_KEY=internal_ai_key
 ```
 
+> ⚠️ **Never commit your `.env` file.** It is already listed in `.gitignore`.
+
 ---
 
-## 📡 API Documentation
+## 📡 API Reference
 
-Base Endpoint: `http://localhost:5000/api/v1/incidents` (or `http://localhost:5000/api/incidents`)
+**Base URL:** `http://localhost:5000/api/v1`
 
-| Method  | Route                       | Description                      | Payload / Parameters                                                                                                  |
-| :------ | :-------------------------- | :------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
-| `POST`  | `/`                         | Submit a new incident report     | `multipart/form-data`: `title`, `description`, `severity`, `category`, `location`, `departmentId`, `evidence` (files) |
-| `GET`   | `/department/:departmentId` | Fetch incidents for a department | URL Param: `departmentId` (number)                                                                                    |
-| `PATCH` | `/:id/accept`               | Accept an OPEN incident          | URL Param: `id`                                                                                                       |
-| `PATCH` | `/:id/reject`               | Reject an OPEN incident          | Body: `{ "reason": "Detailed rejection reason" }`                                                                     |
-| `PATCH` | `/:id/assign-investigator`  | Assign investigator              | Body: `{ "investigatorId": 3 }`                                                                                       |
-| `PATCH` | `/:id/assign-action-owner`  | Assign action owner              | Body: `{ "actionOwnerId": 4 }`                                                                                        |
-| `PATCH` | `/:id/review`               | Mark incident as UNDER_REVIEW    | URL Param: `id`                                                                                                       |
-| `PATCH` | `/:id/close`                | Close an incident                | URL Param: `id`                                                                                                       |
+All protected endpoints require: `Authorization: Bearer <JWT_TOKEN>`
+
+### Authentication
+
+| Method | Route | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/auth/login` | Login and receive JWT token | ❌ |
+| `POST` | `/auth/register` | Register a new user | ❌ |
+
+### Incidents
+
+| Method | Route | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/incidents` | Submit a new incident report | ✅ |
+| `GET` | `/incidents/department/:id` | Get incidents for a department | ✅ |
+| `GET` | `/incidents/:id` | Get a single incident by ID | ✅ |
+| `PATCH` | `/incidents/:id/accept` | Accept an OPEN incident | ✅ Manager |
+| `PATCH` | `/incidents/:id/reject` | Reject with reason | ✅ Manager |
+| `PATCH` | `/incidents/:id/assign-investigator` | Assign investigator | ✅ Manager |
+| `PATCH` | `/incidents/:id/assign-action-owner` | Assign action owner | ✅ Manager |
+| `PATCH` | `/incidents/:id/review` | Mark as UNDER_REVIEW | ✅ Manager |
+| `PATCH` | `/incidents/:id/close` | Close an incident | ✅ Manager |
+| `GET` | `/incidents/assigned` | Get investigator's incidents | ✅ Investigator |
+| `PATCH` | `/incidents/:id/root-cause` | Submit RCA findings | ✅ Investigator |
+| `PATCH` | `/incidents/:id/corrective-action` | Submit corrective action | ✅ Action Owner |
 
 ---
 
 ## 🗄️ Database Schema
 
-### Core Prisma Models:
+### Core Models
 
 ```prisma
 enum IncidentStatus {
-  OPEN
-  ACCEPTED
-  REJECTED
-  INVESTIGATING
-  PENDING_ACTION
-  UNDER_REVIEW
-  CLOSED
+  OPEN | ACCEPTED | REJECTED | INVESTIGATING |
+  PENDING_ACTION | UNDER_REVIEW | CLOSED
 }
 
-enum Severity {
-  LOW
-  MEDIUM
-  HIGH
-  CRITICAL
+enum Severity { LOW | MEDIUM | HIGH | CRITICAL }
+
+model User {
+  id         Int     @id @default(autoincrement())
+  name       String
+  email      String  @unique
+  password   String
+  role       Role    @default(STAFF)
+  department Department @relation(...)
 }
 
 model Incident {
-  id              Int                  @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   title           String
   description     String
   severity        Severity
   category        String
   location        String
-  status          IncidentStatus       @default(OPEN)
+  status          IncidentStatus @default(OPEN)
   rejectionReason String?
-  departmentId    Int
-  department      Department           @relation(fields: [departmentId], references: [id])
+  rootCause       String?
+  correctiveAction String?
   reporterId      Int
-  reporter        User                 @relation("Reporter", fields: [reporterId], references: [id])
   investigatorId  Int?
-  investigator    User?                @relation("Investigator", fields: [investigatorId], references: [id])
   actionOwnerId   Int?
-  actionOwner     User?                @relation("ActionOwner", fields: [actionOwnerId], references: [id])
+  departmentId    Int
   attachments     IncidentAttachment[]
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
-}
-
-model IncidentAttachment {
-  id         Int      @id @default(autoincrement())
-  fileName   String
-  filePath   String
-  fileType   String
-  incidentId Int
-  incident   Incident @relation(fields: [incidentId], references: [id])
-  uploadedAt DateTime @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }
 ```
 
@@ -351,12 +380,24 @@ model IncidentAttachment {
 
 ## 📈 Project Roadmap
 
-- [x] **Staff Incident Submission**: Incident creation form with file upload support & Zod validation
-- [x] **Manager Approval Workflow**: Accept/Reject, Investigator assignment, Action Owner assignment, Review & Close
-- [x] **Department Scoping**: Department-scoped querying and repository patterns
-- [x] **PostgreSQL & Prisma Integration**: Safe migrations and full client generation
-- [ ] **Authentication & RBAC**: JWT-based login, role guards, and middleware scoping
-- [ ] **AI Incident Analytics (Phase 2)**: Severity prediction & vector similarity search
+- [x] **Feature 1 — Staff Incident Submission**: Incident creation form with file upload support & Zod validation
+- [x] **Feature 2 — Manager Approval Workflow**: Accept/Reject, Investigator assignment, Action Owner assignment, Review & Close
+- [x] **Feature 3 — Department Scoping**: Department-scoped querying and clean repository pattern
+- [x] **Feature 4 — Investigator Workspace**: Root Cause Analysis (RCA) submission and investigation tracking
+- [x] **Feature 5 — Action Owner Workspace**: Corrective action implementation and progress updates
+- [x] **Feature 6 — Analytics Dashboard**: Severity breakdown, status distribution charts (Recharts)
+- [x] **Docker Compose Deployment**: Full containerized deployment (Frontend + Backend + PostgreSQL)
+- [x] **JWT Authentication & RBAC**: Secure login, role guards, and middleware protection
+- [ ] **Feature 7 — AI Incident Analytics**: Severity prediction & vector similarity search (Phase 2)
+- [ ] **Feature 8 — Lessons Library**: Knowledge base from past incidents
+
+---
+
+## 👥 Team
+
+| Name | Role |
+|---|---|
+| **Kithsara** | Technical Lead / Full-Stack Developer |
 
 ---
 
@@ -369,5 +410,7 @@ This project is licensed under the [MIT License](LICENSE).
 <div align="center">
 
 **KAIROS HIMS** — _Empowering safer hospital care through real-time incident intelligence._
+
+Made with ❤️ for better healthcare safety
 
 </div>
