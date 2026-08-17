@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Routes, Route } from 'react-router-dom';
 import { CreateIncident } from './pages/CreateIncident';
+import { IncidentsList } from './pages/IncidentsList';
 import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
 import InvestigatorDashboard from './pages/InvestigatorDashboard';

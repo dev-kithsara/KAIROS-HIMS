@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDepartmentIncidents } from '../hooks/useIncidents';
 import { useAuthContext } from '../context/AuthContext';
 import { getDepartmentName } from '../utils/constants';
+import toast from 'react-hot-toast';
 
 export const IncidentsList: React.FC = () => {
   const navigate = useNavigate();
@@ -34,6 +35,53 @@ export const IncidentsList: React.FC = () => {
       return matchesStatus && matchesSeverity && matchesSearch;
     });
   }, [incidents, searchTerm, statusFilter, severityFilter]);
+
+  // =========================================================================
+  // CSV EXPORT LOGIC
+  // =========================================================================
+  const formatCsvValue = (value: unknown) => {
+    const text = value === null || value === undefined ? '' : String(value);
+    return `"${text.replace(/"/g, '""')}"`;
+  };
+
+  const getExportDateStamp = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const csvExport = useMemo(() => {
+    const headers = ['ID', 'Title', 'Severity', 'Status', 'Category', 'Department', 'Reporter', 'Date'];
+
+    const csvRows = filteredIncidents.map((incident) => [
+      incident.id,
+      incident.title,
+      incident.severity,
+      incident.status,
+      incident.category,
+      getDepartmentName(incident.departmentId),
+      incident.reporter?.name || 'Unknown',
+      new Date(incident.createdAt).toLocaleDateString('en-GB'),
+    ]);
+
+    const csvContent = [
+      headers.map(formatCsvValue).join(','),
+      ...csvRows.map((row) => row.map(formatCsvValue).join(',')),
+    ].join('\r\n');
+
+    return {
+      href: `data:text/csv;charset=utf-8,${encodeURIComponent(`\uFEFF${csvContent}`)}`,
+      filename: `Incidents_Export_${getExportDateStamp()}.csv`,
+    };
+  }, [filteredIncidents]);
+
+  const handleExportCSV = () => {
+    toast.success(
+      filteredIncidents.length > 0 ? 'CSV exported successfully!' : 'CSV exported with headers only.'
+    );
+  };
 
   // Helper function to get badge colors for Status
   const getStatusBadge = (status: string) => {
@@ -102,8 +150,13 @@ export const IncidentsList: React.FC = () => {
           <p className="text-[#8FA8B4] text-sm mt-1">{filteredIncidents.length} total incidents</p>
         </div>
 
-        {/* Export Button (Placeholder for future feature) */}
-        <button className="px-4 py-2 bg-[#0E1720] border border-[#253642] text-[#EEF7FC] text-sm font-medium rounded-lg hover:bg-[#253642] transition-colors flex items-center gap-2">
+        {/* Export Button */}
+        <a
+          href={csvExport.href}
+          download={csvExport.filename}
+          onClick={handleExportCSV}
+          className="px-4 py-2 bg-[#0E1720] border border-[#253642] text-[#EEF7FC] text-sm font-medium rounded-lg hover:bg-[#253642] transition-colors flex items-center gap-2"
+        >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -113,7 +166,7 @@ export const IncidentsList: React.FC = () => {
             ></path>
           </svg>
           Export CSV
-        </button>
+        </a>
       </div>
 
       {/* Filters & Search Bar */}
