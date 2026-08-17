@@ -14,10 +14,29 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/MainLayout';
 import ActionOwnerIncidentDetails from './pages/ActionOwnerIncidentDetails';
 import MyIncidentsPage from "./pages/MyIncidentsPage";
+import { useAuthContext } from './context/AuthContext';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
 });
+
+// Route the root path ("/") to the correct home page based on the user's role
+// so that e.g. STAFF never renders the ManagerDashboard (which calls MANAGER-only APIs).
+const HomeRoute = () => {
+  const { user } = useAuthContext();
+
+  switch (user?.role) {
+    case 'INVESTIGATOR':
+      return <InvestigatorDashboard />;
+    case 'ACTION_OWNER':
+      return <ActionOwnerDashboard />;
+    case 'STAFF':
+      return <MyIncidentsPage />;
+    case 'MANAGER':
+    default:
+      return <ManagerDashboard />;
+  }
+};
 
 function App() {
   return (
@@ -35,7 +54,7 @@ function App() {
             }
           >
             <Route element={<MainLayout />}>
-              <Route path="/" element={<ManagerDashboard />} />
+              <Route path="/" element={<HomeRoute />} />
               <Route path="/incidents" element={<IncidentsList />} />
               <Route path="/incidents/:id" element={<IncidentDetails />} />
               <Route path="/my-incidents" element={<MyIncidentsPage />} />
