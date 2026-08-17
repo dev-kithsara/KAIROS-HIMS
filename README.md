@@ -49,51 +49,54 @@ The system enforces a strict **role-based access control (RBAC)** model across f
 
 ## ✨ Features
 
-| Feature | Status | Description |
-|---|---|---|
-| Staff Incident Submission | ✅ Live | Form with file uploads, Zod validation, JWT auth |
-| Manager Approval Workflow | ✅ Live | Accept / Reject / Assign / Close pipeline |
-| Investigator Workspace | ✅ Live | Root Cause Analysis (RCA) submission |
-| Action Owner Workspace | ✅ Live | Corrective action tracking |
-| Analytics Dashboard | ✅ Live | Severity breakdown, status distribution charts |
-| Docker Compose Deployment | ✅ Live | One-command full-stack deployment |
-| AI Incident Analytics | 🔄 Planned | Severity prediction & vector similarity search |
+| Feature                   | Status     | Description                                      |
+| ------------------------- | ---------- | ------------------------------------------------ |
+| Staff Incident Submission | ✅ Live    | Form with file uploads, Zod validation, JWT auth |
+| Manager Approval Workflow | ✅ Live    | Accept / Reject / Assign / Close pipeline        |
+| Investigator Workspace    | ✅ Live    | Root Cause Analysis (RCA) submission             |
+| Action Owner Workspace    | ✅ Live    | Corrective action tracking                       |
+| Analytics Dashboard       | ✅ Live    | Severity breakdown, status distribution charts   |
+| Docker Compose Deployment | ✅ Live    | One-command full-stack deployment                |
+| AI Incident Analytics     | 🔄 Planned | Severity prediction & vector similarity search   |
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-| Technology | Version | Purpose |
-|---|---|---|
-| React | 19 | UI framework |
-| TypeScript | 5.4 | Type safety |
-| Vite | 8 | Build tool (with Rolldown bundler) |
-| Tailwind CSS | 3.4 | Utility-first styling |
-| TanStack React Query | v5 | Server state management & caching |
-| React Router DOM | v7 | Client-side routing |
-| Recharts | 2.x | Analytics charts & graphs |
-| Lucide React | latest | Icon library |
+
+| Technology           | Version | Purpose                            |
+| -------------------- | ------- | ---------------------------------- |
+| React                | 19      | UI framework                       |
+| TypeScript           | 5.4     | Type safety                        |
+| Vite                 | 8       | Build tool (with Rolldown bundler) |
+| Tailwind CSS         | 3.4     | Utility-first styling              |
+| TanStack React Query | v5      | Server state management & caching  |
+| React Router DOM     | v7      | Client-side routing                |
+| Recharts             | 2.x     | Analytics charts & graphs          |
+| Lucide React         | latest  | Icon library                       |
 
 ### Backend
-| Technology | Version | Purpose |
-|---|---|---|
-| Node.js | 20+ | JavaScript runtime |
-| Express.js | 4.19 | HTTP framework |
-| TypeScript | 5.7 | Type safety |
-| Prisma ORM | 5.22 | Database access & migrations |
-| PostgreSQL | 16 | Primary relational database |
-| Multer | 1.4 | Multipart file upload handling |
-| Zod | 3.24 | Runtime schema validation |
-| JSON Web Tokens | latest | Stateless authentication |
-| bcryptjs | latest | Password hashing |
+
+| Technology      | Version | Purpose                        |
+| --------------- | ------- | ------------------------------ |
+| Node.js         | 20+     | JavaScript runtime             |
+| Express.js      | 4.19    | HTTP framework                 |
+| TypeScript      | 5.7     | Type safety                    |
+| Prisma ORM      | 5.22    | Database access & migrations   |
+| PostgreSQL      | 16      | Primary relational database    |
+| Multer          | 1.4     | Multipart file upload handling |
+| Zod             | 3.24    | Runtime schema validation      |
+| JSON Web Tokens | latest  | Stateless authentication       |
+| bcryptjs        | latest  | Password hashing               |
 
 ### Infrastructure
-| Technology | Purpose |
-|---|---|
-| Docker + Docker Compose | Container orchestration |
-| NGINX (Alpine) | Frontend static file serving |
-| node:20-alpine | Backend container base image |
+
+| Technology              | Purpose                      |
+| ----------------------- | ---------------------------- |
+| Docker + Docker Compose | Container orchestration      |
+| NGINX (Alpine)          | Frontend static file serving |
+| node:20-alpine          | Backend container base image |
 
 ---
 
@@ -153,9 +156,9 @@ The system enforces a strict **role-based access control (RBAC)** model across f
 
 ### Prerequisites
 
-- **Docker Desktop** v4.x or higher *(for Docker option)*
-- **Node.js** v20.0 or higher *(for local option)*
-- **npm** v10.0 or higher *(for local option)*
+- **Docker Desktop** v4.x or higher _(for Docker option)_
+- **Node.js** v20.0 or higher _(for local option)_
+- **npm** v10.0 or higher _(for local option)_
 
 ---
 
@@ -163,7 +166,7 @@ The system enforces a strict **role-based access control (RBAC)** model across f
 
 The fastest way to get the full stack running with a single command.
 
-**Step 1 — Build the frontend locally** *(one-time, required before Docker)*
+**Step 1 — Build the frontend locally** _(one-time, required before Docker)_
 
 ```bash
 cd frontend
@@ -189,11 +192,11 @@ docker exec kairos_backend npx prisma db seed
 
 **Access the application:**
 
-| Service | URL |
-|---|---|
-| 🌐 Frontend | http://localhost |
+| Service        | URL                          |
+| -------------- | ---------------------------- |
+| 🌐 Frontend    | http://localhost             |
 | ⚙️ Backend API | http://localhost:5000/api/v1 |
-| 🐘 PostgreSQL | localhost:5432 |
+| 🐘 PostgreSQL  | localhost:5432               |
 
 **Useful Docker commands:**
 
@@ -253,11 +256,11 @@ npm run dev
 
 **Application URLs (Local):**
 
-| Page | URL |
-|---|---|
-| Manager Dashboard | http://localhost:5173/dashboard |
+| Page                | URL                                   |
+| ------------------- | ------------------------------------- |
+| Manager Dashboard   | http://localhost:5173/dashboard       |
 | Incident Submission | http://localhost:5173/submit-incident |
-| Analytics Hub | http://localhost:5173/analytics |
+| Analytics Hub       | http://localhost:5173/analytics       |
 
 ---
 
@@ -265,12 +268,12 @@ npm run dev
 
 Use these after running `npx prisma db seed`:
 
-| Role | Email | Password | Access |
-|---|---|---|---|
-| **Department Manager** | `manager@hospital.com` | `password123` | Dashboard, approval workflow, assignment & closure |
-| **Frontline Staff** | `staff@hospital.com` | `password123` | Submit incident reports with evidence attachments |
-| **Investigator** | `investigator@hospital.com` | `password123` | Root Cause Analysis (RCA) & investigation workspace |
-| **Action Owner** | `actionowner@hospital.com` | `password123` | Corrective action implementation & status updates |
+| Role                   | Email                       | Password      | Access                                              |
+| ---------------------- | --------------------------- | ------------- | --------------------------------------------------- |
+| **Department Manager** | `manager@hospital.com`      | `password123` | Dashboard, approval workflow, assignment & closure  |
+| **Frontline Staff**    | `staff@hospital.com`        | `password123` | Submit incident reports with evidence attachments   |
+| **Investigator**       | `investigator@hospital.com` | `password123` | Root Cause Analysis (RCA) & investigation workspace |
+| **Action Owner**       | `actionowner@hospital.com`  | `password123` | Corrective action implementation & status updates   |
 
 ---
 
@@ -310,27 +313,27 @@ All protected endpoints require: `Authorization: Bearer <JWT_TOKEN>`
 
 ### Authentication
 
-| Method | Route | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/auth/login` | Login and receive JWT token | ❌ |
-| `POST` | `/auth/register` | Register a new user | ❌ |
+| Method | Route            | Description                 | Auth Required |
+| ------ | ---------------- | --------------------------- | ------------- |
+| `POST` | `/auth/login`    | Login and receive JWT token | ❌            |
+| `POST` | `/auth/register` | Register a new user         | ❌            |
 
 ### Incidents
 
-| Method | Route | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/incidents` | Submit a new incident report | ✅ |
-| `GET` | `/incidents/department/:id` | Get incidents for a department | ✅ |
-| `GET` | `/incidents/:id` | Get a single incident by ID | ✅ |
-| `PATCH` | `/incidents/:id/accept` | Accept an OPEN incident | ✅ Manager |
-| `PATCH` | `/incidents/:id/reject` | Reject with reason | ✅ Manager |
-| `PATCH` | `/incidents/:id/assign-investigator` | Assign investigator | ✅ Manager |
-| `PATCH` | `/incidents/:id/assign-action-owner` | Assign action owner | ✅ Manager |
-| `PATCH` | `/incidents/:id/review` | Mark as UNDER_REVIEW | ✅ Manager |
-| `PATCH` | `/incidents/:id/close` | Close an incident | ✅ Manager |
-| `GET` | `/incidents/assigned` | Get investigator's incidents | ✅ Investigator |
-| `PATCH` | `/incidents/:id/root-cause` | Submit RCA findings | ✅ Investigator |
-| `PATCH` | `/incidents/:id/corrective-action` | Submit corrective action | ✅ Action Owner |
+| Method  | Route                                | Description                    | Auth Required   |
+| ------- | ------------------------------------ | ------------------------------ | --------------- |
+| `POST`  | `/incidents`                         | Submit a new incident report   | ✅              |
+| `GET`   | `/incidents/department/:id`          | Get incidents for a department | ✅              |
+| `GET`   | `/incidents/:id`                     | Get a single incident by ID    | ✅              |
+| `PATCH` | `/incidents/:id/accept`              | Accept an OPEN incident        | ✅ Manager      |
+| `PATCH` | `/incidents/:id/reject`              | Reject with reason             | ✅ Manager      |
+| `PATCH` | `/incidents/:id/assign-investigator` | Assign investigator            | ✅ Manager      |
+| `PATCH` | `/incidents/:id/assign-action-owner` | Assign action owner            | ✅ Manager      |
+| `PATCH` | `/incidents/:id/review`              | Mark as UNDER_REVIEW           | ✅ Manager      |
+| `PATCH` | `/incidents/:id/close`               | Close an incident              | ✅ Manager      |
+| `GET`   | `/incidents/assigned`                | Get investigator's incidents   | ✅ Investigator |
+| `PATCH` | `/incidents/:id/root-cause`          | Submit RCA findings            | ✅ Investigator |
+| `PATCH` | `/incidents/:id/corrective-action`   | Submit corrective action       | ✅ Action Owner |
 
 ---
 
@@ -396,8 +399,7 @@ model Incident {
 ## 👥 Team
 
 | Name | Role |
-|---|---|
-| **Kithsara** | Technical Lead / Full-Stack Developer |
+| ---- | ---- |
 
 ---
 
