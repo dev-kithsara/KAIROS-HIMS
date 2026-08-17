@@ -63,3 +63,17 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+
+// 5. Department Analytics (Manager Dashboard)
+export interface DepartmentAnalytics {
+  summary: {
+    total: number;
+    open: number;
+    critical: number;
+    closed: number;
+  };
+  charts: {
+    byStatus: { name: string; value: number }[];
+    bySeverity: { name: string; value: number }[];
+  };
+}

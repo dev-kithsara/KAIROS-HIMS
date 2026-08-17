@@ -25,8 +25,8 @@ export const Sidebar: React.FC = () => {
         ];
       case 'STAFF':
         return [
-          { name: 'My Incidents', path: '/' },
-          { name: 'Report Incident', path: '/report' },
+          { name: 'My Incidents', path: '/my-incidents' },
+          { name: 'Report Incident', path: '/submit-incident' },
         ];
       case 'INVESTIGATOR':
         return [{ name: 'My Investigations', path: '/' }];

@@ -4,11 +4,9 @@
  * For now, we use a constant map based on the 5 core hospital pillars.
  */
 export const DEPARTMENT_MAP: Record<number, string> = {
-  1: 'Finance',
-  2: 'Human Resources',
-  3: 'Operations',
-  4: 'Clinical Services',
-  5: 'Information Technology',
+  // Matches the departments seeded in backend/prisma/seed.ts
+  1: 'IT Department',
+  2: 'Cardiology',
 };
 
 /**

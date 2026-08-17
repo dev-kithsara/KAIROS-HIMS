@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { CreateIncident } from './pages/CreateIncident';
 import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
+import { IncidentsList } from './pages/IncidentsList';
 import InvestigatorDashboard from './pages/InvestigatorDashboard';
 import InvestigatorWorkspace from './pages/InvestigatorWorkspace';
 import { Login } from './pages/Login';
@@ -12,6 +13,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/MainLayout';
 import ActionOwnerIncidentDetails from './pages/ActionOwnerIncidentDetails';
+import MyIncidentsPage from "./pages/MyIncidentsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
@@ -36,6 +38,7 @@ function App() {
               <Route path="/" element={<ManagerDashboard />} />
               <Route path="/incidents" element={<IncidentsList />} />
               <Route path="/incidents/:id" element={<IncidentDetails />} />
+              <Route path="/my-incidents" element={<MyIncidentsPage />} />
               <Route path="/submit-incident" element={<CreateIncident />} />
               <Route path="/investigator" element={<InvestigatorDashboard />} />
               <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />

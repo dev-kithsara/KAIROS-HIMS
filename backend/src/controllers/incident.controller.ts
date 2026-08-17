@@ -27,12 +27,14 @@ export const createIncident = catchAsync(async (req: Request, res: Response) => 
   if (!req.user) {
     throw new AppError('User not authenticated', 401);
   }
-  // 3. Override the reporterId with the securely verified ID from the JWT token.
+// 3. Override the reporterId with the securely verified ID from the JWT token.
   // This prevents malicious users from submitting incidents on behalf of others.
-  const incidentData = {
-    ...validatedData,
-    reporterId: req.user.id,
-  };
+  // departmentId comes from the form: the reporter selects the department
+  // the incident belongs to.
+ const incidentData = {
+  ...validatedData,
+  reporterId: req.user.id,
+};
 
   // 4. Call service with the securely validated data
   const incident = await createIncidentService(

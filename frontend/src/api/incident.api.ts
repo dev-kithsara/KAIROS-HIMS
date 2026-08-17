@@ -1,9 +1,17 @@
 import { apiClient } from './axios';
-import type { Incident, ApiResponse } from '../types/incident';
+import type { Incident, ApiResponse, DepartmentAnalytics, Department, User } from '../types/incident';
 
 // Base URL for the incidents API. 
 // Note: In Vite, we usually set up a proxy in vite.config.ts to forward '/api' to 'http://localhost:5000'
 const API_URL = '/incidents';
+
+/**
+ * Fetch the list of all departments
+ */
+export const getDepartments = async (): Promise<Department[]> => {
+  const response = await apiClient.get<ApiResponse<Department[]>>(`/departments`);
+  return response.data.data;
+};
 
 /**
  * Fetch all incidents for a specific department
@@ -11,6 +19,16 @@ const API_URL = '/incidents';
 export const getDepartmentIncidents = async (departmentId: number): Promise<Incident[]> => {
   // We use apiClient.get<ApiResponse<Incident[]>> to tell TypeScript what shape of data to expect back
   const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/department/${departmentId}`);
+  return response.data.data;
+};
+
+/**
+ * Fetch analytics statistics for a specific department
+ */
+export const getDepartmentAnalytics = async (departmentId: number): Promise<DepartmentAnalytics> => {
+  const response = await apiClient.get<ApiResponse<DepartmentAnalytics>>(
+    `/analytics/department/${departmentId}`
+  );
   return response.data.data;
 };
 
@@ -102,6 +120,14 @@ export const getIncidentById = async (id: number): Promise<Incident> => {
     `${API_URL}/${id}`
   );
 
+  return response.data.data;
+};
+
+/**
+ * Fetch all users with a given role (e.g. INVESTIGATOR, ACTION_OWNER)
+ */
+export const getUsersByRole = async (role: string): Promise<User[]> => {
+  const response = await apiClient.get<ApiResponse<User[]>>(`/users/role/${role}`);
   return response.data.data;
 };
 
