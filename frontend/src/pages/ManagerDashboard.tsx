@@ -163,6 +163,7 @@ export const ManagerDashboard: React.FC = () => {
 
         <div className="flex items-center gap-3 shrink-0">
           <button
+            type="button"
             onClick={() => navigate('/incidents')}
             className="px-5 py-3 text-sm font-bold rounded-xl text-white transition-all shadow-md cursor-pointer"
             style={{ backgroundColor: ROYAL }}
@@ -188,15 +189,12 @@ export const ManagerDashboard: React.FC = () => {
           >
             <div>
               <p
-                className="text-xs font-bold uppercase tracking-wider"
+                className="text-xs font-bold uppercase tracking-wider mb-2"
                 style={{ color: TEXT_MUT }}
               >
                 {card.label}
               </p>
-              <h3
-                className="text-4xl font-extrabold mt-2.5 leading-none"
-                style={{ color: TEXT_PRI }}
-              >
+              <h3 className="text-3xl font-extrabold" style={{ color: card.iconColor }}>
                 {card.value}
               </h3>
               <p className="text-sm font-medium mt-2" style={{ color: TEXT_MUT }}>
@@ -204,7 +202,7 @@ export const ManagerDashboard: React.FC = () => {
               </p>
             </div>
             <div
-              className="p-3.5 rounded-2xl shrink-0"
+              className="p-3 rounded-xl flex items-center justify-center shrink-0"
               style={{ backgroundColor: card.iconBg }}
             >
               <svg
@@ -220,32 +218,32 @@ export const ManagerDashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* ── Charts Grid ────────────────────────────────────────────────── */}
+      {/* ── Charts Section ────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pie Chart: Status Distribution */}
+        {/* Incident Status Breakdown (Donut Chart) */}
         <div
-          className="rounded-2xl p-7 flex flex-col justify-between"
+          className="rounded-2xl p-6 flex flex-col justify-between"
           style={{
             backgroundColor: SURFACE,
             border: `1.5px solid ${BORDER}`,
             boxShadow: '0 2px 8px rgba(30,43,94,0.06)',
           }}
         >
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3
-                className="text-lg font-bold tracking-tight"
-                style={{ color: TEXT_PRI }}
-              >
-                Incident Status Distribution
-              </h3>
-              <p className="text-sm mt-0.5" style={{ color: TEXT_MUT }}>
-                Breakdown of active vs resolved cases
-              </p>
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold" style={{ color: TEXT_PRI }}>
+                Incident Lifecycle Breakdown
+              </h2>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                Department Total: {stats.summary.total}
+              </span>
             </div>
+            <p className="text-xs -mt-2 mb-4" style={{ color: TEXT_MUT }}>
+              Distribution of incidents across workflow stages
+            </p>
           </div>
 
-          <div className="h-72 my-2">
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -257,8 +255,8 @@ export const ManagerDashboard: React.FC = () => {
                   paddingAngle={4}
                   dataKey="value"
                 >
-                  {stats.charts.byStatus.map((entry: { name: string; value: number }, index: number) => (
-                    <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name] || TRUE_BLUE} />
+                  {stats.charts.byStatus.map((entry: { name: string; value: number }) => (
+                    <Cell key={entry.name} fill={STATUS_COLORS[entry.name] || TRUE_BLUE} />
                   ))}
                 </Pie>
                 <RechartsTooltip
@@ -279,54 +277,57 @@ export const ManagerDashboard: React.FC = () => {
 
           {/* Legend */}
           <div className="flex flex-wrap justify-center gap-3.5 mt-4 pt-3 border-t border-slate-200/80">
-            {stats.charts.byStatus.map((entry: { name: string; value: number }, index: number) => (
-              <div key={index} className="flex items-center gap-2 bg-slate-100/60 px-3 py-1.5 rounded-lg">
+            {stats.charts.byStatus.map((entry: { name: string; value: number }) => (
+              <div key={entry.name} className="flex items-center gap-2 bg-slate-100/60 px-3 py-1.5 rounded-lg">
                 <div
                   className="w-3 h-3 rounded-full shrink-0"
                   style={{ backgroundColor: STATUS_COLORS[entry.name] || TRUE_BLUE }}
                 />
                 <span className="text-xs font-semibold" style={{ color: TEXT_PRI }}>
-                  {entry.name.replace('_', ' ')}: <strong className="text-slate-900">{entry.value}</strong>
+                  {entry.name.replaceAll('_', ' ')}: <strong className="text-slate-900">{entry.value}</strong>
                 </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Bar Chart: Severity Breakdown */}
+        {/* Incidents by Severity (Bar Chart) */}
         <div
-          className="rounded-2xl p-7 flex flex-col justify-between"
+          className="rounded-2xl p-6 flex flex-col justify-between"
           style={{
             backgroundColor: SURFACE,
             border: `1.5px solid ${BORDER}`,
             boxShadow: '0 2px 8px rgba(30,43,94,0.06)',
           }}
         >
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3
-                className="text-lg font-bold tracking-tight"
-                style={{ color: TEXT_PRI }}
-              >
-                Severity Level Breakdown
-              </h3>
-              <p className="text-sm mt-0.5" style={{ color: TEXT_MUT }}>
-                Incident count classified by clinical risk severity
-              </p>
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold" style={{ color: TEXT_PRI }}>
+                Severity Risk Profile
+              </h2>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">
+                Critical Priority: {stats.summary.critical}
+              </span>
             </div>
+            <p className="text-xs -mt-2 mb-4" style={{ color: TEXT_MUT }}>
+              Categorization by patient and operational impact severity
+            </p>
           </div>
 
-          <div className="h-72 my-2">
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.charts.bySeverity} barCategoryGap="30%">
-                <CartesianGrid strokeDasharray="3 3" stroke={BORDER} vertical={false} />
+              <BarChart
+                data={stats.charts.bySeverity}
+                margin={{ top: 20, right: 20, left: -20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                 <XAxis
                   dataKey="name"
                   stroke={TEXT_MUT}
                   fontSize={12}
                   fontWeight={600}
                   tickLine={false}
-                  axisLine={false}
+                  axisLine={{ stroke: BORDER }}
                 />
                 <YAxis
                   stroke={TEXT_MUT}
@@ -349,8 +350,8 @@ export const ManagerDashboard: React.FC = () => {
                   cursor={{ fill: '#EBF0FA', opacity: 0.8 }}
                 />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                  {stats.charts.bySeverity.map((entry: { name: string; value: number }, index: number) => (
-                    <Cell key={`cell-${index}`} fill={SEVERITY_COLORS[entry.name] || TRUE_BLUE} />
+                  {stats.charts.bySeverity.map((entry: { name: string; value: number }) => (
+                    <Cell key={entry.name} fill={SEVERITY_COLORS[entry.name] || TRUE_BLUE} />
                   ))}
                 </Bar>
               </BarChart>
@@ -359,8 +360,8 @@ export const ManagerDashboard: React.FC = () => {
 
           {/* Legend */}
           <div className="flex flex-wrap justify-center gap-3.5 mt-4 pt-3 border-t border-slate-200/80">
-            {stats.charts.bySeverity.map((entry: { name: string; value: number }, index: number) => (
-              <div key={index} className="flex items-center gap-2 bg-slate-100/60 px-3 py-1.5 rounded-lg">
+            {stats.charts.bySeverity.map((entry: { name: string; value: number }) => (
+              <div key={entry.name} className="flex items-center gap-2 bg-slate-100/60 px-3 py-1.5 rounded-lg">
                 <div
                   className="w-3 h-3 rounded-full shrink-0"
                   style={{ backgroundColor: SEVERITY_COLORS[entry.name] || TRUE_BLUE }}
@@ -376,9 +377,10 @@ export const ManagerDashboard: React.FC = () => {
 
       {/* ── Quick Action Shortcuts & Department Safety Overview ───────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div
+        <button
+          type="button"
           onClick={() => navigate('/incidents')}
-          className="rounded-2xl p-6 cursor-pointer transition-all hover:-translate-y-0.5 group"
+          className="rounded-2xl p-6 cursor-pointer transition-all hover:-translate-y-0.5 group text-left w-full"
           style={{
             backgroundColor: SURFACE,
             border: `1.5px solid ${BORDER}`,
@@ -400,11 +402,12 @@ export const ManagerDashboard: React.FC = () => {
               </p>
             </div>
           </div>
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           onClick={() => navigate('/team')}
-          className="rounded-2xl p-6 cursor-pointer transition-all hover:-translate-y-0.5 group"
+          className="rounded-2xl p-6 cursor-pointer transition-all hover:-translate-y-0.5 group text-left w-full"
           style={{
             backgroundColor: SURFACE,
             border: `1.5px solid ${BORDER}`,
@@ -426,7 +429,7 @@ export const ManagerDashboard: React.FC = () => {
               </p>
             </div>
           </div>
-        </div>
+        </button>
 
         <div
           className="rounded-2xl p-6"

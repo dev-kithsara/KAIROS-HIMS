@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useActionOwnerIncidents, useSubmitCorrectiveAction, } from '../hooks/useIncidents';
@@ -182,18 +182,20 @@ export const ActionOwnerDashboard: React.FC = () => {
           {filteredIncidents.map((incident) => (
             <div
               key={incident.id}
-              onClick={() => navigate(`/action-owner/incidents/${incident.id}`)}
-              className="rounded-2xl p-5 transition-all duration-200 cursor-pointer"
-              style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(17,17,132,0.12)'; (e.currentTarget as HTMLElement).style.borderColor = '#C0CBE0'; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 6px rgba(17,17,132,0.06)'; (e.currentTarget as HTMLElement).style.borderColor = BORDER; }}
+              className="rounded-2xl p-5 transition-all duration-200"
+              style={{ backgroundColor: SURFACE, border: `1.5px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
             >
               {/* Incident Header */}
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-bold leading-snug" style={{ color: TEXT }}>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/action-owner/incidents/${incident.id}`)}
+                    className="text-sm font-bold leading-snug text-left hover:underline cursor-pointer"
+                    style={{ color: TEXT }}
+                  >
                     {incident.title}
-                  </h2>
+                  </button>
                   <p className="text-xs mt-0.5" style={{ color: FAINT }}>
                     Incident #{incident.id}
                   </p>
@@ -202,7 +204,7 @@ export const ActionOwnerDashboard: React.FC = () => {
                   className="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider shrink-0"
                   style={{ backgroundColor: '#EBF0FA', color: NAVY, border: '1px solid #C0CBE0' }}
                 >
-                  {incident.status.replace('_', ' ')}
+                  {incident.status.replaceAll('_', ' ')}
                 </span>
               </div>
 
@@ -243,11 +245,12 @@ export const ActionOwnerDashboard: React.FC = () => {
 
               {/* Corrective Action Form */}
               {selectedIncidentId === incident.id ? (
-                <div className="mt-4" onClick={(e) => e.stopPropagation()}>
-                  <label className="block text-xs font-semibold mb-2" style={{ color: TEXT }}>
+                <div className="mt-4">
+                  <label htmlFor={`corrective-action-${incident.id}`} className="block text-xs font-semibold mb-2" style={{ color: TEXT }}>
                     Corrective Action
                   </label>
                   <textarea
+                    id={`corrective-action-${incident.id}`}
                     value={correctiveAction}
                     onChange={(e) => setCorrectiveAction(e.target.value)}
                     placeholder="Describe the corrective action that will be taken..."
@@ -267,16 +270,18 @@ export const ActionOwnerDashboard: React.FC = () => {
                   </div>
                   <div className="flex gap-2 mt-3">
                     <button
+                      type="button"
                       onClick={handleSubmit}
                       disabled={submitCorrectiveAction.isPending}
-                      className="flex-1 px-4 py-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 text-white"
+                      className="flex-1 px-4 py-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 text-white cursor-pointer"
                       style={{ backgroundColor: NAVY }}
                     >
                       {submitCorrectiveAction.isPending ? 'Submitting...' : 'Submit Action'}
                     </button>
                     <button
+                      type="button"
                       onClick={() => { setSelectedIncidentId(null); setCorrectiveAction(''); }}
-                      className="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                      className="px-4 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer"
                       style={{ backgroundColor: BG_PAGE, color: MUTED, border: `1px solid ${BORDER}` }}
                     >
                       Cancel
@@ -285,8 +290,9 @@ export const ActionOwnerDashboard: React.FC = () => {
                 </div>
               ) : (
                 <button
-                  onClick={(e) => { e.stopPropagation(); setSelectedIncidentId(incident.id); setCorrectiveAction(''); }}
-                  className="w-full mt-4 px-4 py-2 rounded-xl text-sm font-semibold transition-all text-white"
+                  type="button"
+                  onClick={() => { setSelectedIncidentId(incident.id); setCorrectiveAction(''); }}
+                  className="w-full mt-4 px-4 py-2 rounded-xl text-sm font-semibold transition-all text-white cursor-pointer"
                   style={{ backgroundColor: NAVY, boxShadow: '0 2px 8px rgba(17,17,132,0.18)' }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = COBALT; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = NAVY; }}

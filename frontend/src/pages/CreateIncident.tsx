@@ -317,24 +317,27 @@ export const CreateIncident: React.FC = () => {
           <div className="space-y-5">
             {/* Severity Cards */}
             <div>
-              <label className="block text-xs font-semibold mb-2" style={{ color: TEXT }}>
+              <p id="severity-label" className="block text-xs font-semibold mb-2" style={{ color: TEXT }}>
                 Severity Rating <span style={{ color: DANGER }}>*</span>
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              </p>
+              <div role="radiogroup" aria-labelledby="severity-label" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 {SEVERITY_LEVELS.map((level) => {
                   const isSelected = severity === level.id;
                   return (
-                    <div
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
                       key={level.id}
                       onClick={() => setSeverity(level.id as any)}
-                      className="p-3.5 border rounded-xl cursor-pointer transition-all flex flex-col justify-between"
+                      className="p-3.5 border rounded-xl cursor-pointer transition-all flex flex-col justify-between text-left"
                       style={{
                         borderColor: isSelected ? level.color : BORDER,
                         backgroundColor: isSelected ? `${level.color}14` : '#FFFFFF',
                         boxShadow: isSelected ? `0 0 0 1.5px ${level.color} inset` : 'none',
                       }}
                     >
-                      <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center justify-between mb-1.5 w-full">
                         <span
                           className="text-xs font-bold"
                           style={{ color: isSelected ? level.color : TEXT }}
@@ -349,7 +352,7 @@ export const CreateIncident: React.FC = () => {
                       <p className="text-[11px] leading-snug" style={{ color: MUTED }}>
                         {level.desc}
                       </p>
-                    </div>
+                    </button>
                   );
                 })}
               </div>

@@ -121,6 +121,7 @@ export const IncidentDetails: React.FC = () => {
           Incident not found
         </h2>
         <button
+          type="button"
           onClick={() => navigate('/')}
           className="text-sm font-semibold hover:underline"
           style={{ color: ACCENT }}
@@ -149,6 +150,7 @@ export const IncidentDetails: React.FC = () => {
       >
         {/* Back */}
         <button
+          type="button"
           onClick={() => navigate('/')}
           className="mb-6 text-sm font-semibold flex items-center gap-1 hover:underline cursor-pointer"
           style={{ color: ACCENT }}
@@ -306,7 +308,8 @@ export const IncidentDetails: React.FC = () => {
                   >
                     <span>{file.fileName}</span>
                     <button
-                      className="font-semibold hover:underline text-xs"
+                      type="button"
+                      className="font-semibold hover:underline text-xs cursor-pointer"
                       style={{ color: ACCENT }}
                     >
                       View

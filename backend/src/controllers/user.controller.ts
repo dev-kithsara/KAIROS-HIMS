@@ -74,7 +74,7 @@ export const changeUserRole = catchAsync(async (req: Request, res: Response) => 
   });
 
   const { newRole } = validated.body;
-  const targetUserId = parseInt(validated.params.id, 10);
+  const targetUserId = Number.parseInt(validated.params.id, 10);
 
   // 2. Call the service layer with the Manager's details and the Target User's details
   const updatedUser = await userService.changeUserRole(

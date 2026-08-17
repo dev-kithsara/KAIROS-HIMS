@@ -57,6 +57,13 @@ export const TeamManagement: React.FC = () => {
     }
   };
 
+  const getAvatarColor = (role?: string) => {
+    if (role === 'INVESTIGATOR') return '#7C3AED';
+    if (role === 'ACTION_OWNER') return '#D97706';
+    if (role === 'MANAGER') return NAVY;
+    return '#475569';
+  };
+
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'INVESTIGATOR':
@@ -66,7 +73,7 @@ export const TeamManagement: React.FC = () => {
             style={{ backgroundColor: '#F5F3FF', color: '#6D28D9', border: '1px solid #DDD6FE' }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
-            Investigator
+            <span>Investigator</span>
           </span>
         );
       case 'ACTION_OWNER':
@@ -76,7 +83,7 @@ export const TeamManagement: React.FC = () => {
             style={{ backgroundColor: '#FFFBEB', color: '#B45309', border: '1px solid #FDE68A' }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-            Action Owner
+            <span>Action Owner</span>
           </span>
         );
       case 'MANAGER':
@@ -86,7 +93,7 @@ export const TeamManagement: React.FC = () => {
             style={{ backgroundColor: '#EBF0FA', color: NAVY, border: '1px solid #C0CBE0' }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-blue-900" />
-            Manager
+            <span>Manager</span>
           </span>
         );
       default:
@@ -96,7 +103,7 @@ export const TeamManagement: React.FC = () => {
             style={{ backgroundColor: '#F1F5F9', color: '#475569', border: '1px solid #CBD5E1' }}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-            Staff Member
+            <span>Staff Member</span>
           </span>
         );
     }
@@ -140,9 +147,10 @@ export const TeamManagement: React.FC = () => {
 
       {/* ── Overview Metrics Grid ────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div
+        <button
+          type="button"
           onClick={() => setActiveTab('ALL')}
-          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 text-left w-full ${
             activeTab === 'ALL' ? 'border-[#1E2B5E] shadow-sm' : 'border-transparent'
           }`}
           style={{ backgroundColor: SURFACE, boxShadow: '0 2px 8px rgba(30,43,94,0.06)' }}
@@ -165,11 +173,12 @@ export const TeamManagement: React.FC = () => {
               </svg>
             </div>
           </div>
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           onClick={() => setActiveTab('INVESTIGATOR')}
-          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 text-left w-full ${
             activeTab === 'INVESTIGATOR' ? 'border-purple-600 shadow-sm' : 'border-transparent'
           }`}
           style={{ backgroundColor: SURFACE, boxShadow: '0 2px 8px rgba(30,43,94,0.06)' }}
@@ -192,11 +201,12 @@ export const TeamManagement: React.FC = () => {
               </svg>
             </div>
           </div>
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           onClick={() => setActiveTab('ACTION_OWNER')}
-          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 text-left w-full ${
             activeTab === 'ACTION_OWNER' ? 'border-amber-600 shadow-sm' : 'border-transparent'
           }`}
           style={{ backgroundColor: SURFACE, boxShadow: '0 2px 8px rgba(30,43,94,0.06)' }}
@@ -219,11 +229,12 @@ export const TeamManagement: React.FC = () => {
               </svg>
             </div>
           </div>
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           onClick={() => setActiveTab('STAFF')}
-          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 ${
+          className={`rounded-2xl p-5 cursor-pointer transition-all border-2 text-left w-full ${
             activeTab === 'STAFF' ? 'border-slate-600 shadow-sm' : 'border-transparent'
           }`}
           style={{ backgroundColor: SURFACE, boxShadow: '0 2px 8px rgba(30,43,94,0.06)' }}
@@ -246,7 +257,7 @@ export const TeamManagement: React.FC = () => {
               </svg>
             </div>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* ── Filter Tabs & Search Bar ─────────────────────────────────────── */}
@@ -263,6 +274,7 @@ export const TeamManagement: React.FC = () => {
             { id: 'STAFF', label: 'General Staff', count: generalStaff.length },
           ].map((tab) => (
             <button
+              type="button"
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
@@ -345,14 +357,7 @@ export const TeamManagement: React.FC = () => {
                           <div
                             className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-extrabold text-white shrink-0 shadow-xs"
                             style={{
-                              backgroundColor:
-                                user.role === 'INVESTIGATOR'
-                                  ? '#7C3AED'
-                                  : user.role === 'ACTION_OWNER'
-                                  ? '#D97706'
-                                  : user.role === 'MANAGER'
-                                  ? NAVY
-                                  : '#475569',
+                              backgroundColor: getAvatarColor(user.role),
                             }}
                           >
                             {user.name?.[0]?.toUpperCase() ?? 'U'}

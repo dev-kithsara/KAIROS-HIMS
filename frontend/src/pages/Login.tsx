@@ -1,4 +1,4 @@
-﻿// frontend/src/pages/Login.tsx
+// frontend/src/pages/Login.tsx
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -133,10 +133,11 @@ export const Login: React.FC = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold mb-1.5" style={{ color: TEXT }}>
+            <label htmlFor="login-email" className="block text-sm font-semibold mb-1.5" style={{ color: TEXT }}>
               Email Address
             </label>
             <input
+              id="login-email"
               type="email"
               required
               value={email}
@@ -156,10 +157,11 @@ export const Login: React.FC = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-semibold mb-1.5" style={{ color: TEXT }}>
+            <label htmlFor="login-password" className="block text-sm font-semibold mb-1.5" style={{ color: TEXT }}>
               Password
             </label>
             <input
+              id="login-password"
               type="password"
               required
               value={password}

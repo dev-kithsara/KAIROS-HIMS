@@ -202,10 +202,11 @@ const InvestigatorWorkspace: React.FC = () => {
         <h2 className="text-base font-bold mb-5" style={{ color: TEXT }}>Root Cause Analysis</h2>
 
         <div className="mb-5">
-          <label className="block text-sm font-semibold mb-2" style={{ color: TEXT }}>
+          <label htmlFor="root-cause-category-select" className="block text-sm font-semibold mb-2" style={{ color: TEXT }}>
             Root Cause Category
           </label>
           <select
+            id="root-cause-category-select"
             value={rootCauseCategory}
             onChange={(e) => setRootCauseCategory(e.target.value)}
             style={inputStyle}
@@ -220,10 +221,11 @@ const InvestigatorWorkspace: React.FC = () => {
         </div>
 
         <div className="mb-5">
-          <label className="block text-sm font-semibold mb-2" style={{ color: TEXT }}>
+          <label htmlFor="root-cause-findings-textarea" className="block text-sm font-semibold mb-2" style={{ color: TEXT }}>
             Detailed Findings
           </label>
           <textarea
+            id="root-cause-findings-textarea"
             value={rootCause}
             onChange={(e) => setRootCause(e.target.value)}
             rows={5}
@@ -236,6 +238,7 @@ const InvestigatorWorkspace: React.FC = () => {
         </div>
 
         <button
+          type="button"
           onClick={handleRootCauseSubmit}
           disabled={loading}
           className="rounded-xl px-6 py-3 text-sm font-bold text-white transition-all disabled:opacity-50 cursor-pointer"

@@ -25,7 +25,7 @@ export const IncidentsList: React.FC = () => {
     const matchesSearch =
       incident.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       incident.id.toString().includes(searchTerm) ||
-      (incident.reporter?.name && incident.reporter.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      Boolean(incident.reporter?.name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesStatus = statusFilter === 'ALL' || incident.status === statusFilter;
     const matchesSeverity = severityFilter === 'ALL' || incident.severity === severityFilter;
@@ -39,12 +39,12 @@ export const IncidentsList: React.FC = () => {
     const headers = ['ID', 'Title', 'Severity', 'Status', 'Category', 'Location', 'Reporter', 'Created At'];
     const rows = filteredIncidents.map((i: Incident) => [
       i.id,
-      `"${i.title.replace(/"/g, '""')}"`,
+      `"${i.title.replaceAll('"', '""')}"`,
       i.severity,
       i.status,
       i.category,
-      `"${i.location.replace(/"/g, '""')}"`,
-      `"${(i.reporter?.name || 'Unknown').replace(/"/g, '""')}"`,
+      `"${i.location.replaceAll('"', '""')}"`,
+      `"${(i.reporter?.name || 'Unknown').replaceAll('"', '""')}"`,
       new Date(i.createdAt).toISOString(),
     ]);
     return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');

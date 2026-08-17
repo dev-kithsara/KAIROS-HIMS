@@ -94,6 +94,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
           style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
         >
           <button
+            type="button"
             onClick={() => navigate('/action-owner')}
             className="text-sm mb-4 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
             style={{ color: ROYAL }}
@@ -115,7 +116,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
               className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider w-fit"
               style={{ backgroundColor: '#EBF0FA', color: NAVY, border: '1px solid #C0CBE0' }}
             >
-              {incident.status.replace(/_/g, ' ')}
+              {incident.status.replaceAll('_', ' ')}
             </span>
           </div>
         </div>
@@ -123,7 +124,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
         {/* Incident Details */}
         <div
           className="p-6 rounded-2xl"
-          style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
+          style={{ backgroundColor: SURFACE, border: `1.5px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
         >
           <h2 className="text-base font-bold mb-5" style={{ color: TEXT }}>Incident Details</h2>
 
@@ -154,7 +155,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
         {/* Investigator Findings */}
         <div
           className="p-6 rounded-2xl"
-          style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
+          style={{ backgroundColor: SURFACE, border: `1.5px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
         >
           <h2 className="text-base font-bold mb-5" style={{ color: TEXT }}>Investigator Findings</h2>
 
@@ -183,14 +184,15 @@ const ActionOwnerIncidentDetails: React.FC = () => {
         {/* Corrective Action */}
         <div
           className="p-6 rounded-2xl"
-          style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
+          style={{ backgroundColor: SURFACE, border: `1.5px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
         >
           <h2 className="text-base font-bold" style={{ color: TEXT }}>Corrective Action</h2>
-          <p className="text-sm mt-1 mb-4" style={{ color: MUTED }}>
+          <label htmlFor="action-owner-corrective-action" className="block text-sm mt-1 mb-4" style={{ color: MUTED }}>
             Describe the corrective action that will be taken to prevent this incident from happening again.
-          </p>
+          </label>
 
           <textarea
+            id="action-owner-corrective-action"
             value={correctiveAction}
             onChange={(e) => setCorrectiveAction(e.target.value)}
             placeholder="Enter corrective action details..."
@@ -213,6 +215,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
 
           <div className="flex gap-3 mt-5">
             <button
+              type="button"
               onClick={handleSubmit}
               disabled={submitCorrectiveAction.isPending || correctiveAction.trim().length < 20}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 text-white cursor-pointer"
@@ -222,6 +225,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
             </button>
 
             <button
+              type="button"
               onClick={() => navigate('/action-owner')}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer"
               style={{ backgroundColor: BG_PAGE, color: MUTED, border: `1px solid ${BORDER}` }}
