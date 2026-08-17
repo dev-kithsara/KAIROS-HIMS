@@ -21,6 +21,8 @@ exports.createIncident = (0, catchAsync_1.catchAsync)(async (req, res) => {
     }
     // 3. Override the reporterId with the securely verified ID from the JWT token.
     // This prevents malicious users from submitting incidents on behalf of others.
+    // departmentId comes from the form: the reporter selects the department
+    // the incident belongs to.
     const incidentData = {
         ...validatedData,
         reporterId: req.user.id,

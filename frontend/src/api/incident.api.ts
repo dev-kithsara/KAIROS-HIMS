@@ -1,7 +1,13 @@
 import { apiClient } from './axios';
-import type { Incident, ApiResponse, DepartmentAnalytics, Department, User } from '../types/incident';
+import type {
+  Incident,
+  ApiResponse,
+  DepartmentAnalytics,
+  Department,
+  User,
+} from '../types/incident';
 
-// Base URL for the incidents API. 
+// Base URL for the incidents API.
 // Note: In Vite, we usually set up a proxy in vite.config.ts to forward '/api' to 'http://localhost:5000'
 const API_URL = '/incidents';
 
@@ -17,15 +23,18 @@ export const getDepartments = async (): Promise<Department[]> => {
  * Fetch all incidents for a specific department
  */
 export const getDepartmentIncidents = async (departmentId: number): Promise<Incident[]> => {
-  // We use apiClient.get<ApiResponse<Incident[]>> to tell TypeScript what shape of data to expect back
-  const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/department/${departmentId}`);
+  const response = await apiClient.get<ApiResponse<Incident[]>>(
+    `${API_URL}/department/${departmentId}`
+  );
   return response.data.data;
 };
 
 /**
  * Fetch analytics statistics for a specific department
  */
-export const getDepartmentAnalytics = async (departmentId: number): Promise<DepartmentAnalytics> => {
+export const getDepartmentAnalytics = async (
+  departmentId: number
+): Promise<DepartmentAnalytics> => {
   const response = await apiClient.get<ApiResponse<DepartmentAnalytics>>(
     `/analytics/department/${departmentId}`
   );
@@ -44,8 +53,9 @@ export const acceptIncident = async (id: number): Promise<Incident> => {
  * Reject an OPEN incident with a reason
  */
 export const rejectIncident = async (id: number, reason: string): Promise<Incident> => {
-  // The second argument in apiClient.patch is the Request Body
-  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/reject`, { reason });
+  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/reject`, {
+    reason,
+  });
   return response.data.data;
 };
 
@@ -53,7 +63,10 @@ export const rejectIncident = async (id: number, reason: string): Promise<Incide
  * Assign an investigator to an ACCEPTED incident
  */
 export const assignInvestigator = async (id: number, investigatorId: number): Promise<Incident> => {
-  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/assign-investigator`, { investigatorId });
+  const response = await apiClient.patch<ApiResponse<Incident>>(
+    `${API_URL}/${id}/assign-investigator`,
+    { investigatorId }
+  );
   return response.data.data;
 };
 
@@ -61,7 +74,10 @@ export const assignInvestigator = async (id: number, investigatorId: number): Pr
  * Assign an action owner to an INVESTIGATING incident
  */
 export const assignActionOwner = async (id: number, actionOwnerId: number): Promise<Incident> => {
-  const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/assign-action-owner`, { actionOwnerId });
+  const response = await apiClient.patch<ApiResponse<Incident>>(
+    `${API_URL}/${id}/assign-action-owner`,
+    { actionOwnerId }
+  );
   return response.data.data;
 };
 
@@ -99,27 +115,19 @@ export const createIncident = async (formData: FormData): Promise<Incident> => {
 
 // Get incidents assigned to the investigator
 export const getAssignedIncidents = async (): Promise<Incident[]> => {
-  const response = await apiClient.get<ApiResponse<Incident[]>>(
-    `${API_URL}/investigator`
-  );
-
+  const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/investigator`);
   return response.data.data;
 };
+
 // Feature 5 - Get incidents assigned to the logged-in Action Owner
 export const getActionOwnerIncidents = async (): Promise<Incident[]> => {
-  const response = await apiClient.get<ApiResponse<Incident[]>>(
-    `${API_URL}/action-owner`
-  );
-
+  const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/action-owner`);
   return response.data.data;
 };
 
 // Get a single incident by ID
 export const getIncidentById = async (id: number): Promise<Incident> => {
-  const response = await apiClient.get<ApiResponse<Incident>>(
-    `${API_URL}/${id}`
-  );
-
+  const response = await apiClient.get<ApiResponse<Incident>>(`${API_URL}/${id}`);
   return response.data.data;
 };
 
@@ -140,6 +148,5 @@ export const submitCorrectiveAction = async (
     `${API_URL}/${id}/corrective-action`,
     { correctiveAction }
   );
-
   return response.data.data;
 };

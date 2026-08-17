@@ -1,18 +1,19 @@
-// frontend/src/components/IncidentActions.tsx
+﻿// frontend/src/components/IncidentActions.tsx
 
 import React from 'react';
 import type { Incident } from '../types/incident';
 import { useAuthContext } from '../context/AuthContext';
 
-// ── KAIROS Clinical Palette ────────────────────────────────────────────────
-const TEAL   = '#45A79A';
-const BLUE   = '#4588AB';
-const ACCENT = '#4DC4B5';
-const MUTED  = '#8FA8B4';
-const BORDER = '#253642';
+// ── Color Tokens ──────────────────────────────────────────────────────────
+const NAVY   = '#1E2B5E';
+const ROYAL  = '#2952C4';
+const BORDER = '#D8DCE8';
+const MUTED  = '#6B7494';
 const DANGER = '#EF4444';
-const AMBER  = '#FBBF24';
-const VIOLET = '#C084FC';
+const AMBER  = '#D97706';
+const VIOLET = '#7C3AED';
+const GREEN  = '#16A34A';
+
 
 interface IncidentActionsProps {
   incident: Incident;
@@ -28,13 +29,13 @@ const ActionBtn: React.FC<{
   label: string;
   onClick?: () => void;
   bg: string;
-  color?: string;
-}> = ({ label, onClick, bg, color = '#EEF7FC' }) => (
+  textColor?: string;
+}> = ({ label, onClick, bg, textColor = '#F7F8FA' }) => (
   <button
     onClick={onClick}
-    className="px-5 py-2.5 text-sm font-semibold rounded-lg transition-all cursor-pointer"
-    style={{ backgroundColor: bg, color, border: `1px solid ${bg}` }}
-    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.85'; }}
+    className="px-5 py-2.5 text-sm font-semibold rounded-xl transition-all cursor-pointer"
+    style={{ backgroundColor: bg, color: textColor, boxShadow: `0 2px 8px ${bg}40` }}
+    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.88'; }}
     onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
   >
     {label}
@@ -61,18 +62,18 @@ export const IncidentActions: React.FC<IncidentActionsProps> = ({
       case 'OPEN':
         return (
           <>
-            <ActionBtn label="Accept Incident"  onClick={onAccept} bg={TEAL} />
+            <ActionBtn label="Accept Incident"  onClick={onAccept} bg={GREEN} />
             <ActionBtn label="Reject Incident"  onClick={onReject} bg={DANGER} />
           </>
         );
       case 'ACCEPTED':
-        return <ActionBtn label="Assign Investigator" onClick={onAssignInvestigator} bg={BLUE} />;
+        return <ActionBtn label="Assign Investigator" onClick={onAssignInvestigator} bg={ROYAL} />;
       case 'INVESTIGATING':
-        return <ActionBtn label="Assign Action Owner" onClick={onAssignActionOwner} bg={AMBER} color="#0E1720" />;
+        return <ActionBtn label="Assign Action Owner" onClick={onAssignActionOwner} bg={AMBER} />;
       case 'PENDING_ACTION':
         return <ActionBtn label="Mark as Under Review" onClick={onReview} bg={VIOLET} />;
       case 'UNDER_REVIEW':
-        return <ActionBtn label="Close Incident" onClick={onClose} bg={ACCENT} color="#090F16" />;
+        return <ActionBtn label="Close Incident" onClick={onClose} bg={NAVY} />;
       case 'CLOSED':
       case 'REJECTED':
         return (

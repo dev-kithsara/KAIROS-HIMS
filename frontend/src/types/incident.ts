@@ -1,5 +1,12 @@
 // 1. Define the possible status values exactly as they are in the Backend Prisma Enum
-export type IncidentStatus = 'OPEN' | 'ACCEPTED' | 'REJECTED' | 'INVESTIGATING' | 'PENDING_ACTION' | 'UNDER_REVIEW' | 'CLOSED';
+export type IncidentStatus =
+  | 'OPEN'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'INVESTIGATING'
+  | 'PENDING_ACTION'
+  | 'UNDER_REVIEW'
+  | 'CLOSED';
 
 // 2. Define a minimal User interface for the related data (reporter, investigator, etc.)
 export interface User {
@@ -14,14 +21,13 @@ export interface Department {
   id: number;
   name: string;
 }
+
 export interface IncidentAttachment {
   id: number;
   fileName: string;
   filePath: string;
   fileType: string;
 }
-
-
 
 // 3. Define the main Incident interface matching the Backend response
 export interface Incident {
@@ -64,8 +70,12 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-// 5. Department Analytics (Manager Dashboard)
-export interface DepartmentAnalytics {
+export interface ChartDataPoint {
+  name: string;
+  value: number;
+}
+
+export interface DepartmentStats {
   summary: {
     total: number;
     open: number;
@@ -73,7 +83,9 @@ export interface DepartmentAnalytics {
     closed: number;
   };
   charts: {
-    byStatus: { name: string; value: number }[];
-    bySeverity: { name: string; value: number }[];
+    byStatus: ChartDataPoint[];
+    bySeverity: ChartDataPoint[];
   };
 }
+
+export type DepartmentAnalytics = DepartmentStats;

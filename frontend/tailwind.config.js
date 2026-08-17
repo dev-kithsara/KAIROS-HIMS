@@ -7,30 +7,41 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── Core Theme ──────────────────────────────────────────
-        'kairos-bg':          '#090F16',   // Deep Navy Slate  – main background
-        'kairos-panel':       '#0E1720',   // Dark Panel       – cards & sidebar
-        'kairos-text':        '#EEF7FC',   // Ice White        – primary text
-        'kairos-teal':        '#45A79A',   // Clinical Teal    – primary / brand
-        'kairos-blue':        '#4588AB',   // Slate Blue       – secondary
-        'kairos-accent':      '#4DC4B5',   // Bright Teal      – active highlight
-        'kairos-muted':       '#8FA8B4',   // Muted Text       – secondary text
-        'kairos-border':      '#253642',   // Border           – dividers
-        'kairos-danger':      '#EF4444',   // Destructive Red  – danger / delete
-        // ── Severity ────────────────────────────────────────────
+        // ── KAIROS Blue Family Core ──────────────────────────────────
+        'k-navy':           '#111184',   // Primary brand
+        'k-navy-dark':      '#0C0C6B',   // Pressed / active
+        'k-navy-light':     '#1a1aa0',   // Hover
+        'k-cobalt':         '#1E40AF',   // Cobalt blue
+        'k-royal':          '#2563EB',   // Royal blue
+        'k-true-blue':      '#3B82F6',   // True blue
+        'k-sky':            '#60A5FA',   // Sky blue
+        'k-blue-gray':      '#64748B',   // Blue-gray muted
+        'k-blue-gray-lt':   '#94A3B8',   // Lighter blue-gray
+        // ── Content Area ────────────────────────────────────────────
+        'k-bg':             '#F0F4FF',   // Page background
+        'k-surface':        '#FFFFFF',   // Cards
+        'k-surface-alt':    '#F8FAFF',   // Alt surface
+        'k-border':         '#DBEAFE',   // Soft blue border
+        'k-border-dark':    '#BFDBFE',   // Darker border
+        // ── Text ────────────────────────────────────────────────────
+        'k-text-primary':   '#0F1B4C',   // Heading color
+        'k-text-body':      '#334155',   // Body text
+        'k-text-muted':     '#64748B',   // Muted text
+        'k-text-faint':     '#94A3B8',   // Faint / placeholder
+        // ── Severity ────────────────────────────────────────────────
         'sev-low':            '#22C55E',
         'sev-medium':         '#EAB308',
         'sev-high':           '#F97316',
         'sev-critical':       '#EF4444',
-        // ── Status ──────────────────────────────────────────────
-        'status-open':        '#38BDF8',
-        'status-accepted':    '#2DD4BF',
-        'status-rejected':    '#F87171',
-        'status-investing':   '#60A5FA',
-        'status-pending':     '#FBBF24',
-        'status-progress':    '#C084FC',
-        'status-review':      '#FDE047',
-        'status-closed':      '#4ADE80',
+        // ── Status ──────────────────────────────────────────────────
+        'status-open':        '#3B82F6',
+        'status-accepted':    '#10B981',
+        'status-rejected':    '#EF4444',
+        'status-investing':   '#8B5CF6',
+        'status-pending':     '#F59E0B',
+        'status-progress':    '#EC4899',
+        'status-review':      '#0EA5E9',
+        'status-closed':      '#22C55E',
       },
     },
   },

@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import incidentRoutes from './routes/incident.routes';
 import authRoutes from './routes/auth.routes';
-import departmentRoutes from './routes/department.routes';
-import { globalErrorHandler } from './middlewares/errorHandler.middleware'; // Import the handler
 import analyticsRoutes from './routes/analytics.routes';
 import userRoutes from './routes/user.routes';
+import { globalErrorHandler } from './middlewares/errorHandler.middleware'; // Import the handler
+import departmentRoutes from './routes/department.routes';
 
 const app = express();
 

@@ -1,33 +1,34 @@
-// frontend/src/components/IncidentCard.tsx
+﻿// frontend/src/components/IncidentCard.tsx
 
 import React from 'react';
 import type { Incident } from '../types/incident';
 
-// ── KAIROS Clinical Palette ────────────────────────────────────────────────
-const PANEL   = '#0E1720';
-const TEXT    = '#EEF7FC';
-const MUTED   = '#8FA8B4';
-const BORDER  = '#253642';
-const ACCENT  = '#4DC4B5';
+// ── Color Tokens ──────────────────────────────────────────────────────────
+const SURFACE = '#F7F8FA';
+const BORDER  = '#D8DCE8';
+const TEXT    = '#1A2447';
+const MUTED   = '#6B7494';
+const FAINT   = '#9BA4BC';
+const NAVY    = '#1E2B5E';
 
-// Status hex values
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  OPEN:           { bg: '#38BDF822', text: '#38BDF8' },
-  ACCEPTED:       { bg: '#2DD4BF22', text: '#2DD4BF' },
-  REJECTED:       { bg: '#F8717122', text: '#F87171' },
-  INVESTIGATING:  { bg: '#60A5FA22', text: '#60A5FA' },
-  PENDING_ACTION: { bg: '#FBBF2422', text: '#FBBF24' },
-  IN_PROGRESS:    { bg: '#C084FC22', text: '#C084FC' },
-  UNDER_REVIEW:   { bg: '#FDE04722', text: '#FDE047' },
-  CLOSED:         { bg: '#4ADE8022', text: '#4ADE80' },
+// Status badge colors
+const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  OPEN:           { bg: '#EBF0FA', text: '#2952C4', border: '#C0CBE0' },
+  ACCEPTED:       { bg: '#F0FDF4', text: '#16A34A', border: '#BBF7D0' },
+  REJECTED:       { bg: '#FEF2F2', text: '#DC2626', border: '#FECACA' },
+  INVESTIGATING:  { bg: '#F5F3FF', text: '#7C3AED', border: '#DDD6FE' },
+  PENDING_ACTION: { bg: '#FFFBEB', text: '#D97706', border: '#FDE68A' },
+  IN_PROGRESS:    { bg: '#FDF4FF', text: '#9333EA', border: '#F3E8FF' },
+  UNDER_REVIEW:   { bg: '#EBF0FA', text: '#0EA5E9', border: '#BAE6FD' },
+  CLOSED:         { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0' },
 };
 
-// Severity top bar & badge colors
-const SEVERITY_COLORS: Record<string, { bar: string; bg: string; text: string }> = {
-  LOW:      { bar: '#22C55E', bg: '#22C55E22', text: '#22C55E' },
-  MEDIUM:   { bar: '#EAB308', bg: '#EAB30822', text: '#EAB308' },
-  HIGH:     { bar: '#F97316', bg: '#F9731622', text: '#F97316' },
-  CRITICAL: { bar: '#EF4444', bg: '#EF444422', text: '#EF4444' },
+// Severity bar colors
+const SEVERITY_COLORS: Record<string, { bar: string; bg: string; text: string; border: string }> = {
+  LOW:      { bar: '#22C55E', bg: '#F0FDF4', text: '#16A34A', border: '#BBF7D0' },
+  MEDIUM:   { bar: '#EAB308', bg: '#FEFCE8', text: '#CA8A04', border: '#FEF08A' },
+  HIGH:     { bar: '#F97316', bg: '#FFF7ED', text: '#EA580C', border: '#FED7AA' },
+  CRITICAL: { bar: '#EF4444', bg: '#FEF2F2', text: '#DC2626', border: '#FECACA' },
 };
 
 interface IncidentCardProps {
@@ -36,8 +37,8 @@ interface IncidentCardProps {
 }
 
 export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick }) => {
-  const status   = STATUS_COLORS[incident.status]   ?? { bg: '#25364222', text: '#8FA8B4' };
-  const severity = SEVERITY_COLORS[incident.severity] ?? { bar: '#253642', bg: '#25364222', text: '#8FA8B4' };
+  const status   = STATUS_COLORS[incident.status]   ?? { bg: '#F1F5F9', text: '#6B7494', border: '#CBD5E1' };
+  const severity = SEVERITY_COLORS[incident.severity] ?? { bar: '#9BA4BC', bg: '#F1F5F9', text: '#6B7494', border: '#CBD5E1' };
 
   const formattedDate = new Date(incident.createdAt).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric',
@@ -46,19 +47,19 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
   return (
     <div
       onClick={onClick}
-      className="group rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden flex flex-col justify-between"
+      className="group rounded-2xl cursor-pointer transition-all duration-200 relative overflow-hidden flex flex-col justify-between"
       style={{
-        backgroundColor: PANEL,
+        backgroundColor: SURFACE,
         border: `1px solid ${BORDER}`,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+        boxShadow: '0 1px 6px rgba(17,17,132,0.06)',
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.borderColor = '#45A79A';
-        (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(69,167,154,0.15)';
+        (e.currentTarget as HTMLElement).style.borderColor = '#C0CBE0';
+        (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(17,17,132,0.12)';
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLElement).style.borderColor = BORDER;
-        (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+        (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 6px rgba(17,17,132,0.06)';
       }}
     >
       {/* Severity top bar */}
@@ -68,20 +69,20 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
         {/* Title + Status Badge */}
         <div className="flex justify-between items-start mb-3 gap-2">
           <h3
-            className="text-base font-bold truncate transition-colors"
+            className="text-sm font-bold truncate leading-snug"
             style={{ color: TEXT }}
           >
             {incident.title}
           </h3>
           <span
-            className="px-2.5 py-0.5 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0"
-            style={{ backgroundColor: status.bg, color: status.text, border: `1px solid ${status.text}40` }}
+            className="px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap shrink-0"
+            style={{ backgroundColor: status.bg, color: status.text, border: `1px solid ${status.border}` }}
           >
             {incident.status.replace(/_/g, ' ')}
           </span>
         </div>
 
-        <p className="text-sm line-clamp-2 mb-4" style={{ color: MUTED }}>
+        <p className="text-xs line-clamp-2 mb-4 leading-relaxed" style={{ color: MUTED }}>
           {incident.description}
         </p>
       </div>
@@ -89,17 +90,16 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
       {/* Footer row */}
       <div
         className="flex justify-between items-center px-5 py-3 text-xs"
-        style={{ borderTop: `1px solid ${BORDER}`, color: MUTED }}
+        style={{ borderTop: `1px solid ${BORDER}`, color: FAINT }}
       >
         <div className="flex items-center gap-2">
           <span>Reporter:</span>
-          <span className="font-semibold" style={{ color: ACCENT }}>
+          <span className="font-semibold" style={{ color: NAVY }}>
             {incident.reporter?.name || 'Unknown'}
           </span>
-          {/* Severity Badge */}
           <span
-            className="px-2 py-0.5 rounded text-[10px] font-extrabold tracking-wide"
-            style={{ backgroundColor: severity.bg, color: severity.text, border: `1px solid ${severity.text}40` }}
+            className="px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide"
+            style={{ backgroundColor: severity.bg, color: severity.text, border: `1px solid ${severity.border}` }}
           >
             {incident.severity}
           </span>

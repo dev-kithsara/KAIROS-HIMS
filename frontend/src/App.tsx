@@ -4,7 +4,6 @@ import { CreateIncident } from './pages/CreateIncident';
 import { IncidentsList } from './pages/IncidentsList';
 import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
-import { IncidentsList } from './pages/IncidentsList';
 import InvestigatorDashboard from './pages/InvestigatorDashboard';
 import InvestigatorWorkspace from './pages/InvestigatorWorkspace';
 import { Login } from './pages/Login';
@@ -14,7 +13,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/MainLayout';
 import ActionOwnerIncidentDetails from './pages/ActionOwnerIncidentDetails';
-import MyIncidentsPage from "./pages/MyIncidentsPage";
+import { TeamManagement } from './pages/TeamManagement';
+import MyIncidentsPage from './pages/MyIncidentsPage';
 import { useAuthContext } from './context/AuthContext';
 
 const queryClient = new QueryClient({
@@ -64,9 +64,10 @@ function App() {
               <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />
               <Route path="/action-owner" element={<ActionOwnerDashboard />} />
               <Route path="/action-owner/:id" element={<ActionOwnerIncidentDetails />} />
-              <Route path="/action-owner/incidents/:id" element={<ActionOwnerIncidentDetails />} 
-              
-/>
+              {/* Manager Only - Team Management */}
+              <Route element={<ProtectedRoute allowedRoles={['MANAGER']} />}>
+                <Route path="/team" element={<TeamManagement />} />
+              </Route>
             </Route>
           </Route>
         </Routes>
