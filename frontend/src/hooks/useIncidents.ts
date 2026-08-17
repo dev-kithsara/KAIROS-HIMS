@@ -153,3 +153,12 @@ export const useIncident = (id: number) => {
     enabled: !!id,
   });
 };
+
+// Feature 6 - Hook to fetch department analytics
+export const useDepartmentAnalytics = (departmentId: number) => {
+  return useQuery({
+    queryKey: ['analytics', 'department', departmentId],
+    queryFn: () => incidentApi.getDepartmentAnalytics(departmentId),
+    enabled: !!departmentId,
+  });
+};

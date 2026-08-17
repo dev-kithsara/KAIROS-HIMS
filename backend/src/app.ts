@@ -2,8 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import incidentRoutes from './routes/incident.routes';
 import authRoutes from './routes/auth.routes';
-import { globalErrorHandler } from './middlewares/errorHandler.middleware'; // Import the handler
 import analyticsRoutes from './routes/analytics.routes';
+import userRoutes from './routes/user.routes';
+import { globalErrorHandler } from './middlewares/errorHandler.middleware'; // Import the handler
 
 const app = express();
 
@@ -27,7 +28,7 @@ app.use('/api/incidents', incidentRoutes);
 app.use('/api/v1/incidents', incidentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/analytics', analyticsRoutes);
-
+app.use('/api/users', userRoutes);
 // Health Check Routes
 app.get('/', (req, res) => {
   res.json({

@@ -6,8 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const incident_routes_1 = __importDefault(require("./routes/incident.routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
-const errorHandler_middleware_1 = require("./middlewares/errorHandler.middleware"); // Import the handler
 const analytics_routes_1 = __importDefault(require("./routes/analytics.routes"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
+const errorHandler_middleware_1 = require("./middlewares/errorHandler.middleware"); // Import the handler
 const app = (0, express_1.default)();
 /*
 ==========================================
@@ -26,6 +27,7 @@ app.use('/api/incidents', incident_routes_1.default);
 app.use('/api/v1/incidents', incident_routes_1.default);
 app.use('/api/auth', auth_routes_1.default);
 app.use('/api/analytics', analytics_routes_1.default);
+app.use('/api/users', user_routes_1.default);
 // Health Check Routes
 app.get('/', (req, res) => {
     res.json({

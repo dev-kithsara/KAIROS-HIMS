@@ -3,9 +3,6 @@
 # 1. Base Image
 FROM node:20-alpine
 
-# Security: Don't run as root
-USER node
-
 # 2. Set the working directory inside the container
 WORKDIR /app
 

@@ -1,4 +1,4 @@
-// frontend/src/pages/IncidentDetails.tsx
+﻿// frontend/src/pages/IncidentDetails.tsx
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -19,30 +19,31 @@ import { AssignUserModal } from '../components/AssignUserModal';
 import { useAuthContext } from '../context/AuthContext';
 
 // ── Mock Data ──────────────────────────────────────────────────────────────
-// TODO: Replace with actual API calls (e.g., useUsersByRole hook)
 const MOCK_INVESTIGATORS = [{ id: 2, name: 'Nimal Investigator', role: 'INVESTIGATOR' }];
 const MOCK_ACTION_OWNERS = [{ id: 6, name: 'Sunil Action Owner', role: 'ACTION_OWNER' }];
 
-// ── KAIROS Clinical Palette ────────────────────────────────────────────────
-const BG     = '#090F16';
-const PANEL  = '#0E1720';
-const TEXT   = '#EEF7FC';
-const MUTED  = '#8FA8B4';
-const BORDER = '#253642';
-const TEAL   = '#45A79A';
-const BLUE   = '#4588AB';
-const ACCENT = '#4DC4B5';
+// ── Color Tokens ───────────────────────────────────────────────────────────
 
-// Status badge styles
-const STATUS_STYLES: Record<string, { bg: string; color: string }> = {
-  OPEN:           { bg: '#38BDF822', color: '#38BDF8' },
-  ACCEPTED:       { bg: '#2DD4BF22', color: '#2DD4BF' },
-  REJECTED:       { bg: '#F8717122', color: '#F87171' },
-  INVESTIGATING:  { bg: '#60A5FA22', color: '#60A5FA' },
-  PENDING_ACTION: { bg: '#FBBF2422', color: '#FBBF24' },
-  IN_PROGRESS:    { bg: '#C084FC22', color: '#C084FC' },
-  UNDER_REVIEW:   { bg: '#FDE04722', color: '#FDE047' },
-  CLOSED:         { bg: '#4ADE8022', color: '#4ADE80' },
+
+const ROYAL   = '#2952C4';
+const SURFACE = '#F7F8FA';
+const BG_PAGE = '#EDEEF3';
+const BORDER  = '#D8DCE8';
+const TEXT    = '#1A2447';
+const MUTED   = '#6B7494';
+const FAINT   = '#9BA4BC';
+const ACCENT  = '#2952C4';
+
+// Status badge map
+const STATUS_STYLES: Record<string, { bg: string; color: string; border: string }> = {
+  OPEN:           { bg: '#EBF0FA', color: '#2952C4', border: '#C0CBE0' },
+  ACCEPTED:       { bg: '#F0FDF4', color: '#16A34A', border: '#BBF7D0' },
+  REJECTED:       { bg: '#FEF2F2', color: '#DC2626', border: '#FECACA' },
+  INVESTIGATING:  { bg: '#F5F3FF', color: '#7C3AED', border: '#DDD6FE' },
+  PENDING_ACTION: { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A' },
+  IN_PROGRESS:    { bg: '#FDF4FF', color: '#9333EA', border: '#F3E8FF' },
+  UNDER_REVIEW:   { bg: '#EBF0FA', color: '#0EA5E9', border: '#BAE6FD' },
+  CLOSED:         { bg: '#F0FDF4', color: '#15803D', border: '#BBF7D0' },
 };
 
 export const IncidentDetails: React.FC = () => {
@@ -92,32 +93,43 @@ export const IncidentDetails: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center text-sm" style={{ color: MUTED }}>Loading details...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div
+          className="animate-spin rounded-full h-10 w-10 border-[3px] border-t-transparent"
+          style={{ borderColor: `${ROYAL} transparent ${ROYAL} ${ROYAL}` }}
+        />
+      </div>
+    );
   }
 
   if (!incident) {
     return (
       <div className="p-8 text-center flex flex-col items-center">
-        <h2 className="text-xl font-semibold mb-4" style={{ color: '#F87171' }}>Incident not found</h2>
-        <button onClick={() => navigate('/')} className="text-sm font-medium hover:underline" style={{ color: ACCENT }}>
+        <h2 className="text-xl font-semibold mb-4" style={{ color: '#EF4444' }}>Incident not found</h2>
+        <button
+          onClick={() => navigate('/')}
+          className="text-sm font-semibold hover:underline"
+          style={{ color: ACCENT }}
+        >
           &larr; Go back to Dashboard
         </button>
       </div>
     );
   }
 
-  const statusStyle = STATUS_STYLES[incident.status] ?? { bg: BORDER, color: MUTED };
+  const statusStyle = STATUS_STYLES[incident.status] ?? { bg: '#F1F5F9', color: MUTED, border: '#CBD5E1' };
 
   return (
-    <div className="min-h-screen p-2 sm:p-4" style={{ backgroundColor: BG, color: TEXT }}>
+    <div className="min-h-screen p-2 sm:p-4" style={{ color: TEXT }}>
       <div
-        className="max-w-4xl mx-auto rounded-xl p-6"
-        style={{ backgroundColor: PANEL, border: `1px solid ${BORDER}` }}
+        className="max-w-4xl mx-auto rounded-2xl p-6"
+        style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 2px 12px rgba(17,17,132,0.07)' }}
       >
         {/* Back */}
         <button
           onClick={() => navigate('/')}
-          className="mb-6 text-sm font-medium flex items-center hover:underline cursor-pointer"
+          className="mb-6 text-sm font-semibold flex items-center gap-1 hover:underline cursor-pointer"
           style={{ color: ACCENT }}
         >
           &larr; Back to Dashboard
@@ -129,7 +141,7 @@ export const IncidentDetails: React.FC = () => {
             <h1 className="text-2xl font-bold" style={{ color: TEXT }}>{incident.title}</h1>
             <span
               className="px-3 py-1 rounded-full text-xs font-bold tracking-wider"
-              style={{ backgroundColor: statusStyle.bg, color: statusStyle.color, border: `1px solid ${statusStyle.color}40` }}
+              style={{ backgroundColor: statusStyle.bg, color: statusStyle.color, border: `1px solid ${statusStyle.border}` }}
             >
               {incident.status.replace(/_/g, ' ')}
             </span>
@@ -143,8 +155,8 @@ export const IncidentDetails: React.FC = () => {
         <div className="mb-8">
           <h3 className="text-base font-semibold mb-2" style={{ color: TEXT }}>Description</h3>
           <p
-            className="text-sm p-4 rounded-lg whitespace-pre-wrap leading-relaxed"
-            style={{ backgroundColor: BG, border: `1px solid ${BORDER}`, color: MUTED }}
+            className="text-sm p-4 rounded-xl whitespace-pre-wrap leading-relaxed"
+            style={{ backgroundColor: BG_PAGE, border: `1px solid ${BORDER}`, color: MUTED }}
           >
             {incident.description}
           </p>
@@ -160,10 +172,10 @@ export const IncidentDetails: React.FC = () => {
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="p-4 rounded-lg"
-              style={{ backgroundColor: BG, border: `1px solid ${BORDER}` }}
+              className="p-4 rounded-xl"
+              style={{ backgroundColor: BG_PAGE, border: `1px solid ${BORDER}` }}
             >
-              <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: MUTED }}>{label}</h4>
+              <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: FAINT }}>{label}</h4>
               <p className="font-semibold text-sm" style={{ color: TEXT }}>{value}</p>
             </div>
           ))}
@@ -171,16 +183,16 @@ export const IncidentDetails: React.FC = () => {
 
         {/* People Involved */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="p-4 rounded-lg" style={{ backgroundColor: `${BLUE}18`, border: `1px solid ${BLUE}44` }}>
-            <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: BLUE }}>Reporter</h4>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: '#EBF0FA', border: '1px solid #C0CBE0' }}>
+            <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: '#2952C4' }}>Reporter</h4>
             <p className="font-semibold text-sm" style={{ color: TEXT }}>{incident.reporter?.name || 'Unknown'}</p>
           </div>
-          <div className="p-4 rounded-lg" style={{ backgroundColor: `${TEAL}18`, border: `1px solid ${TEAL}44` }}>
-            <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: TEAL }}>Investigator</h4>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+            <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: '#7C3AED' }}>Investigator</h4>
             <p className="font-semibold text-sm" style={{ color: TEXT }}>{incident.investigator?.name || 'Not assigned'}</p>
           </div>
-          <div className="p-4 rounded-lg" style={{ backgroundColor: `${ACCENT}18`, border: `1px solid ${ACCENT}44` }}>
-            <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: ACCENT }}>Action Owner</h4>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: '#F0F9FF', border: '1px solid #BAE6FD' }}>
+            <h4 className="text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: '#0369A1' }}>Action Owner</h4>
             <p className="font-semibold text-sm" style={{ color: TEXT }}>{incident.actionOwner?.name || 'Not assigned'}</p>
           </div>
         </div>
@@ -188,7 +200,7 @@ export const IncidentDetails: React.FC = () => {
         {/* Root Cause */}
         <div className="mb-8">
           <h3 className="text-base font-semibold mb-3" style={{ color: TEXT }}>Root Cause Analysis</h3>
-          <div className="p-4 rounded-lg" style={{ backgroundColor: BG, border: `1px solid ${BORDER}` }}>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: BG_PAGE, border: `1px solid ${BORDER}` }}>
             <p className="text-sm mb-2" style={{ color: MUTED }}>
               <span className="font-semibold" style={{ color: TEXT }}>Category: </span>
               {incident.rootCauseCategory || 'Not submitted'}
@@ -203,7 +215,7 @@ export const IncidentDetails: React.FC = () => {
         {/* Attachments */}
         <div className="mb-8">
           <h3 className="text-base font-semibold mb-3" style={{ color: TEXT }}>Attachments</h3>
-          <div className="p-4 rounded-lg" style={{ backgroundColor: BG, border: `1px solid ${BORDER}` }}>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: BG_PAGE, border: `1px solid ${BORDER}` }}>
             {incident.attachments && incident.attachments.length > 0 ? (
               <ul className="space-y-2">
                 {incident.attachments.map((file) => (
@@ -213,7 +225,7 @@ export const IncidentDetails: React.FC = () => {
                     style={{ borderBottom: `1px solid ${BORDER}`, color: TEXT }}
                   >
                     <span>{file.fileName}</span>
-                    <button className="font-medium hover:underline text-xs" style={{ color: ACCENT }}>View</button>
+                    <button className="font-semibold hover:underline text-xs" style={{ color: ACCENT }}>View</button>
                   </li>
                 ))}
               </ul>

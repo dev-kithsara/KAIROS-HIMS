@@ -63,3 +63,21 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+
+export interface ChartDataPoint {
+  name: string;
+  value: number;
+}
+
+export interface DepartmentStats {
+  summary: {
+    total: number;
+    open: number;
+    critical: number;
+    closed: number;
+  };
+  charts: {
+    byStatus: ChartDataPoint[];
+    bySeverity: ChartDataPoint[];
+  };
+}

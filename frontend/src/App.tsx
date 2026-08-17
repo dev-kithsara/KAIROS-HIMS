@@ -13,6 +13,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MainLayout } from './components/MainLayout';
 import ActionOwnerIncidentDetails from './pages/ActionOwnerIncidentDetails';
+import { TeamManagement } from './pages/TeamManagement';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
@@ -42,9 +43,10 @@ function App() {
               <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />
               <Route path="/action-owner" element={<ActionOwnerDashboard />} />
               <Route path="/action-owner/:id" element={<ActionOwnerIncidentDetails />} />
-              <Route path="/action-owner/incidents/:id" element={<ActionOwnerIncidentDetails />} 
-              
-/>
+              {/* Manager Only - Team Management */}
+              <Route element={<ProtectedRoute allowedRoles={['MANAGER']} />}>
+                <Route path="/team" element={<TeamManagement />} />
+              </Route>
             </Route>
           </Route>
         </Routes>

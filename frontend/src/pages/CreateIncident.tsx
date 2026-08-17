@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateIncident } from '../hooks/useIncidents';
 import { 
@@ -150,27 +150,36 @@ export const CreateIncident: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100/70 text-slate-900 font-sans antialiased">
+    <div className="min-h-screen text-slate-900 font-sans antialiased" style={{ backgroundColor: '#EDEEF3' }}>
       
       {/* Top Application Header Bar */}
-      <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-sm">
+      <header className="sticky top-0 z-30 shadow-sm" style={{ backgroundColor: '#1E2B5E', borderBottom: '1px solid #192651' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-teal-500 text-slate-900 flex items-center justify-center font-bold text-xs tracking-wider">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs tracking-wider text-white"
+              style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
+            >
               KH
             </div>
-            <span className="font-semibold text-sm tracking-wide text-slate-100">KAIROS HIMS</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-xs text-slate-400 font-medium hidden sm:inline-block">Clinical Safety & Risk Management</span>
+            <span className="font-semibold text-sm tracking-widest text-white">KAIROS HIMS</span>
+            <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+            <span className="text-xs font-medium hidden sm:inline-block" style={{ color: 'rgba(255,255,255,0.55)' }}>Clinical Safety &amp; Risk Management</span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-slate-300">
-            <span className="hidden md:inline-block px-2.5 py-1 bg-slate-800 rounded border border-slate-700 font-mono">
+          <div className="flex items-center gap-4 text-xs">
+            <span
+              className="hidden md:inline-block px-2.5 py-1 rounded font-mono"
+              style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.18)' }}
+            >
               ROLE: STAFF REPORTING
             </span>
             <button
               onClick={() => navigate('/')}
-              className="text-slate-300 hover:text-white transition-colors flex items-center gap-1 font-medium"
+              className="flex items-center gap-1 font-semibold transition-colors"
+              style={{ color: 'rgba(255,255,255,0.75)' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#F7F8FA'; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.75)'; }}
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Dashboard</span>

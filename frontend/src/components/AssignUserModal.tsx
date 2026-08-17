@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
-// ── KAIROS Clinical Palette ─────────────────────────────────────────
-const PANEL   = '#0E1720';
-const TEXT    = '#EEF7FC';
-const MUTED   = '#8FA8B4';
-const BORDER  = '#253642';
+// ── Color Tokens ─────────────────────────────────────────────────────
+const SURFACE = '#F7F8FA';
+const BG_PAGE = '#EDEEF3';
+const TEXT    = '#1A2447';
+const MUTED   = '#6B7494';
+const BORDER  = '#D8DCE8';
 const DANGER  = '#EF4444';
-const TEAL    = '#45A79A';
+const ROYAL   = '#2952C4';
+const NAVY    = '#1E2B5E';
 
 interface AssignUserModalProps {
   isOpen: boolean;
@@ -33,14 +35,17 @@ export const AssignUserModal: React.FC<AssignUserModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50" style={{ backgroundColor: 'rgba(9,15,22,0.85)' }}>
+    <div
+      className="fixed inset-0 flex justify-center items-center z-50"
+      style={{ backgroundColor: 'rgba(15,27,76,0.45)', backdropFilter: 'blur(4px)' }}
+    >
       <div
-        className="rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden"
-        style={{ backgroundColor: PANEL, border: `1px solid ${BORDER}` }}
+        className="rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden"
+        style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 24px 60px rgba(17,17,132,0.18)' }}
       >
         {/* Header */}
         <div className="px-6 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
-          <h3 className="text-lg font-bold" style={{ color: TEXT }}>{title}</h3>
+          <h3 className="text-base font-bold" style={{ color: TEXT }}>{title}</h3>
         </div>
 
         {/* Body */}
@@ -48,27 +53,27 @@ export const AssignUserModal: React.FC<AssignUserModalProps> = ({
           <p className="text-sm mb-4" style={{ color: MUTED }}>{description}</p>
 
           <select
-            className="w-full rounded-lg p-3 text-sm outline-none transition-all cursor-pointer"
+            className="w-full rounded-xl p-3 text-sm outline-none transition-all cursor-pointer"
             style={{
-              backgroundColor: '#090F16',
-              border: `1px solid ${error ? DANGER : BORDER}`,
+              backgroundColor: BG_PAGE,
+              border: `1.5px solid ${error ? DANGER : BORDER}`,
               color: TEXT,
             }}
             value={selectedUserId}
             onChange={(e) => { setSelectedUserId(Number(e.target.value)); if (error) setError(''); }}
             disabled={isLoading}
-            onFocus={(e) => { (e.target as HTMLElement).style.borderColor = error ? DANGER : TEAL; }}
-            onBlur={(e)  => { (e.target as HTMLElement).style.borderColor = error ? DANGER : BORDER; }}
+            onFocus={(e) => { (e.target as HTMLElement).style.borderColor = error ? DANGER : ROYAL; (e.target as HTMLElement).style.boxShadow = '0 0 0 3px #EBF0FA'; }}
+            onBlur={(e)  => { (e.target as HTMLElement).style.borderColor = error ? DANGER : BORDER; (e.target as HTMLElement).style.boxShadow = 'none'; }}
           >
-            <option value="" disabled style={{ backgroundColor: PANEL }}>-- Select a User --</option>
+            <option value="" disabled style={{ backgroundColor: SURFACE }}>-- Select a User --</option>
             {availableUsers.map(user => (
-              <option key={user.id} value={user.id} style={{ backgroundColor: PANEL }}>
+              <option key={user.id} value={user.id} style={{ backgroundColor: SURFACE }}>
                 {user.name} ({user.role})
               </option>
             ))}
           </select>
 
-          {error && <p className="text-xs mt-1" style={{ color: DANGER }}>{error}</p>}
+          {error && <p className="text-xs mt-1.5 font-medium" style={{ color: DANGER }}>{error}</p>}
         </div>
 
         {/* Footer */}
@@ -76,7 +81,7 @@ export const AssignUserModal: React.FC<AssignUserModalProps> = ({
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 text-sm font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50"
             style={{ color: MUTED, border: `1px solid ${BORDER}`, backgroundColor: 'transparent' }}
           >
             Cancel
@@ -84,8 +89,8 @@ export const AssignUserModal: React.FC<AssignUserModalProps> = ({
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer disabled:opacity-50"
-            style={{ backgroundColor: TEAL, color: '#090F16', border: `1px solid ${TEAL}` }}
+            className="px-4 py-2 text-sm font-semibold rounded-xl transition-all cursor-pointer disabled:opacity-50 text-white"
+            style={{ backgroundColor: NAVY, border: `1px solid ${NAVY}` }}
           >
             {isLoading ? 'Assigning...' : 'Confirm Assignment'}
           </button>

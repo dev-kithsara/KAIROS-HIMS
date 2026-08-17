@@ -1,5 +1,5 @@
 import { apiClient } from './axios';
-import type { Incident, ApiResponse } from '../types/incident';
+import type { Incident, ApiResponse, DepartmentStats } from '../types/incident';
 
 // Base URL for the incidents API. 
 // Note: In Vite, we usually set up a proxy in vite.config.ts to forward '/api' to 'http://localhost:5000'
@@ -115,5 +115,15 @@ export const submitCorrectiveAction = async (
     { correctiveAction }
   );
 
+  return response.data.data;
+};
+
+/**
+ * Feature 6 - Fetch department analytics statistics
+ */
+export const getDepartmentAnalytics = async (departmentId: number): Promise<DepartmentStats> => {
+  const response = await apiClient.get<ApiResponse<DepartmentStats>>(
+    `/analytics/department/${departmentId}`
+  );
   return response.data.data;
 };
