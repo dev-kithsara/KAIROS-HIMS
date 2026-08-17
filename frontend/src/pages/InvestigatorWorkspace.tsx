@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Incident } from "../types/incident";
+import { apiClient } from "../api/axios";
+import toast from "react-hot-toast";
 
 // ── Color Tokens ──────────────────────────────────────────────────────────
 const NAVY    = '#1E2B5E';
@@ -34,34 +36,25 @@ const InvestigatorWorkspace: React.FC = () => {
 
   const handleRootCauseSubmit = async () => {
     if (rootCause.length < 20) {
-      alert("Root cause findings must be at least 20 characters");
+      toast.error("Root cause findings must be at least 20 characters");
       return;
     }
     if (!rootCauseCategory) {
-      alert("Please select a root cause category");
+      toast.error("Please select a root cause category");
       return;
     }
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:5000/api/v1/incidents/${incident!.id}/root-cause`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({ rootCause, rootCauseCategory }),
-        }
-      );
-      if (!response.ok) throw new Error("Failed");
-      alert("Root Cause submitted successfully");
+      await apiClient.patch(`/incidents/${incident!.id}/root-cause`, {
+        rootCause,
+        rootCauseCategory,
+      });
+      toast.success("Root Cause submitted successfully");
       setRootCause("");
       setRootCauseCategory("");
       navigate("/investigator");
     } catch {
-      alert("Validation failed or could not submit root cause.");
+      toast.error("Validation failed or could not submit root cause.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +67,7 @@ const InvestigatorWorkspace: React.FC = () => {
           <h2 className="text-xl font-bold mb-4" style={{ color: TEXT }}>Incident not found</h2>
           <button
             onClick={() => navigate("/investigator")}
-            className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white"
+            className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white cursor-pointer"
             style={{ backgroundColor: NAVY }}
           >
             Back to Dashboard
@@ -101,7 +94,7 @@ const InvestigatorWorkspace: React.FC = () => {
       {/* Back */}
       <button
         onClick={() => navigate("/investigator")}
-        className="text-sm font-semibold hover:underline flex items-center gap-1.5"
+        className="text-sm font-semibold hover:underline flex items-center gap-1.5 cursor-pointer"
         style={{ color: ROYAL }}
       >
         &larr; Back to Dashboard
@@ -185,9 +178,9 @@ const InvestigatorWorkspace: React.FC = () => {
                   <p className="text-xs mt-0.5" style={{ color: FAINT }}>{file.fileType}</p>
                 </div>
                 <a
-                  href={`http://localhost:5000/${file.filePath}`}
+                  href={`/${file.filePath}`}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="rounded-xl px-4 py-1.5 text-xs font-semibold text-white"
                   style={{ backgroundColor: ROYAL }}
                 >

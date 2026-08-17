@@ -1,9 +1,10 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   useIncident,
   useSubmitCorrectiveAction,
 } from '../hooks/useIncidents';
+import toast from 'react-hot-toast';
 
 // ── KAIROS Blue Palette ───────────────────────────────────────────────────
 const NAVY    = '#1E2B5E';
@@ -16,7 +17,6 @@ const MUTED   = '#6B7494';
 const FAINT   = '#9BA4BC';
 const GREEN   = '#16A34A';
 const AMBER   = '#D97706';
-
 
 const ActionOwnerIncidentDetails: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
     if (!incident) return;
 
     if (correctiveAction.trim().length < 20) {
-      alert('Corrective action must be at least 20 characters long.');
+      toast.error('Corrective action must be at least 20 characters long.');
       return;
     }
 
@@ -49,11 +49,10 @@ const ActionOwnerIncidentDetails: React.FC = () => {
         correctiveAction: correctiveAction.trim(),
       });
 
-      alert('Corrective action submitted successfully.');
-
+      toast.success('Corrective action submitted successfully.');
       navigate('/action-owner');
     } catch (err) {
-      alert(
+      toast.error(
         err instanceof Error
           ? err.message
           : 'Failed to submit corrective action.'
@@ -96,10 +95,10 @@ const ActionOwnerIncidentDetails: React.FC = () => {
         >
           <button
             onClick={() => navigate('/action-owner')}
-            className="text-sm mb-4 font-semibold hover:underline flex items-center gap-1"
+            className="text-sm mb-4 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
             style={{ color: ROYAL }}
           >
-            ← Back to Action Owner Dashboard
+            &larr; Back to Action Owner Dashboard
           </button>
 
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -216,7 +215,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
             <button
               onClick={handleSubmit}
               disabled={submitCorrectiveAction.isPending || correctiveAction.trim().length < 20}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 text-white"
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 text-white cursor-pointer"
               style={{ backgroundColor: NAVY, boxShadow: '0 2px 8px rgba(17,17,132,0.20)' }}
             >
               {submitCorrectiveAction.isPending ? 'Submitting...' : 'Submit Corrective Action'}
@@ -224,7 +223,7 @@ const ActionOwnerIncidentDetails: React.FC = () => {
 
             <button
               onClick={() => navigate('/action-owner')}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold"
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer"
               style={{ backgroundColor: BG_PAGE, color: MUTED, border: `1px solid ${BORDER}` }}
             >
               Cancel

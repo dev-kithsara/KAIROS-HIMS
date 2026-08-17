@@ -6,11 +6,22 @@ import { catchAsync } from '../utils/catchAsync';
 import { AppError } from '../utils/AppError';
 import { z } from 'zod';
 
-// 1. Zod Schema to validate the incoming role change request
+// 1. Zod Schemas for robust validation
 const changeRoleSchema = z.object({
   body: z.object({
     newRole: z.enum(['STAFF', 'INVESTIGATOR', 'ACTION_OWNER'], {
       errorMap: () => ({ message: 'Role must be STAFF, INVESTIGATOR, or ACTION_OWNER' }),
+    }),
+  }),
+  params: z.object({
+    id: z.string().regex(/^\d+$/, 'User ID must be a positive integer'),
+  }),
+});
+
+const getRoleSchema = z.object({
+  params: z.object({
+    role: z.enum(['STAFF', 'INVESTIGATOR', 'ACTION_OWNER', 'MANAGER', 'ADMIN'], {
+      errorMap: () => ({ message: 'Invalid role parameter' }),
     }),
   }),
 });
@@ -19,12 +30,9 @@ const changeRoleSchema = z.object({
  * Get all users in the manager's department
  */
 export const getDepartmentUsers = catchAsync(async (req: Request, res: Response) => {
-  // Ensure user is authenticated
   if (!req.user) throw new AppError('User not authenticated.', 401);
 
-  // A manager can only see users in their own department
   const departmentId = req.user.departmentId;
-
   const users = await userService.getUsersByDepartment(departmentId);
 
   return res.status(200).json({
@@ -39,10 +47,13 @@ export const getDepartmentUsers = catchAsync(async (req: Request, res: Response)
 export const getUsersByRole = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError('User not authenticated.', 401);
 
-  const role = (req.params.role as string)?.toUpperCase();
-  if (!role) throw new AppError('Role parameter is required.', 400);
+  const rawRole = (req.params.role as string)?.toUpperCase();
+  const parsed = getRoleSchema.safeParse({ params: { role: rawRole } });
+  if (!parsed.success) {
+    throw new AppError('Invalid role specified.', 400);
+  }
 
-  const users = await userService.getUsersByRole(role);
+  const users = await userService.getUsersByRole(parsed.data.params.role);
 
   return res.status(200).json({
     success: true,
@@ -56,20 +67,21 @@ export const getUsersByRole = catchAsync(async (req: Request, res: Response) => 
 export const changeUserRole = catchAsync(async (req: Request, res: Response) => {
   if (!req.user) throw new AppError('User not authenticated.', 401);
 
-  // 1. Validate the request body
-  const validatedData = changeRoleSchema.parse({ body: req.body });
-  const { newRole } = validatedData.body;
+  // 1. Validate both params and body with Zod
+  const validated = changeRoleSchema.parse({
+    body: req.body,
+    params: req.params,
+  });
 
-  // 2. Extract the target user ID from the URL
-  const targetUserId = parseInt(req.params.id as string, 10);
-  if (isNaN(targetUserId)) throw new AppError('Invalid user ID provided.', 400);
+  const { newRole } = validated.body;
+  const targetUserId = parseInt(validated.params.id, 10);
 
-  // 3. Call the service layer with the Manager's details and the Target User's details
+  // 2. Call the service layer with the Manager's details and the Target User's details
   const updatedUser = await userService.changeUserRole(
-    req.user.id, // Manager's ID
-    req.user.departmentId, // Manager's Department ID
-    targetUserId, // The user being changed
-    newRole // The new role
+    req.user.id,
+    req.user.departmentId,
+    targetUserId,
+    newRole
   );
 
   return res.status(200).json({
