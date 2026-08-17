@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import incidentRoutes from './routes/incident.routes';
 import authRoutes from './routes/auth.routes';
+import departmentRoutes from './routes/department.routes';
 import { globalErrorHandler } from './middlewares/errorHandler.middleware'; // Import the handler
 import analyticsRoutes from './routes/analytics.routes';
+import userRoutes from './routes/user.routes';
 
 const app = express();
 
@@ -12,6 +14,14 @@ const app = express();
 Middleware
 ==========================================
 */
+
+// Allow requests from the React frontend
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 // Parse JSON request body
 app.use(express.json());
@@ -26,7 +36,9 @@ Routes
 app.use('/api/incidents', incidentRoutes);
 app.use('/api/v1/incidents', incidentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/departments', departmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/users', userRoutes);
 
 // Health Check Routes
 app.get('/', (req, res) => {

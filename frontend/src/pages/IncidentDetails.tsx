@@ -17,11 +17,7 @@ import { IncidentActions } from '../components/IncidentActions';
 import { RejectModal } from '../components/RejectModal';
 import { AssignUserModal } from '../components/AssignUserModal';
 import { useAuthContext } from '../context/AuthContext';
-
-// ── Mock Data ──────────────────────────────────────────────────────────────
-// TODO: Replace with actual API calls (e.g., useUsersByRole hook)
-const MOCK_INVESTIGATORS = [{ id: 2, name: 'Nimal Investigator', role: 'INVESTIGATOR' }];
-const MOCK_ACTION_OWNERS = [{ id: 6, name: 'Sunil Action Owner', role: 'ACTION_OWNER' }];
+import { useUsersByRole } from '../hooks/useIncidents';
 
 // ── KAIROS Clinical Palette ────────────────────────────────────────────────
 const BG     = '#090F16';
@@ -61,6 +57,9 @@ export const IncidentDetails: React.FC = () => {
   const rejectMutation             = useRejectIncident();
   const assignInvestigatorMutation = useAssignInvestigator();
   const assignActionOwnerMutation  = useAssignActionOwner();
+
+  const { data: investigators = [] } = useUsersByRole('INVESTIGATOR');
+  const { data: actionOwners = [] }  = useUsersByRole('ACTION_OWNER');
 
   const [isRejectModalOpen,       setIsRejectModalOpen]       = useState(false);
   const [isInvestigatorModalOpen, setIsInvestigatorModalOpen] = useState(false);
@@ -255,7 +254,7 @@ export const IncidentDetails: React.FC = () => {
         isLoading={assignInvestigatorMutation.isPending}
         title="Assign Investigator"
         description="Select an investigator to find the root cause of this incident."
-        availableUsers={MOCK_INVESTIGATORS}
+        availableUsers={investigators}
       />
       <AssignUserModal
         isOpen={isActionOwnerModalOpen}
@@ -264,7 +263,7 @@ export const IncidentDetails: React.FC = () => {
         isLoading={assignActionOwnerMutation.isPending}
         title="Assign Action Owner"
         description="Select an action owner to implement corrective actions."
-        availableUsers={MOCK_ACTION_OWNERS}
+        availableUsers={actionOwners}
       />
     </div>
   );

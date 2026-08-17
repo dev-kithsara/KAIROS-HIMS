@@ -3,6 +3,17 @@ import { IncidentCard } from '../components/IncidentCard';
 import { useAssignedIncidents } from '../hooks/useIncidents';
 import { useNavigate } from 'react-router-dom';
 import type { Incident } from "../types/incident";
+import { Inbox } from 'lucide-react';
+
+// ── KAIROS Clinical Palette ────────────────────────────────────────────────
+const BG = '#090F16';
+const PANEL = '#0E1720';
+const TEXT = '#EEF7FC';
+const TEAL = '#45A79A';
+const ACCENT = '#4DC4B5';
+const MUTED = '#8FA8B4';
+const BORDER = '#253642';
+const DANGER = '#EF4444';
 
 const InvestigatorDashboard = () => {
   const navigate = useNavigate();
@@ -26,18 +37,25 @@ const InvestigatorDashboard = () => {
   }, [incidents]);
 
   const handleIncidentClick = (incident: Incident) => {
-  navigate(`/investigator/${incident.id}`, {
-    state: { incident },
-  });
-};
+    navigate(`/investigator/${incident.id}`, {
+      state: { incident },
+    });
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto flex min-h-[70vh] max-w-6xl items-center justify-center rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex flex-col items-center gap-3 text-slate-500">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600"></div>
-            <p className="text-sm font-medium">Loading assigned incidents...</p>
-          </div>
+      <div
+        className="min-h-[50vh] flex items-center justify-center"
+        style={{ backgroundColor: BG }}
+      >
+        <div className="flex flex-col items-center gap-4">
+          <div
+            className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent"
+            style={{ borderColor: `${TEAL} transparent ${TEAL} ${TEAL}` }}
+          />
+          <p className="text-sm" style={{ color: MUTED }}>
+            Loading assigned incidents...
+          </p>
         </div>
       </div>
     );
@@ -45,82 +63,138 @@ const InvestigatorDashboard = () => {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-rose-200 bg-rose-50 p-8 text-center shadow-sm">
-          <h2 className="text-2xl font-semibold text-rose-700">Unable to load incidents</h2>
-          <p className="mt-3 text-sm text-rose-600">
-            {error instanceof Error ? error.message : 'Unknown error occurred'}
-          </p>
-        </div>
+      <div
+        className="p-6 rounded-xl border-l-4"
+        style={{
+          backgroundColor: PANEL,
+          borderLeftColor: DANGER,
+          borderTop: `1px solid ${BORDER}`,
+          borderRight: `1px solid ${BORDER}`,
+          borderBottom: `1px solid ${BORDER}`,
+        }}
+      >
+        <h3 className="font-semibold" style={{ color: DANGER }}>
+          Error loading incidents
+        </h3>
+        <p className="text-sm mt-2" style={{ color: MUTED }}>
+          {error instanceof Error ? error.message : 'Unknown error occurred'}
+        </p>
       </div>
     );
   }
 
   if (!incidents || incidents.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <span className="inline-flex rounded-full bg-blue-50 px-4 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-blue-700">
-            Investigator workspace
-          </span>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">Investigator Dashboard</h1>
-          <p className="mt-3 text-slate-500">No assigned incidents found.</p>
+      <div className="space-y-6">
+        <div
+          className="p-6 rounded-xl border"
+          style={{ backgroundColor: PANEL, borderColor: BORDER }}
+        >
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: TEXT }}>
+            Investigator Dashboard
+          </h1>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>
+            Review and resolve the incidents assigned to you.
+          </p>
+        </div>
+
+        <div
+          className="flex flex-col items-center justify-center p-12 text-center rounded-xl border"
+          style={{ backgroundColor: PANEL, borderColor: BORDER }}
+        >
+          <div
+            className="mb-4 flex h-16 w-16 items-center justify-center rounded-full"
+            style={{ backgroundColor: `${TEAL}1A`, color: TEAL }}
+          >
+            <Inbox className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-semibold" style={{ color: TEXT }}>
+            No assigned incidents found
+          </h3>
+          <p className="mt-2 max-w-md text-sm" style={{ color: MUTED }}>
+            Incidents assigned to you by a manager will appear here.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <section className="overflow-hidden rounded-3xl bg-gradient-to-r from-[#0B4F8A] via-[#1473B8] to-[#38A0D8] text-white shadow-lg">
-          <div className="flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <span className="inline-flex rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-blue-100">
-                Investigator workspace
-              </span>
-              <h1 className="mt-4 text-3xl font-bold sm:text-4xl">Assigned Incidents</h1>
-              <p className="mt-2 max-w-2xl text-sm text-slate-200 sm:text-base">
-                Review and resolve the incidents currently assigned to you in one focused queue.
-              </p>
-            </div>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div
+        className="flex flex-col md:flex-row md:items-end justify-between gap-4 p-6 rounded-xl border"
+        style={{ backgroundColor: PANEL, borderColor: BORDER }}
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: TEXT }}>
+            Assigned Incidents
+          </h1>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>
+            Review and resolve the incidents currently assigned to you in one focused queue.
+          </p>
+        </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Total</p>
-                <p className="mt-1 text-2xl font-bold">{stats.count}</p>
-              </div>
-              <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Active</p>
-                <p className="mt-1 text-2xl font-bold">{stats.activeCount}</p>
-              </div>
-              <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Review</p>
-                <p className="mt-1 text-2xl font-bold">{stats.reviewCount}</p>
-              </div>
-            </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div
+            className="rounded-lg px-4 py-3"
+            style={{ backgroundColor: BG, border: `1px solid ${BORDER}` }}
+          >
+            <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: MUTED }}>
+              Total
+            </p>
+            <p className="mt-1 text-2xl font-bold" style={{ color: TEXT }}>
+              {stats.count}
+            </p>
           </div>
-        </section>
+          <div
+            className="rounded-lg px-4 py-3"
+            style={{ backgroundColor: BG, border: `1px solid ${BORDER}` }}
+          >
+            <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: MUTED }}>
+              Active
+            </p>
+            <p className="mt-1 text-2xl font-bold" style={{ color: ACCENT }}>
+              {stats.activeCount}
+            </p>
+          </div>
+          <div
+            className="rounded-lg px-4 py-3"
+            style={{ backgroundColor: BG, border: `1px solid ${BORDER}` }}
+          >
+            <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: MUTED }}>
+              Review
+            </p>
+            <p className="mt-1 text-2xl font-bold" style={{ color: TEAL }}>
+              {stats.reviewCount}
+            </p>
+          </div>
+        </div>
+      </div>
 
-        <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Incident Queue</h2>
-              <p className="text-sm text-slate-500">Click any incident to view the full investigation details.</p>
-            </div>
-          </div>
+      {/* Incident Queue */}
+      <div
+        className="rounded-xl border p-6"
+        style={{ backgroundColor: PANEL, borderColor: BORDER }}
+      >
+        <div className="mb-5">
+          <h2 className="text-lg font-semibold" style={{ color: TEXT }}>
+            Incident Queue
+          </h2>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>
+            Click any incident to view the full investigation details.
+          </p>
+        </div>
 
-          <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-            {incidents.map((incident) => (
-              <div key={incident.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-2 transition-all duration-200 hover:border-blue-200 hover:shadow-md">
-                <IncidentCard
-                    incident={incident}
-                    onClick={() => handleIncidentClick(incident)}
-                />
-              </div>
-            ))}
-          </div>
-        </section>
+        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+          {incidents.map((incident) => (
+            <IncidentCard
+              key={incident.id}
+              incident={incident}
+              onClick={() => handleIncidentClick(incident)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
