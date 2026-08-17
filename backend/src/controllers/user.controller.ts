@@ -34,6 +34,23 @@ export const getDepartmentUsers = catchAsync(async (req: Request, res: Response)
 });
 
 /**
+ * Get all users with a specific role
+ */
+export const getUsersByRole = catchAsync(async (req: Request, res: Response) => {
+  if (!req.user) throw new AppError('User not authenticated.', 401);
+
+  const role = (req.params.role as string)?.toUpperCase();
+  if (!role) throw new AppError('Role parameter is required.', 400);
+
+  const users = await userService.getUsersByRole(role);
+
+  return res.status(200).json({
+    success: true,
+    data: users,
+  });
+});
+
+/**
  * Change a user's role (Promote/Demote)
  */
 export const changeUserRole = catchAsync(async (req: Request, res: Response) => {

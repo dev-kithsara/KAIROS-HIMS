@@ -1,19 +1,9 @@
-﻿import { useMemo } from "react";
+import { useMemo } from "react";
 import { IncidentCard } from '../components/IncidentCard';
 import { useAssignedIncidents } from '../hooks/useIncidents';
 import { useNavigate } from 'react-router-dom';
 import type { Incident } from "../types/incident";
 import { Inbox } from 'lucide-react';
-
-// ── KAIROS Clinical Palette ────────────────────────────────────────────────
-const BG = '#090F16';
-const PANEL = '#0E1720';
-const TEXT = '#EEF7FC';
-const TEAL = '#45A79A';
-const ACCENT = '#4DC4B5';
-const MUTED = '#8FA8B4';
-const BORDER = '#253642';
-const DANGER = '#EF4444';
 
 // ── Color Tokens ──────────────────────────────────────────────────────────
 const NAVY    = '#1E2B5E';
@@ -23,7 +13,6 @@ const SURFACE = '#F7F8FA';
 const BORDER  = '#D8DCE8';
 const TEXT    = '#1A2447';
 const MUTED   = '#6B7494';
-
 
 const InvestigatorDashboard = () => {
   const navigate = useNavigate();
@@ -73,51 +62,38 @@ const InvestigatorDashboard = () => {
 
   if (!incidents || incidents.length === 0) {
     return (
-      <div className="space-y-6">
-        {/* Header */}
+      <div className="space-y-6 pb-6">
         <div
-          className="rounded-2xl p-8 text-center"
+          className="p-8 rounded-2xl text-center"
           style={{
             background: `linear-gradient(135deg, ${NAVY} 0%, #192651 60%, ${COBALT} 100%)`,
-            boxShadow: '0 4px 24px rgba(17,17,132,0.18)',
+            boxShadow: '0 4px 24px rgba(30,43,94,0.18)',
           }}
         >
           <span
-            className="inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] mb-4"
-            style={{ backgroundColor: 'rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.85)' }}
+            className="inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] mb-4 text-white/90"
+            style={{ backgroundColor: 'rgba(255,255,255,0.14)' }}
           >
             Investigator Workspace
           </span>
           <h1 className="text-3xl font-bold text-white">Investigator Dashboard</h1>
-          <p className="mt-2 text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-            No assigned incidents found.
-        <div
-          className="p-6 rounded-xl border"
-          style={{ backgroundColor: PANEL, borderColor: BORDER }}
-        >
-          <h1 className="text-2xl font-bold tracking-tight" style={{ color: TEXT }}>
-            Investigator Dashboard
-          </h1>
-          <p className="text-sm mt-1" style={{ color: MUTED }}>
+          <p className="mt-2 text-sm text-white/70">
             Review and resolve the incidents assigned to you.
           </p>
         </div>
 
         <div
-          className="flex flex-col items-center justify-center p-12 text-center rounded-xl border"
-          style={{ backgroundColor: PANEL, borderColor: BORDER }}
+          className="flex flex-col items-center justify-center p-16 text-center rounded-2xl border"
+          style={{ backgroundColor: SURFACE, borderColor: BORDER }}
         >
-          <div
-            className="mb-4 flex h-16 w-16 items-center justify-center rounded-full"
-            style={{ backgroundColor: `${TEAL}1A`, color: TEAL }}
-          >
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-blue-700">
             <Inbox className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-semibold" style={{ color: TEXT }}>
+          <h3 className="text-lg font-bold" style={{ color: TEXT }}>
             No assigned incidents found
           </h3>
           <p className="mt-2 max-w-md text-sm" style={{ color: MUTED }}>
-            Incidents assigned to you by a manager will appear here.
+            Incidents assigned to you by a department manager will appear here for root cause analysis.
           </p>
         </div>
       </div>
@@ -125,25 +101,25 @@ const InvestigatorDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-6">
       {/* ── Header Banner ──────────────────────────────────────────────────── */}
       <section
         className="overflow-hidden rounded-2xl"
         style={{
           background: `linear-gradient(135deg, ${NAVY} 0%, #192651 60%, ${COBALT} 100%)`,
-          boxShadow: '0 4px 24px rgba(17,17,132,0.18)',
+          boxShadow: '0 4px 24px rgba(30,43,94,0.18)',
         }}
       >
         <div className="flex flex-col gap-5 p-6 sm:p-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <span
-              className="inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em]"
-              style={{ backgroundColor: 'rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.85)' }}
+              className="inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/90"
+              style={{ backgroundColor: 'rgba(255,255,255,0.14)' }}
             >
               Investigator Workspace
             </span>
             <h1 className="mt-3 text-2xl font-bold text-white sm:text-3xl">Assigned Incidents</h1>
-            <p className="mt-1.5 max-w-xl text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
+            <p className="mt-1.5 max-w-xl text-sm" style={{ color: 'rgba(255,255,255,0.75)' }}>
               Review and resolve the incidents currently assigned to you.
             </p>
           </div>
@@ -172,11 +148,11 @@ const InvestigatorDashboard = () => {
 
       {/* ── Incident Queue ─────────────────────────────────────────────────── */}
       <section
-        className="rounded-2xl p-5"
-        style={{ backgroundColor: SURFACE, border: `1px solid ${BORDER}`, boxShadow: '0 1px 6px rgba(17,17,132,0.06)' }}
+        className="rounded-2xl p-6"
+        style={{ backgroundColor: SURFACE, border: `1.5px solid ${BORDER}`, boxShadow: '0 2px 8px rgba(30,43,94,0.06)' }}
       >
         <div className="mb-5">
-          <h2 className="text-base font-bold" style={{ color: TEXT }}>Incident Queue</h2>
+          <h2 className="text-lg font-bold" style={{ color: TEXT }}>Incident Queue</h2>
           <p className="text-sm mt-0.5" style={{ color: MUTED }}>
             Click any incident to view the full investigation details.
           </p>

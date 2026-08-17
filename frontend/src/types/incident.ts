@@ -21,6 +21,7 @@ export interface Department {
   id: number;
   name: string;
 }
+
 export interface IncidentAttachment {
   id: number;
   fileName: string;
@@ -86,3 +87,5 @@ export interface DepartmentStats {
     bySeverity: ChartDataPoint[];
   };
 }
+
+export type DepartmentAnalytics = DepartmentStats;

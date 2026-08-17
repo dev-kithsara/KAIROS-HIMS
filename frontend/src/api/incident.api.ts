@@ -2,7 +2,6 @@ import { apiClient } from './axios';
 import type {
   Incident,
   ApiResponse,
-  DepartmentStats,
   DepartmentAnalytics,
   Department,
   User,
@@ -24,7 +23,6 @@ export const getDepartments = async (): Promise<Department[]> => {
  * Fetch all incidents for a specific department
  */
 export const getDepartmentIncidents = async (departmentId: number): Promise<Incident[]> => {
-  // We use apiClient.get<ApiResponse<Incident[]>> to tell TypeScript what shape of data to expect back
   const response = await apiClient.get<ApiResponse<Incident[]>>(
     `${API_URL}/department/${departmentId}`
   );
@@ -55,7 +53,6 @@ export const acceptIncident = async (id: number): Promise<Incident> => {
  * Reject an OPEN incident with a reason
  */
 export const rejectIncident = async (id: number, reason: string): Promise<Incident> => {
-  // The second argument in apiClient.patch is the Request Body
   const response = await apiClient.patch<ApiResponse<Incident>>(`${API_URL}/${id}/reject`, {
     reason,
   });
@@ -119,20 +116,18 @@ export const createIncident = async (formData: FormData): Promise<Incident> => {
 // Get incidents assigned to the investigator
 export const getAssignedIncidents = async (): Promise<Incident[]> => {
   const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/investigator`);
-
   return response.data.data;
 };
+
 // Feature 5 - Get incidents assigned to the logged-in Action Owner
 export const getActionOwnerIncidents = async (): Promise<Incident[]> => {
   const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/action-owner`);
-
   return response.data.data;
 };
 
 // Get a single incident by ID
 export const getIncidentById = async (id: number): Promise<Incident> => {
   const response = await apiClient.get<ApiResponse<Incident>>(`${API_URL}/${id}`);
-
   return response.data.data;
 };
 
@@ -152,17 +147,6 @@ export const submitCorrectiveAction = async (
   const response = await apiClient.patch<ApiResponse<Incident>>(
     `${API_URL}/${id}/corrective-action`,
     { correctiveAction }
-  );
-
-  return response.data.data;
-};
-
-/**
- * Feature 6 - Fetch department analytics statistics
- */
-export const getDepartmentAnalytics = async (departmentId: number): Promise<DepartmentStats> => {
-  const response = await apiClient.get<ApiResponse<DepartmentStats>>(
-    `/analytics/department/${departmentId}`
   );
   return response.data.data;
 };

@@ -11,6 +11,14 @@ export class UserService {
     return await userRepository.findByDepartmentId(departmentId);
   }
 
+  async getUsersByRole(role: string) {
+    const validRoles = ['STAFF', 'INVESTIGATOR', 'ACTION_OWNER', 'MANAGER', 'ADMIN'];
+    if (!validRoles.includes(role)) {
+      throw new AppError(`Invalid role. Must be one of: ${validRoles.join(', ')}`, 400);
+    }
+    return await userRepository.findByRole(role);
+  }
+
   /**
    * Change a user's role (Promote/Demote)
    * Business Rules:

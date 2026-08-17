@@ -4,7 +4,6 @@ import { CreateIncident } from './pages/CreateIncident';
 import { IncidentsList } from './pages/IncidentsList';
 import { ManagerDashboard } from './pages/ManagerDashboard';
 import { IncidentDetails } from './pages/IncidentDetails';
-import { IncidentsList } from './pages/IncidentsList';
 import InvestigatorDashboard from './pages/InvestigatorDashboard';
 import InvestigatorWorkspace from './pages/InvestigatorWorkspace';
 import { Login } from './pages/Login';

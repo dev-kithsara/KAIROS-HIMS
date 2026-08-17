@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 
 // ── Color Tokens ─────────────────────────────────────────────────────
 const SURFACE = '#F7F8FA';
@@ -17,7 +17,7 @@ interface AssignUserModalProps {
   isLoading: boolean;
   title: string;
   description: string;
-  availableUsers: { id: number; name: string; role: string }[];
+  availableUsers: { id: number; name: string; role?: string }[];
 }
 
 export const AssignUserModal: React.FC<AssignUserModalProps> = ({

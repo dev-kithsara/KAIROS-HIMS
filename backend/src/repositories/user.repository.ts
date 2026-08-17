@@ -23,6 +23,25 @@ export class UserRepository {
   }
 
   /**
+   * Find all users by role
+   * Excludes passwords from the result for security
+   */
+  async findByRole(role: string) {
+    return await prisma.user.findMany({
+      where: { role },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        departmentId: true,
+        createdAt: true,
+      },
+      orderBy: { name: 'asc' },
+    });
+  }
+
+  /**
    * Update a user's role
    */
   async updateRole(userId: number, newRole: string) {

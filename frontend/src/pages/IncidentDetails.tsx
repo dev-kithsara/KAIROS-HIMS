@@ -1,4 +1,4 @@
-﻿// frontend/src/pages/IncidentDetails.tsx
+// frontend/src/pages/IncidentDetails.tsx
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -19,11 +19,8 @@ import { AssignUserModal } from '../components/AssignUserModal';
 import { useAuthContext } from '../context/AuthContext';
 import { useUsersByRole } from '../hooks/useIncidents';
 
-// ── Mock Data ──────────────────────────────────────────────────────────────
-const MOCK_INVESTIGATORS = [{ id: 2, name: 'Nimal Investigator', role: 'INVESTIGATOR' }];
-const MOCK_ACTION_OWNERS = [{ id: 6, name: 'Sunil Action Owner', role: 'ACTION_OWNER' }];
-
 // ── Color Tokens ───────────────────────────────────────────────────────────
+
 
 const ROYAL = '#2952C4';
 const SURFACE = '#F7F8FA';
