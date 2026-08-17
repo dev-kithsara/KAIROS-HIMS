@@ -3,6 +3,17 @@ import { IncidentCard } from '../components/IncidentCard';
 import { useAssignedIncidents } from '../hooks/useIncidents';
 import { useNavigate } from 'react-router-dom';
 import type { Incident } from "../types/incident";
+import { Inbox } from 'lucide-react';
+
+// ── KAIROS Clinical Palette ────────────────────────────────────────────────
+const BG = '#090F16';
+const PANEL = '#0E1720';
+const TEXT = '#EEF7FC';
+const TEAL = '#45A79A';
+const ACCENT = '#4DC4B5';
+const MUTED = '#8FA8B4';
+const BORDER = '#253642';
+const DANGER = '#EF4444';
 
 // ── Color Tokens ──────────────────────────────────────────────────────────
 const NAVY    = '#1E2B5E';
@@ -80,6 +91,33 @@ const InvestigatorDashboard = () => {
           <h1 className="text-3xl font-bold text-white">Investigator Dashboard</h1>
           <p className="mt-2 text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
             No assigned incidents found.
+        <div
+          className="p-6 rounded-xl border"
+          style={{ backgroundColor: PANEL, borderColor: BORDER }}
+        >
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: TEXT }}>
+            Investigator Dashboard
+          </h1>
+          <p className="text-sm mt-1" style={{ color: MUTED }}>
+            Review and resolve the incidents assigned to you.
+          </p>
+        </div>
+
+        <div
+          className="flex flex-col items-center justify-center p-12 text-center rounded-xl border"
+          style={{ backgroundColor: PANEL, borderColor: BORDER }}
+        >
+          <div
+            className="mb-4 flex h-16 w-16 items-center justify-center rounded-full"
+            style={{ backgroundColor: `${TEAL}1A`, color: TEAL }}
+          >
+            <Inbox className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-semibold" style={{ color: TEXT }}>
+            No assigned incidents found
+          </h3>
+          <p className="mt-2 max-w-md text-sm" style={{ color: MUTED }}>
+            Incidents assigned to you by a manager will appear here.
           </p>
         </div>
       </div>

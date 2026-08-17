@@ -192,23 +192,17 @@ export const Sidebar: React.FC = () => {
               onClick={() => navigate(link.path)}
               className="w-full flex items-center gap-3.5 px-4 py-3 text-[15px] font-semibold rounded-xl transition-all cursor-pointer text-left"
               style={{
-                backgroundColor: isActive
-                  ? 'var(--k-sidebar-active)'
-                  : 'transparent',
+                backgroundColor: isActive ? 'var(--k-sidebar-active)' : 'transparent',
                 color: isActive ? '#FFFFFF' : 'var(--k-sidebar-text)',
-                borderLeft: isActive
-                  ? '3.5px solid #FFFFFF'
-                  : '3.5px solid transparent',
+                borderLeft: isActive ? '3.5px solid #FFFFFF' : '3.5px solid transparent',
               }}
               onMouseEnter={(e) => {
                 if (!isActive)
-                  (e.currentTarget as HTMLElement).style.backgroundColor =
-                    'var(--k-sidebar-hover)';
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--k-sidebar-hover)';
               }}
               onMouseLeave={(e) => {
                 if (!isActive)
-                  (e.currentTarget as HTMLElement).style.backgroundColor =
-                    'transparent';
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
               }}
             >
               <svg
@@ -226,24 +220,18 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* Logout Area */}
-      <div
-        className="p-4 shrink-0"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}
-      >
+      <div className="p-4 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3.5 px-4 py-3 text-sm font-semibold rounded-xl transition-colors cursor-pointer"
           style={{ color: 'rgba(255,255,255,0.65)' }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.backgroundColor =
-              'var(--k-sidebar-hover)';
+            (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--k-sidebar-hover)';
             (e.currentTarget as HTMLElement).style.color = '#FFFFFF';
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.backgroundColor =
-              'transparent';
-            (e.currentTarget as HTMLElement).style.color =
-              'rgba(255,255,255,0.65)';
+            (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.65)';
           }}
         >
           <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

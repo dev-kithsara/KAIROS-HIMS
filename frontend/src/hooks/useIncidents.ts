@@ -1,7 +1,34 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as incidentApi from '../api/incident.api';
-import type { Incident } from '../types/incident';
+import type { Incident, DepartmentAnalytics, Department, User } from '../types/incident';
 import { getActionOwnerIncidents, submitCorrectiveAction } from '../api/incident.api';
+
+// 0. Hook to fetch all users with a given role (e.g. INVESTIGATOR, ACTION_OWNER)
+export const useUsersByRole = (role: string) => {
+  return useQuery<User[]>({
+    queryKey: ['users', 'role', role],
+    queryFn: () => incidentApi.getUsersByRole(role),
+    enabled: !!role,
+  });
+};
+
+// 0. Hook to fetch the list of all departments
+export const useDepartments = () => {
+  return useQuery<Department[]>({
+    queryKey: ['departments'],
+    queryFn: () => incidentApi.getDepartments(),
+  });
+};
+
+// 0. Hook to fetch department analytics summaries for the Manager Dashboard
+export const useDepartmentAnalytics = (departmentId: number) => {
+  return useQuery<DepartmentAnalytics>({
+    queryKey: ['analytics', 'department', departmentId],
+    queryFn: () => incidentApi.getDepartmentAnalytics(departmentId),
+    // Don't fetch if departmentId is not valid (e.g., 0 or undefined)
+    enabled: !!departmentId,
+  });
+};
 
 // 1. Hook to fetch all incidents for a department
 export const useDepartmentIncidents = (departmentId: number) => {

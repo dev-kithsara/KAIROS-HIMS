@@ -1,5 +1,12 @@
 // 1. Define the possible status values exactly as they are in the Backend Prisma Enum
-export type IncidentStatus = 'OPEN' | 'ACCEPTED' | 'REJECTED' | 'INVESTIGATING' | 'PENDING_ACTION' | 'UNDER_REVIEW' | 'CLOSED';
+export type IncidentStatus =
+  | 'OPEN'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'INVESTIGATING'
+  | 'PENDING_ACTION'
+  | 'UNDER_REVIEW'
+  | 'CLOSED';
 
 // 2. Define a minimal User interface for the related data (reporter, investigator, etc.)
 export interface User {
@@ -20,8 +27,6 @@ export interface IncidentAttachment {
   filePath: string;
   fileType: string;
 }
-
-
 
 // 3. Define the main Incident interface matching the Backend response
 export interface Incident {
