@@ -370,3 +370,4 @@ export class IncidentService {
 
 // Export a single instance of the service (Singleton pattern)
 export const incidentService = new IncidentService();
+
