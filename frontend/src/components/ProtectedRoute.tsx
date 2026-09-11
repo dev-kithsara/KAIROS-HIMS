@@ -7,7 +7,12 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
-  const { user, isAuthenticated } = useAuthContext();
+  const { user, isAuthenticated, isLoading } = useAuthContext();
+
+  // 0. Still checking localStorage — don't decide anything yet
+  if (isLoading) {
+    return null;
+  }
 
   // 1. If not logged in, redirect to login page
   if (!isAuthenticated) {

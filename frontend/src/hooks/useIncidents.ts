@@ -125,6 +125,14 @@ export const useCreateIncident = () => {
   });
 };
 
+// Hook to fetch incidents reported by the logged-in staff member (My Incidents page)
+export const useMyIncidents = () => {
+  return useQuery<Incident[]>({
+    queryKey: ['incidents', 'my-incidents'],
+    queryFn: () => incidentApi.getMyIncidents(),
+  });
+};
+
 // 9. Hook to fetch incidents assigned to the investigator
 export const useAssignedIncidents = () => {
   return useQuery<Incident[]>({
