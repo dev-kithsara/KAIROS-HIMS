@@ -12,7 +12,8 @@ import {
   getAssignedIncidents,
   submitRootCause,
   getActionOwnerIncidents,
-  submitCorrectiveAction
+  submitCorrectiveAction,
+  getMyIncidents
 } from "../controllers/incident.controller";
 
 import upload from "../middlewares/upload.middleware";
@@ -34,7 +35,10 @@ router.post(
   upload.array("evidence", 5), // 3. Handle file uploads (up to 5 files)
   createIncident
 );
-
+// Route: GET /api/incidents/my-incidents
+// Description: Get all incidents reported by the logged-in Staff member
+// Access: STAFF only
+router.get("/my-incidents", authenticate, authorizeRoles("STAFF"), getMyIncidents);
 
 // Route: GET /api/incidents/action-owner
 // Description: Get incidents assigned to the logged-in Action Owner

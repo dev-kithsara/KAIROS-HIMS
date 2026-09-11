@@ -138,6 +138,24 @@ export const closeIncident = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
+ * Get all incidents reported by the logged-in staff member
+ * Feature: My Incidents (Staff Dashboard)
+ */
+export const getMyIncidents = catchAsync(async (req: Request, res: Response) => {
+  if (!req.user) {
+    throw new AppError('User not authenticated.', 401);
+  }
+
+  const reporterId = req.user.id;
+  const incidents = await incidentService.getMyIncidents(reporterId);
+
+  return res.status(200).json({
+    success: true,
+    data: incidents,
+  });
+});
+
+/**
  * Get incidents assigned to investigator
  * Feature 4 - Investigator Workspace
  */
