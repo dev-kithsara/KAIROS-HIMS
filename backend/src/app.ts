@@ -1,11 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import incidentRoutes from './routes/incident.routes';
-import authRoutes from './routes/auth.routes';
-import analyticsRoutes from './routes/analytics.routes';
-import userRoutes from './routes/user.routes';
-import { globalErrorHandler } from './middlewares/errorHandler.middleware'; // Import the handler
-import departmentRoutes from './routes/department.routes';
+import incidentRoutes from './modules/incidents/incident.routes';
+import authRoutes from './modules/auth/auth.routes';
+import analyticsRoutes from './modules/analytics/analytics.routes';
+import userRoutes from './modules/users/users.routes';
+import { globalErrorHandler } from './shared/middleware/errorHandler.middleware'; // Import the handler
+import departmentRoutes from './modules/departments/departments.routes';
+
 
 const app = express();
 
