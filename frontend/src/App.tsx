@@ -1,21 +1,21 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Routes, Route } from 'react-router-dom';
-import { CreateIncident } from './pages/CreateIncident';
-import { IncidentsList } from './pages/IncidentsList';
-import { ManagerDashboard } from './pages/ManagerDashboard';
-import { IncidentDetails } from './pages/IncidentDetails';
-import InvestigatorDashboard from './pages/InvestigatorDashboard';
-import InvestigatorWorkspace from './pages/InvestigatorWorkspace';
-import { Login } from './pages/Login';
-import { ActionOwnerDashboard } from './pages/ActionOwnerDashboard';
+import { CreateIncident } from './features/incidents/pages/CreateIncident';
+import { IncidentsList } from './features/incidents/pages/IncidentsList';
+import { ManagerDashboard } from './features/incidents/pages/ManagerDashboard';
+import { IncidentDetails } from './features/incidents/pages/IncidentDetails';
+import InvestigatorDashboard from './features/incidents/pages/InvestigatorDashboard';
+import InvestigatorWorkspace from './features/incidents/pages/InvestigatorWorkspace';
+import { Login } from './features/auth/pages/Login';
+import { ActionOwnerDashboard } from './features/incidents/pages/ActionOwnerDashboard';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { MainLayout } from './components/MainLayout';
-import ActionOwnerIncidentDetails from './pages/ActionOwnerIncidentDetails';
-import { TeamManagement } from './pages/TeamManagement';
-import MyIncidentsPage from './pages/MyIncidentsPage';
-import { useAuthContext } from './context/AuthContext';
+import { AuthProvider, useAuthContext } from './features/auth/context/AuthContext';
+import { ProtectedRoute } from './shared/components/ProtectedRoute';
+import { MainLayout } from './shared/components/MainLayout';
+import ActionOwnerIncidentDetails from './features/incidents/pages/ActionOwnerIncidentDetails';
+import { TeamManagement } from './features/users/pages/TeamManagement';
+import MyIncidentsPage from './features/incidents/pages/MyIncidentsPage';
+
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
