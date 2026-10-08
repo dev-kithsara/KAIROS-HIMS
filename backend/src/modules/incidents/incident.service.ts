@@ -273,6 +273,17 @@ export class IncidentService {
 
     return await incidentRepository.findAssignedIncidents(investigatorId);
   }
+    /**
+   * Get all incidents reported by the logged-in staff member
+   * Feature: My Incidents (Staff Dashboard)
+   */
+  async getMyIncidents(reporterId: number) {
+    if (!reporterId || reporterId <= 0) {
+      throw new AppError('Invalid reporter ID.', 400);
+    }
+
+    return await incidentRepository.findByReporterId(reporterId);
+  }
 
   /**
  * Get incidents assigned to the logged-in Action Owner
@@ -370,3 +381,4 @@ export class IncidentService {
 
 // Export a single instance of the service (Singleton pattern)
 export const incidentService = new IncidentService();
+

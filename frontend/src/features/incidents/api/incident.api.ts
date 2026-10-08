@@ -113,6 +113,12 @@ export const createIncident = async (formData: FormData): Promise<Incident> => {
   return response.data.incident;
 };
 
+// Get all incidents reported by the logged-in staff member (My Incidents page)
+export const getMyIncidents = async (): Promise<Incident[]> => {
+  const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/my-incidents`);
+  return response.data.data;
+};
+
 // Get incidents assigned to the investigator
 export const getAssignedIncidents = async (): Promise<Incident[]> => {
   const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/investigator`);
