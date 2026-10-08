@@ -3,7 +3,6 @@ import { Inbox } from 'lucide-react';
 import { useMyIncidents } from '../hooks/useIncidents';
 
 // ── KAIROS Blue Palette ───────────────────────────────────────────────────
-const NAVY    = '#1E2B5E';
 const ROYAL   = '#2952C4';
 const SURFACE = '#F7F8FA';
 const BG_PAGE = '#EDEEF3';

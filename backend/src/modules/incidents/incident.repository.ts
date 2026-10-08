@@ -223,6 +223,43 @@ export class IncidentRepository {
   }
 
   /**
+   * Get all incidents reported by a specific staff member (Feature: My Incidents)
+   * @param reporterId - The ID of the staff member who submitted the incidents
+   * @returns Array of incidents, newest first
+   */
+  async findByReporterId(reporterId: number) {
+    return await prisma.incident.findMany({
+      where: {
+        reporterId: reporterId,
+      },
+      include: {
+        investigator: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        actionOwner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        department: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        attachments: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  /**
    * Update Root Cause Analysis findings
    * @param id - Incident ID
    * @param rootCause - Investigator findings
