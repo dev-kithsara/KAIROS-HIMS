@@ -8,11 +8,11 @@ import {
   assignInvestigatorSchema,
   assignActionOwnerSchema,
   departmentParamsSchema,
+  rootCauseSchema,
 } from './incident.validator';
-import { incidentService, createIncidentService } from './incident.service';
+import { incidentService } from './incident.service';
 import { catchAsync } from '../../shared/utils/catchAsync';
 import { AppError } from '../../shared/utils/AppError';
-import { rootCauseSchema } from './rootCause.validator';
 
 /**
  * Controller for creating a new incident report
@@ -37,7 +37,7 @@ export const createIncident = catchAsync(async (req: Request, res: Response) => 
   };
 
   // 4. Call service with the securely validated data
-  const incident = await createIncidentService(
+  const incident = await incidentService.createIncident(
     incidentData,
     req.files as Express.Multer.File[]
   );
