@@ -1,0 +1,147 @@
+// 1. Define the possible status values exactly as they are in the Backend Prisma Enum
+export type IncidentStatus =
+  | 'OPEN'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'INVESTIGATING'
+  | 'PENDING_ACTION'
+  | 'UNDER_REVIEW'
+  | 'CLOSED';
+
+// 2. Define a minimal User interface for the related data (reporter, investigator, etc.)
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role?: string;
+  departmentId?: number;
+}
+
+export interface Department {
+  id: number;
+  name: string;
+}
+
+export interface IncidentAttachment {
+  id: number;
+  fileName: string;
+  filePath: string;
+  fileType: string;
+}
+
+// 3. Define the main Incident interface matching the Backend response
+export interface Incident {
+  id: number;
+  title: string;
+  description: string;
+
+  severity: string;
+  category: string;
+  location: string;
+
+  status: IncidentStatus;
+
+  rejectionReason?: string;
+
+  rootCause?: string;
+  rootCauseCategory?: string;
+  correctiveAction?: string;
+
+  departmentId: number;
+  reporterId: number;
+  investigatorId?: number;
+  actionOwnerId?: number;
+
+  createdAt: string;
+  updatedAt: string;
+
+  reporter?: User;
+  investigator?: User;
+  actionOwner?: User;
+
+  department?: Department;
+  attachments?: IncidentAttachment[];
+}
+
+// 4. Define a generic API Response interface to match our Backend standard response
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+export interface ChartDataPoint {
+  name: string;
+  value: number;
+}
+
+export interface DepartmentStats {
+  summary: {
+    total: number;
+    open: number;
+    critical: number;
+    closed: number;
+  };
+  charts: {
+    byStatus: ChartDataPoint[];
+    bySeverity: ChartDataPoint[];
+  };
+}
+
+export type DepartmentAnalytics = DepartmentStats;
+
+export interface ComplianceCheckItem {
+  id: string;
+  label: string;
+  passed: boolean;
+  tip?: string;
+}
+
+export interface StaffAssistResult {
+  completenessScore: number;
+  completenessLevel: string;
+  suggestedCategory: string;
+  suggestedSubCategory: string;
+  suggestedSeverity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  confidence: number;
+  similarIncidentsCount: number;
+  similaritySummary: string;
+  complianceChecks: ComplianceCheckItem[];
+}
+
+export interface StaffConfigData {
+  departments: Department[];
+  categories: Record<string, string[]>;
+  severities: string[];
+}
+
+export interface StaffIncidentItem {
+  id: number;
+  referenceId: string;
+  title: string;
+  category: string;
+  subcategory?: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | string;
+  status: IncidentStatus;
+  reportedAt: string;
+  location: string;
+  department?: {
+    id?: number;
+    name: string;
+  };
+  rejectionReason?: string;
+  description?: string;
+}
+
+export interface StaffIncidentsSummary {
+  total: number;
+  open: number;
+  inProgress: number;
+  closed: number;
+}
+
+export interface StaffIncidentsResponseData {
+  summary: StaffIncidentsSummary;
+  items: StaffIncidentItem[];
+}
+
