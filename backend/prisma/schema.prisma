@@ -1,12 +1,7 @@
-// This is your Prisma schema file
+// backend/prisma/schema.prisma
 
 generator client {
   provider      = "prisma-client-js"
-  // Tell Prisma to generate engine binaries for:
-  //  - "native"                    → local Windows dev machine
-  //  - "linux-musl-openssl-3.0.x" → Alpine Linux (Docker) with OpenSSL 3.x
-  // Without this, Prisma downloads the OpenSSL 1.1 engine binary which
-  // doesn't work on Alpine 3.18+ (which ships OpenSSL 3 only).
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -15,7 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 1. Use an enum to manage the various states of an Incident
 enum IncidentStatus {
   OPEN
   ACCEPTED
@@ -33,19 +27,65 @@ enum Severity {
   CRITICAL
 }
 
+enum CapaType {
+  CORRECTIVE
+  PREVENTIVE
+}
+
+enum CapaPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CapaStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ControlEffectiveness {
+  EFFECTIVE
+  PARTIALLY_EFFECTIVE
+  INEFFECTIVE
+}
+
+enum ControlStatus {
+  PLANNED
+  IN_PROGRESS
+  VERIFIED
+}
+
+enum ReviewOutcome {
+  APPROVED
+  REVISION_REQUIRED
+}
+
+enum DisseminationStatus {
+  SCHEDULED
+  COMPLETED
+}
+
 model User {
   id                    Int        @id @default(autoincrement())
   email                 String     @unique
   password              String
   name                  String
-  role                  String     // Admin, Manager, Staff, etc.
+  role                  String     // ADMIN, MANAGER, INVESTIGATOR, ACTION_OWNER, STAFF
   departmentId          Int
   department            Department @relation(fields: [departmentId], references: [id])
   
-  // 2. Use relation names because a single User can have multiple relationships
   reportedIncidents     Incident[] @relation("Reporter")
   investigatedIncidents Incident[] @relation("Investigator")
   ownedActions          Incident[] @relation("ActionOwner")
+  
+  // Relations for CAPA and Audit Logging
+  assignedCapaActions   CapaAction[]        @relation("ActionOwnerAssignment")
+  verifiedCapaActions   CapaAction[]        @relation("ActionVerifier")
+  managementReviews     ManagementReview[]  @relation("ReviewAuthor")
+  closedIncidents       Incident[]          @relation("IncidentCloser")
+  auditLogs             IncidentAuditLog[]
 
   createdAt             DateTime   @default(now())
   updatedAt             DateTime   @updatedAt
@@ -66,29 +106,42 @@ model Incident {
   category          String
   location          String
   status            IncidentStatus @default(OPEN)
-  rejectionReason   String?        // Value provided only if rejected (optional)
+  rejectionReason   String?
 
-  // Root Cause Analysis (Feature 4)
-  rootCause         String?        @map("root_cause")
-  rootCauseCategory String?        @map("root_cause_category")
+  // Root Cause Analysis & Investigation Findings
+  rootCause                  String?        @map("root_cause")
+  rootCauseCategory          String?        @map("root_cause_category")
+  investigationFindings      String?        @map("investigation_findings")
+  investigationReviewStatus  String?        @default("PENDING") // PENDING, APPROVED, REVISION_REQUESTED
+  investigationReviewComment String?        @map("investigation_review_comment")
 
-  correctiveAction String?
+  correctiveAction           String?
   
-  // 3. Foreign keys and relationships
   departmentId      Int
   department        Department     @relation(fields: [departmentId], references: [id])
   
   reporterId        Int
   reporter          User           @relation("Reporter", fields: [reporterId], references: [id])
   
-  investigatorId    Int?           // Optional because not assigned initially
+  investigatorId    Int?
   investigator      User?          @relation("Investigator", fields: [investigatorId], references: [id])
   
-  actionOwnerId     Int?           // Optional because not assigned initially
+  actionOwnerId     Int?
   actionOwner       User?          @relation("ActionOwner", fields: [actionOwnerId], references: [id])
 
-  // File attachments (Kasun's feature)
+  // Final Controlled Closure fields
+  closedAt          DateTime?
+  closureSummary    String?
+  closedById        Int?
+  closedBy          User?          @relation("IncidentCloser", fields: [closedById], references: [id])
+
+  // Clinical Governance Sub-Entities
   attachments       IncidentAttachment[]
+  capaActions       CapaAction[]
+  controls          IncidentControl[]
+  managementReview  ManagementReview?
+  disseminations    LessonsDissemination[]
+  auditLogs         IncidentAuditLog[]
 
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
@@ -101,7 +154,93 @@ model IncidentAttachment {
   fileType   String
 
   incidentId Int
-  incident   Incident @relation(fields: [incidentId], references: [id])
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
 
   uploadedAt DateTime @default(now())
+}
+
+model CapaAction {
+  id                 Int          @id @default(autoincrement())
+  incidentId         Int
+  incident           Incident     @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  
+  title              String
+  actionType         CapaType     @default(CORRECTIVE)
+  priority           CapaPriority @default(MEDIUM)
+  dueDate            DateTime
+  description        String
+  
+  actionOwnerId      Int
+  actionOwner        User         @relation("ActionOwnerAssignment", fields: [actionOwnerId], references: [id])
+  
+  status             CapaStatus   @default(NOT_STARTED)
+  evidenceNotes      String?
+  
+  // Verification Gate
+  isVerified         Boolean      @default(false)
+  verifiedAt         DateTime?
+  verifiedById       Int?
+  verifiedBy         User?        @relation("ActionVerifier", fields: [verifiedById], references: [id])
+  verificationNotes  String?
+
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+}
+
+model IncidentControl {
+  id                  Int                  @id @default(autoincrement())
+  incidentId          Int
+  incident            Incident             @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  
+  controlType         String
+  effectiveness       ControlEffectiveness @default(PARTIALLY_EFFECTIVE)
+  status              ControlStatus        @default(PLANNED)
+  failureReason       String?
+  requiredImprovement String?
+  targetDate          DateTime
+
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model ManagementReview {
+  id                  Int           @id @default(autoincrement())
+  incidentId          Int           @unique
+  incident            Incident      @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  
+  outcome             ReviewOutcome @default(APPROVED)
+  lessonsLearned      String
+  outcomeComments     String
+  followUpMonitoring  String
+  
+  reviewedById        Int
+  reviewedBy          User          @relation("ReviewAuthor", fields: [reviewedById], references: [id])
+  reviewedAt          DateTime      @default(now())
+}
+
+model LessonsDissemination {
+  id            Int                 @id @default(autoincrement())
+  incidentId    Int
+  incident      Incident            @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  
+  audience      String
+  scheduledDate DateTime
+  status        DisseminationStatus @default(SCHEDULED)
+
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model IncidentAuditLog {
+  id         Int      @id @default(autoincrement())
+  incidentId Int
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  
+  action     String   // e.g., TRIAGE_ACCEPTED, RECORD_CORRECTED, CAPA_CREATED, CAPA_VERIFIED, INCIDENT_CLOSED
+  reason     String?
+  changes    String?  // Serialized JSON of changed diffs
+  createdAt  DateTime @default(now())
 }

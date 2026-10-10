@@ -7,7 +7,7 @@ import userRoutes from './modules/users/users.routes';
 import { globalErrorHandler } from './shared/middleware/errorHandler.middleware'; // Import the handler
 import departmentRoutes from './modules/departments/departments.routes';
 import staffRoutes from './modules/staff/staff.routes';
-
+import managerRoutes from './modules/manager/manager.routes';
 
 const app = express();
 
@@ -20,7 +20,7 @@ Middleware
 // Allow requests from the React frontend
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'http://localhost', 'http://localhost:80'],
     credentials: true,
   })
 );
@@ -42,6 +42,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/manager', managerRoutes);
 
 // Health Check Routes
 app.get('/', (req, res) => {
