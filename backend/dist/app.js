@@ -11,6 +11,7 @@ const analytics_routes_1 = __importDefault(require("./modules/analytics/analytic
 const users_routes_1 = __importDefault(require("./modules/users/users.routes"));
 const errorHandler_middleware_1 = require("./shared/middleware/errorHandler.middleware"); // Import the handler
 const departments_routes_1 = __importDefault(require("./modules/departments/departments.routes"));
+const staff_routes_1 = __importDefault(require("./modules/staff/staff.routes"));
 const app = (0, express_1.default)();
 /*
 ==========================================
@@ -30,6 +31,7 @@ Routes
 ==========================================
 */
 // Route mounting
+app.use('/api/staff', staff_routes_1.default);
 app.use('/api/incidents', incident_routes_1.default);
 app.use('/api/v1/incidents', incident_routes_1.default);
 app.use('/api/auth', auth_routes_1.default);

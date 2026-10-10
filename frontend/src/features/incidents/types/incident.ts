@@ -89,3 +89,28 @@ export interface DepartmentStats {
 }
 
 export type DepartmentAnalytics = DepartmentStats;
+
+export interface ComplianceCheckItem {
+  id: string;
+  label: string;
+  passed: boolean;
+  tip?: string;
+}
+
+export interface StaffAssistResult {
+  completenessScore: number;
+  completenessLevel: string;
+  suggestedCategory: string;
+  suggestedSubCategory: string;
+  suggestedSeverity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  confidence: number;
+  similarIncidentsCount: number;
+  similaritySummary: string;
+  complianceChecks: ComplianceCheckItem[];
+}
+
+export interface StaffConfigData {
+  departments: Department[];
+  categories: Record<string, string[]>;
+  severities: string[];
+}

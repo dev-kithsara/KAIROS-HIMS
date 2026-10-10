@@ -6,6 +6,7 @@ import analyticsRoutes from './modules/analytics/analytics.routes';
 import userRoutes from './modules/users/users.routes';
 import { globalErrorHandler } from './shared/middleware/errorHandler.middleware'; // Import the handler
 import departmentRoutes from './modules/departments/departments.routes';
+import staffRoutes from './modules/staff/staff.routes';
 
 
 const app = express();
@@ -34,6 +35,7 @@ Routes
 */
 
 // Route mounting
+app.use('/api/staff', staffRoutes);
 app.use('/api/incidents', incidentRoutes);
 app.use('/api/v1/incidents', incidentRoutes);
 app.use('/api/auth', authRoutes);

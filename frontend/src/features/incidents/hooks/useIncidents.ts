@@ -178,3 +178,38 @@ export const useIncident = (id: number) => {
     enabled: !!id,
   });
 };
+
+// Hook to fetch staff configuration (active departments and categories)
+export const useStaffConfig = () => {
+  return useQuery({
+    queryKey: ['staff-config'],
+    queryFn: () => incidentApi.getStaffConfig(),
+  });
+};
+
+// Hook to run automated compliance check
+export const useComplianceAssist = () => {
+  return useMutation({
+    mutationFn: incidentApi.runComplianceAssist,
+  });
+};
+
+// Hook to save private draft
+export const useSaveDraft = () => {
+  return useMutation({
+    mutationFn: incidentApi.saveStaffDraft,
+  });
+};
+
+// Hook to submit formal incident via staff endpoint
+export const useSubmitStaffIncident = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (formData: FormData) => incidentApi.submitStaffIncident(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incidents'] });
+    },
+  });
+};
+
