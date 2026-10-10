@@ -275,7 +275,45 @@ export class IncidentService {
       throw new AppError('Invalid reporter ID.', 400);
     }
 
-    return await incidentRepository.findByReporterId(reporterId);
+    const rawIncidents = await incidentRepository.findByReporterId(reporterId);
+
+    const total = rawIncidents.length;
+    const open = rawIncidents.filter((i) => i.status === 'OPEN' || i.status === 'ACCEPTED').length;
+    const inProgress = rawIncidents.filter((i) =>
+      ['INVESTIGATING', 'PENDING_ACTION', 'UNDER_REVIEW'].includes(i.status)
+    ).length;
+    const closed = rawIncidents.filter((i) => i.status === 'CLOSED').length;
+
+    const items = rawIncidents.map((incident) => {
+      const year = new Date(incident.createdAt).getFullYear();
+      const referenceId = `INC-${year}-${String(incident.id).padStart(4, '0')}`;
+
+      let category = incident.category;
+      let subcategory = '';
+      if (incident.category.includes(' - ')) {
+        const parts = incident.category.split(' - ');
+        category = parts[0];
+        subcategory = parts.slice(1).join(' - ');
+      }
+
+      return {
+        ...incident,
+        referenceId,
+        category,
+        subcategory,
+        reportedAt: incident.createdAt.toISOString(),
+      };
+    });
+
+    return {
+      summary: {
+        total,
+        open,
+        inProgress,
+        closed,
+      },
+      items,
+    };
   }
 
   /**

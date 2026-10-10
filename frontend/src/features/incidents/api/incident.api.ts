@@ -6,6 +6,8 @@ import type {
   Department,
   User,
   StaffAssistResult,
+  StaffIncidentsResponseData,
+  StaffIncidentItem,
 } from '../types/incident';
 
 // Base URL for the incidents API.
@@ -114,10 +116,77 @@ export const createIncident = async (formData: FormData): Promise<Incident> => {
   return response.data.incident;
 };
 
-// Get all incidents reported by the logged-in staff member (My Incidents page)
-export const getMyIncidents = async (): Promise<Incident[]> => {
-  const response = await apiClient.get<ApiResponse<Incident[]>>(`${API_URL}/my-incidents`);
-  return response.data.data;
+// Helper to format raw list to staff response structure if necessary
+const formatRawListToStaffData = (rawList: any[]): StaffIncidentsResponseData => {
+  const total = rawList.length;
+  const open = rawList.filter((i) => i.status === 'OPEN' || i.status === 'ACCEPTED').length;
+  const inProgress = rawList.filter((i) =>
+    ['INVESTIGATING', 'PENDING_ACTION', 'UNDER_REVIEW'].includes(i.status)
+  ).length;
+  const closed = rawList.filter((i) => i.status === 'CLOSED').length;
+
+  const items: StaffIncidentItem[] = rawList.map((inc) => {
+    const year = new Date(inc.createdAt || inc.reportedAt || Date.now()).getFullYear();
+    const referenceId = inc.referenceId || `INC-${year}-${String(inc.id).padStart(4, '0')}`;
+    let category = inc.category || 'Clinical Care';
+    let subcategory = inc.subcategory || '';
+    if (!subcategory && category.includes(' - ')) {
+      const parts = category.split(' - ');
+      category = parts[0];
+      subcategory = parts.slice(1).join(' - ');
+    }
+
+    return {
+      id: inc.id,
+      referenceId,
+      title: inc.title,
+      category,
+      subcategory,
+      severity: inc.severity,
+      status: inc.status,
+      reportedAt: inc.createdAt || inc.reportedAt || new Date().toISOString(),
+      location: inc.location || 'Hospital Ward',
+      department: inc.department,
+      rejectionReason: inc.rejectionReason,
+      description: inc.description,
+    };
+  });
+
+  return {
+    summary: { total, open, inProgress, closed },
+    items,
+  };
+};
+
+/**
+ * Fetch staff incidents with lightweight summary
+ * Strictly calls GET /staff/incidents, with fallback to GET /incidents/my
+ */
+export const getMyIncidents = async (): Promise<StaffIncidentsResponseData> => {
+  try {
+    const response = await apiClient.get<any>('/staff/incidents');
+    if (response.data?.data?.items && response.data?.data?.summary) {
+      return response.data.data;
+    }
+    if (Array.isArray(response.data?.data)) {
+      return formatRawListToStaffData(response.data.data);
+    }
+  } catch {
+    try {
+      const fallbackRes = await apiClient.get<any>('/incidents/my');
+      if (fallbackRes.data?.data?.items && fallbackRes.data?.data?.summary) {
+        return fallbackRes.data.data;
+      }
+      if (Array.isArray(fallbackRes.data?.data)) {
+        return formatRawListToStaffData(fallbackRes.data.data);
+      }
+    } catch {}
+  }
+
+  return {
+    summary: { total: 0, open: 0, inProgress: 0, closed: 0 },
+    items: [],
+  };
 };
 
 // Get incidents assigned to the investigator

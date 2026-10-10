@@ -12,7 +12,8 @@ import {
   getAssignedIncidents,
   submitRootCause,
   getActionOwnerIncidents,
-  submitCorrectiveAction
+  submitCorrectiveAction,
+  getMyIncidents
 } from './incident.controller';
 
 import upload from '../../shared/middleware/upload.middleware';
@@ -94,9 +95,14 @@ router.get("/investigator", authenticate, authorizeRoles("INVESTIGATOR"), getAss
 // Description: Investigator submits Root Cause Analysis findings
 router.patch("/:id/root-cause", authenticate, authorizeRoles("INVESTIGATOR"), submitRootCause);
 
+// Route: GET /api/incidents/my or /api/incidents/my-incidents
+// Description: Get all incidents submitted by the logged-in staff member
+router.get("/my", authenticate, getMyIncidents);
+router.get("/my-incidents", authenticate, getMyIncidents);
+
 // Route: GET /api/v1/incidents/:id
 // Description: Get a single incident by ID with related data
-// NOTE: Registered last so it does not shadow /action-owner or /investigator
+// NOTE: Registered last so it does not shadow /action-owner or /investigator or /my
 router.get("/:id", authenticate, getIncidentById);
 
 export default router;

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authenticate, authorizeRoles } from '../../shared/middleware/auth.middleware';
 import upload from '../../shared/middleware/upload.middleware';
-import { createIncident } from '../incidents/incident.controller';
+import { createIncident, getMyIncidents } from '../incidents/incident.controller';
 import prisma from '../../shared/prisma/prisma';
 import { catchAsync } from '../../shared/utils/catchAsync';
 
@@ -315,6 +315,18 @@ router.post(
       },
     });
   })
+);
+
+/**
+ * GET /api/staff/incidents
+ * Connects 1:1 with Staff My Incidents Dashboard
+ * Returns lightweight summary and list of items reported by the logged-in staff member
+ */
+router.get(
+  '/incidents',
+  authenticate,
+  authorizeRoles('STAFF', 'MANAGER', 'ADMIN'),
+  getMyIncidents
 );
 
 /**

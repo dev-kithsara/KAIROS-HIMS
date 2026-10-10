@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as incidentApi from '../api/incident.api';
-import type { Incident, DepartmentAnalytics, Department, User } from '../types/incident';
+import type { Incident, DepartmentAnalytics, Department, User, StaffIncidentsResponseData } from '../types/incident';
 import { getActionOwnerIncidents, submitCorrectiveAction } from '../api/incident.api';
 
 // 0. Hook to fetch all users with a given role (e.g. INVESTIGATOR, ACTION_OWNER)
@@ -127,8 +127,8 @@ export const useCreateIncident = () => {
 
 // Hook to fetch incidents reported by the logged-in staff member (My Incidents page)
 export const useMyIncidents = () => {
-  return useQuery<Incident[]>({
-    queryKey: ['incidents', 'my-incidents'],
+  return useQuery<StaffIncidentsResponseData>({
+    queryKey: ['staff-incidents', 'my-incidents'],
     queryFn: () => incidentApi.getMyIncidents(),
   });
 };

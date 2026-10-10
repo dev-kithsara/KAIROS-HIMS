@@ -114,3 +114,34 @@ export interface StaffConfigData {
   categories: Record<string, string[]>;
   severities: string[];
 }
+
+export interface StaffIncidentItem {
+  id: number;
+  referenceId: string;
+  title: string;
+  category: string;
+  subcategory?: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | string;
+  status: IncidentStatus;
+  reportedAt: string;
+  location: string;
+  department?: {
+    id?: number;
+    name: string;
+  };
+  rejectionReason?: string;
+  description?: string;
+}
+
+export interface StaffIncidentsSummary {
+  total: number;
+  open: number;
+  inProgress: number;
+  closed: number;
+}
+
+export interface StaffIncidentsResponseData {
+  summary: StaffIncidentsSummary;
+  items: StaffIncidentItem[];
+}
+

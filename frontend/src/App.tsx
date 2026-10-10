@@ -24,7 +24,15 @@ const queryClient = new QueryClient({
 // Route the root path ("/") to the correct home page based on the user's role
 // so that e.g. STAFF never renders the ManagerDashboard (which calls MANAGER-only APIs).
 const HomeRoute = () => {
-  const { user } = useAuthContext();
+  const { user, isLoading } = useAuthContext();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="w-8 h-8 border-4 border-[#0F1E42] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   switch (user?.role) {
     case 'INVESTIGATOR':
@@ -34,8 +42,10 @@ const HomeRoute = () => {
     case 'STAFF':
       return <MyIncidentsPage />;
     case 'MANAGER':
-    default:
+    case 'ADMIN':
       return <ManagerDashboard />;
+    default:
+      return <MyIncidentsPage />;
   }
 };
 
@@ -51,21 +61,22 @@ function App() {
           {/* Protected Routes */}
           <Route
             element={
-              <ProtectedRoute allowedRoles={['MANAGER', 'STAFF', 'INVESTIGATOR', 'ACTION_OWNER']} />
+              <ProtectedRoute allowedRoles={['MANAGER', 'STAFF', 'INVESTIGATOR', 'ACTION_OWNER', 'ADMIN']} />
             }
           >
             <Route element={<MainLayout />}>
               <Route path="/" element={<HomeRoute />} />
-              <Route path="/incidents" element={<IncidentsList />} />
-              <Route path="/incidents/:id" element={<IncidentDetails />} />
               <Route path="/my-incidents" element={<MyIncidentsPage />} />
               <Route path="/submit-incident" element={<CreateIncident />} />
+              <Route path="/incidents/:id" element={<IncidentDetails />} />
               <Route path="/investigator" element={<InvestigatorDashboard />} />
               <Route path="/investigator/:id" element={<InvestigatorWorkspace />} />
               <Route path="/action-owner" element={<ActionOwnerDashboard />} />
               <Route path="/action-owner/:id" element={<ActionOwnerIncidentDetails />} />
-              {/* Manager Only - Team Management */}
-              <Route element={<ProtectedRoute allowedRoles={['MANAGER']} />}>
+
+              {/* Manager & Admin Only - Department Registry & Team Management */}
+              <Route element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']} />}>
+                <Route path="/incidents" element={<IncidentsList />} />
                 <Route path="/team" element={<TeamManagement />} />
               </Route>
             </Route>
