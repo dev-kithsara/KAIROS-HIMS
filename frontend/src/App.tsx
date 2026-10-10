@@ -17,7 +17,7 @@ import { MainLayout } from './shared/components/MainLayout';
 import ActionOwnerIncidentDetails from './features/incidents/pages/ActionOwnerIncidentDetails';
 import MyIncidentsPage from './features/incidents/pages/MyIncidentsPage';
 
-// Manager Modernized Clinical Governance Pages
+// Modernized Department Manager Clinical Governance Components
 import { ManagerIncidentDetails } from './features/manager/pages/ManagerIncidentDetails';
 import { ManagerAnalytics } from './features/manager/pages/ManagerAnalytics';
 import { ManagerTeam } from './features/manager/pages/ManagerTeam';
@@ -26,7 +26,7 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
 });
 
-// Route the root path ("/") to the correct home page based on the user's role
+// Home router based on user role
 const HomeRoute = () => {
   const { user, isLoading } = useAuthContext();
 
@@ -53,8 +53,8 @@ const HomeRoute = () => {
   }
 };
 
-// Smart Incident Route: Serves Manager Governance view to Managers/Admins, otherwise staff view
-const IncidentViewRoute = () => {
+// Smart Incident Route: Forces Modernized 4-Tab Governance for Managers/Admins
+const IncidentDetailsDispatcher = () => {
   const { user } = useAuthContext();
   if (user?.role === 'MANAGER' || user?.role === 'ADMIN') {
     return <ManagerIncidentDetails />;
@@ -83,9 +83,9 @@ function App() {
               <Route path="/" element={<HomeRoute />} />
               <Route path="/my-incidents" element={<MyIncidentsPage />} />
               <Route path="/submit-incident" element={<CreateIncident />} />
-              
-              {/* Incident Details (Smart Route: Managers see 4-Tab Governance, Staff see standard view) */}
-              <Route path="/incidents/:id" element={<IncidentViewRoute />} />
+
+              {/* Incidents View - Loads Modernized 4-Tab Governance for Managers */}
+              <Route path="/incidents/:id" element={<IncidentDetailsDispatcher />} />
               <Route path="/manager/incidents/:id" element={<ManagerIncidentDetails />} />
 
               <Route path="/investigator" element={<InvestigatorDashboard />} />
@@ -93,7 +93,7 @@ function App() {
               <Route path="/action-owner" element={<ActionOwnerDashboard />} />
               <Route path="/action-owner/:id" element={<ActionOwnerIncidentDetails />} />
 
-              {/* Manager & Admin Only Routes */}
+              {/* Manager & Admin Only Modernized Views */}
               <Route element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']} />}>
                 <Route path="/incidents" element={<IncidentsList />} />
                 <Route path="/team" element={<ManagerTeam />} />
