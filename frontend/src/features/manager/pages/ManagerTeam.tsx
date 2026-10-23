@@ -85,6 +85,36 @@ export const ManagerTeam: React.FC = () => {
     });
   }, [team, searchTerm, roleFilter]);
 
+  // ---------------------------------------------------------
+// Helper: Determine workload saturation level for an investigator
+// based on the number of incidents they have investigated.
+// Returns label, color classes, and icon for the badge.
+// ---------------------------------------------------------
+const getWorkloadBadge = (count: number): { label: string; classes: string; dot: string } => {
+  if (count >= 10) {
+    // Heavy Load: Clinically risky — may cause investigation delays
+    return {
+      label: `Investigated: ${count} (Heavy Load ⚠️)`,
+      classes: 'text-red-700 bg-red-50 border border-red-200 rounded-full px-2 py-0.5',
+      dot: 'bg-red-500',
+    };
+  } else if (count >= 5) {
+    // Moderate Load: Approaching capacity
+    return {
+      label: `Investigated: ${count} (Moderate Load)`,
+      classes: 'text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5',
+      dot: 'bg-amber-500',
+    };
+  } else {
+    // Available: Safe capacity
+    return {
+      label: `Investigated: ${count}`,
+      classes: 'text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5',
+      dot: 'bg-emerald-500',
+    };
+  }
+};
+
   const roleBadgeClasses: Record<string, string> = {
     STAFF: 'bg-slate-100 text-slate-700 border-slate-200',
     INVESTIGATOR: 'bg-purple-100 text-purple-800 border-purple-200',
@@ -223,22 +253,29 @@ export const ManagerTeam: React.FC = () => {
                       </span>
                     </td>
 
-                    <td className="p-4 text-slate-600">
-                      <div className="space-y-0.5 text-[11px]">
-                        <p>
-                          Investigated:{' '}
-                          <span className="font-semibold text-slate-800">
-                            {member._count?.investigatedIncidents ?? 0}
-                          </span>
-                        </p>
-                        <p>
-                          Owned Actions:{' '}
-                          <span className="font-semibold text-slate-800">
-                            {member._count?.assignedCapaActions ?? 0}
-                          </span>
-                        </p>
-                      </div>
-                    </td>
+              <td className="p-4">
+              <div className="space-y-1.5 text-[11px]">
+                {/* Workload Saturation Badge — color-coded by investigation count */}
+                {(() => {
+                  const invCount = member._count?.investigatedIncidents ?? 0;
+                  const badge = getWorkloadBadge(invCount);
+                  return (
+                    <span className={`inline-flex items-center gap-1.5 font-semibold ${badge.classes}`}>
+                      {/* Colored dot showing saturation status */}
+                      <span className={`w-1.5 h-1.5 rounded-full ${badge.dot} shrink-0`} />
+                      {badge.label}
+                    </span>
+                  );
+                })()}
+                {/* CAPA Action count — plain text (no threshold for now) */}
+                <p className="text-slate-500">
+                  Owned Actions:{' '}
+                  <span className="font-semibold text-slate-700">
+                    {member._count?.assignedCapaActions ?? 0}
+                  </span>
+                </p>
+              </div>
+            </td>
 
                     <td className="p-4">
                       <span
