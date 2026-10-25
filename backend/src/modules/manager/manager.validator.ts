@@ -89,4 +89,6 @@ export const updateTeamRoleSchema = z.object({
   }),
   // Optional clinical rationale for changing staff governance role
   reason: z.string().optional(),
+  // Explicit manager override flag to bypass Active Duty Guard when intentional
+  force: z.boolean().optional().default(false),
 });

@@ -340,13 +340,18 @@ export const managerApi = {
     return response.data.data;
   },
 
-  // Delegate Role to Team Member
-  updateTeamRole: async (userId: number, role: 'STAFF' | 'INVESTIGATOR' | 'ACTION_OWNER') => {
+ // Delegate Role to Team Member with optional force override
+  updateTeamRole: async (
+    userId: number, 
+    role: 'STAFF' | 'INVESTIGATOR' | 'ACTION_OWNER',
+    force: boolean = false,
+    reason?: string
+  ) => {
     const response = await apiClient.patch<{
       success: boolean;
       message: string;
       data: DepartmentUser;
-    }>(`/manager/team/${userId}/role`, { role });
+    }>(`/manager/team/${userId}/role`, { role, force, reason });
     return response.data;
   },
 

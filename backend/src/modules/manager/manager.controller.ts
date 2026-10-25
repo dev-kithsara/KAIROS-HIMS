@@ -60,13 +60,14 @@ export const updateTeamRole = catchAsync(async (req: Request, res: Response) => 
   const { departmentId,  userId: actorUserId } = getAuthContext(req);
   const targetUserId = parseParamId(req.params.userId, 'user ID');
 
-  const { role, reason } = updateTeamRoleSchema.parse(req.body);
+  const { role, reason, force } = updateTeamRoleSchema.parse(req.body);
   const updatedUser = await managerService.updateTeamRole(
       departmentId, 
       targetUserId, 
       role,
       actorUserId,
-      reason
+      reason,
+      force
     );
 
   return res.status(200).json({
