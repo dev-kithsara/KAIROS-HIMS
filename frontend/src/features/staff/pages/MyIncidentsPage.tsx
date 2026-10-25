@@ -224,7 +224,7 @@ export const MyIncidentsPage: React.FC = () => {
             className="px-5 py-2.5 text-xs font-bold rounded-xl text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-all cursor-pointer inline-flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Report New Incident</span>
+            <span>Report New Incident</span>
           </button>
         </div>
       </div>
