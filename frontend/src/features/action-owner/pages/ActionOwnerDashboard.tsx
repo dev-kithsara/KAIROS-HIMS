@@ -512,30 +512,31 @@ export const ActionOwnerDashboard: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Middle: Clinical Priority & Risk Score */}
+                {/* Middle: Priority and risk */}
                 <div className="flex items-center gap-6 lg:w-72 lg:justify-between shrink-0">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B7494]">
-                      Priority & Risk
+                      Priority
                     </p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <span
-                        className={`rounded px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${
-                          item.priority === 'CRITICAL'
-                            ? 'bg-red-100 text-red-800'
-                            : item.priority === 'HIGH'
-                            ? 'bg-orange-100 text-orange-800'
-                            : item.priority === 'MEDIUM'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-slate-100 text-slate-700'
-                        }`}
-                      >
-                        {item.priority}
+                    <p
+                      className={`mt-1 text-sm font-semibold capitalize ${
+                        item.priority === 'CRITICAL'
+                          ? 'text-red-700'
+                          : item.priority === 'HIGH'
+                          ? 'text-orange-700'
+                          : item.priority === 'MEDIUM'
+                          ? 'text-amber-700'
+                          : 'text-slate-600'
+                      }`}
+                    >
+                      {item.priority.toLowerCase()}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Risk {item.completionRisk.score}% ·{' '}
+                      <span className="capitalize">
+                        {item.completionRisk.level.toLowerCase()}
                       </span>
-                      <span className="text-xs font-semibold text-slate-500">
-                        {item.completionRisk.score}% Risk
-                      </span>
-                    </div>
+                    </p>
                   </div>
 
                   {/* Right: Due Date & Countdown */}

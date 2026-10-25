@@ -4,27 +4,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   ArrowLeft,
-  CheckCircle2,
-  AlertTriangle,
-  Upload,
-  FileText,
-  Clock,
-  ShieldCheck,
-  Building,
-  Calendar,
   AlertCircle,
   ExternalLink,
-  Lock,
-  Layers,
-  HelpCircle,
+  FileText,
+  Upload,
 } from 'lucide-react';
 import {
   actionOwnerApi,
   type ActionStatus,
 } from '../api/actionOwner.api';
 
-// Enterprise Clinical Theme Colors
-const NAVY = '#1E2B5E';
 const BORDER = '#D8DCE8';
 
 const formatDate = (isoString: string) =>
@@ -37,7 +26,7 @@ const formatDate = (isoString: string) =>
 const formatDateTime = (isoString: string) =>
   new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
-    month: 'short',
+    month: '2-digit',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
@@ -206,41 +195,42 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
     );
   }
 
+  // Due state display text
+  const dueStateText = (() => {
+    if (item.status === 'COMPLETED') {
+      return item.reviewStatus === 'VERIFIED' ? 'Verified' : 'Submitted for verification';
+    }
+    if (item.overdue) return `${Math.abs(item.dueInDays)} day(s) overdue`;
+    if (item.dueInDays === 0) return 'Due today';
+    return `${item.dueInDays} day(s) remaining`;
+  })();
+
   return (
-    <div className="space-y-6 pb-12 text-[#1A2447]">
-      {/* ── Top Navigation Link ────────────────────────────────────────── */}
+    <div className="space-y-5 pb-12 text-[#1A2447]">
+      {/* ── Back Navigation ──────────────────────────────────────────── */}
       <button
         type="button"
         onClick={() => navigate('/action-owner')}
-        className="flex items-center gap-2 text-sm font-semibold text-[#2952C4] hover:underline cursor-pointer"
+        className="flex items-center gap-1.5 text-sm font-semibold text-[#2952C4] hover:underline cursor-pointer"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Action Owner Dashboard
+        Back to assigned actions
       </button>
 
-      {/* ── Header Context ─────────────────────────────────────────────── */}
+      {/* ── Header ───────────────────────────────────────────────────── */}
       <header
-        className="rounded-2xl p-6 text-white shadow-sm md:p-8"
-        style={{
-          backgroundColor: NAVY,
-          border: '1px solid #141F45',
-        }}
+        className="rounded-2xl p-6 text-white md:p-8"
+        style={{ backgroundColor: '#1E2B5E' }}
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-blue-200">
-                ACT-{String(item.id).padStart(4, '0')}
-              </span>
-              <span className="text-blue-300">•</span>
-              <span className="text-xs font-semibold text-blue-100">
-                Incident #{item.incident.id} ({item.incident.category})
-              </span>
-            </div>
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-200">
+              Action Record ACT-{String(item.id).padStart(4, '0')} • Incident #{item.incident.id}
+            </p>
             <h1 className="mt-2 text-2xl font-bold tracking-tight text-white md:text-3xl">
               {item.title}
             </h1>
-            <p className="mt-2 text-sm leading-relaxed text-blue-100">
+            <p className="mt-2 text-sm leading-relaxed text-blue-100/80">
               {item.description}
             </p>
           </div>
@@ -263,7 +253,7 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
                 : item.reviewStatus === 'COMPLETED_PENDING_VERIFICATION'
                 ? 'Awaiting Verification'
                 : item.reviewStatus === 'VERIFIED'
-                ? 'Verified Effective'
+                ? 'Verified'
                 : item.status.replaceAll('_', ' ')}
             </span>
 
@@ -279,120 +269,104 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
                     : 'bg-white/15 text-blue-100'
                 }`}
               >
-                {item.priority} Priority
+                {item.priority} priority
               </span>
             </div>
           </div>
         </div>
       </header>
 
-      {/* ── Manager Feedback Alerts ─────────────────────────────────────── */}
+      {/* ── Manager Feedback Alerts ─────────────────────────────────── */}
       {isReturned && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50/90 p-5 text-amber-900 shadow-sm">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
-            <div>
-              <h3 className="text-sm font-bold text-amber-900">
-                Department Manager Feedback: Action Returned for Revision
-              </h3>
-              <p className="mt-1 text-sm leading-relaxed text-amber-800">
-                {item.managerReviewComment ||
-                  'The manager indicated further remediation evidence or protocol adjustment is required.'}
-              </p>
-              <p className="mt-2 text-xs font-semibold text-amber-700">
-                Update your progress note, attach additional evidence if needed, and resubmit for verification.
-              </p>
-            </div>
-          </div>
+        <div
+          className="rounded-xl p-5"
+          style={{
+            backgroundColor: '#FEF3C7',
+            borderLeft: '4px solid #F59E0B',
+          }}
+        >
+          <h3 className="text-sm font-bold text-amber-900">
+            Manager returned this action for revision.
+          </h3>
+          <p className="mt-1 text-sm text-amber-800">
+            {item.managerReviewComment ||
+              'The manager indicated further remediation evidence or protocol adjustment is required.'}
+          </p>
         </div>
       )}
 
       {isLocked && (
-        <div className="rounded-xl border border-emerald-300 bg-emerald-50/90 p-5 text-emerald-900 shadow-sm">
-          <div className="flex items-start gap-3">
-            <ShieldCheck className="h-5 w-5 text-emerald-700 shrink-0 mt-0.5" />
-            <div>
-              <h3 className="text-sm font-bold text-emerald-900">
-                Manager Verified & Locked: Clinical Governance Closed
-              </h3>
-              <p className="mt-1 text-sm leading-relaxed text-emerald-800">
-                {item.managerReviewComment ||
-                  'Department Manager has verified the completed corrective action and confirmed clinical compliance.'}
-              </p>
-              <div className="mt-2 flex items-center gap-3 text-xs font-semibold text-emerald-700">
-                <span>Rating: {item.effectiveness || 'EFFECTIVE'}</span>
-                {item.effectivenessScore != null && (
-                  <span>Score: {item.effectivenessScore}% Effectiveness</span>
-                )}
-                <span>• Closed-loop audit confirmed</span>
-              </div>
-            </div>
-          </div>
+        <div
+          className="rounded-xl p-5"
+          style={{
+            backgroundColor: '#D1FAE5',
+            borderLeft: '4px solid #10B981',
+          }}
+        >
+          <h3 className="text-sm font-bold text-emerald-900">
+            Manager verified this action.
+          </h3>
+          <p className="mt-1 text-sm text-emerald-800">
+            {item.managerReviewComment || 'Verified and closed.'}
+            {item.effectiveness && ` • Effectiveness: ${item.effectiveness}`}
+            {item.effectivenessScore != null && ` (${item.effectivenessScore}%)`}
+          </p>
         </div>
       )}
 
-      {/* ── Metadata Cards Grid (4 Cards) ───────────────────────────────── */}
+      {/* ── Metadata Cards Grid ──────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Parent Incident */}
+        {/* Incident */}
         <div
-          className="rounded-xl bg-white p-4 shadow-sm"
+          className="rounded-xl bg-white p-4"
           style={{ border: `1px solid ${BORDER}` }}
         >
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#6B7494]">
-            <Layers className="h-4 w-4 text-[#2952C4]" />
-            Parent Incident
-          </div>
-          <p className="mt-2 text-sm font-bold text-[#1A2447] truncate">
-            #{item.incident.id} {item.incident.title}
+          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7494]">
+            Incident
           </p>
-          <p className="mt-0.5 text-xs text-[#6B7494]">
-            Severity: {item.incident.severity}
+          <p className="mt-1.5 text-sm font-bold text-[#1A2447]">
+            #{item.incident.id} {item.incident.category && (
+              <span className="text-[#2952C4]">{item.incident.category}</span>
+            )} {item.incident.title}
           </p>
         </div>
 
         {/* Department */}
         <div
-          className="rounded-xl bg-white p-4 shadow-sm"
+          className="rounded-xl bg-white p-4"
           style={{ border: `1px solid ${BORDER}` }}
         >
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#6B7494]">
-            <Building className="h-4 w-4 text-[#2952C4]" />
+          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7494]">
             Department
-          </div>
-          <p className="mt-2 text-sm font-bold text-[#1A2447]">
-            {item.incident.department.name}
           </p>
-          <p className="mt-0.5 text-xs text-[#6B7494]">
-            Location: {item.incident.location || 'Hospital Campus'}
+          <p className="mt-1.5 text-sm font-bold text-[#1A2447]">
+            {item.incident.department.name}
           </p>
         </div>
 
         {/* Due Date */}
         <div
-          className="rounded-xl bg-white p-4 shadow-sm"
+          className="rounded-xl bg-white p-4"
           style={{ border: `1px solid ${BORDER}` }}
         >
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#6B7494]">
-            <Calendar className="h-4 w-4 text-[#2952C4]" />
+          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7494]">
             Due Date
-          </div>
-          <p className="mt-2 text-sm font-bold text-[#1A2447]">
+          </p>
+          <p className="mt-1.5 text-sm font-bold text-[#1A2447]">
             {formatDate(item.dueDate)}
           </p>
-          <p className="mt-0.5 text-xs text-[#6B7494]">Target SLA Deadline</p>
         </div>
 
         {/* Due State */}
         <div
-          className="rounded-xl bg-white p-4 shadow-sm"
+          className="rounded-xl bg-white p-4"
           style={{ border: `1px solid ${BORDER}` }}
         >
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#6B7494]">
-            <Clock className="h-4 w-4 text-[#2952C4]" />
+          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B7494]">
             Due State
-          </div>
+          </p>
           <p
-            className={`mt-2 text-sm font-bold ${
+            className={`mt-1.5 text-sm font-bold ${
               item.status === 'COMPLETED'
                 ? 'text-emerald-700'
                 : item.overdue
@@ -402,178 +376,105 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
                 : 'text-[#1A2447]'
             }`}
           >
-            {item.status === 'COMPLETED'
-              ? item.reviewStatus === 'VERIFIED'
-                ? 'Verified'
-                : 'Submitted for verification'
-              : item.overdue
-              ? `${Math.abs(item.dueInDays)} day(s) overdue`
-              : item.dueInDays === 0
-              ? 'Due today'
-              : `${item.dueInDays} day(s) remaining`}
-          </p>
-          <p className="mt-0.5 text-xs text-[#6B7494]">
-            {item.status === 'COMPLETED' ? 'Work completed' : 'Compliance clock active'}
+            {dueStateText}
           </p>
         </div>
       </div>
 
-      {/* ── 3-Tab Navigation Bar ────────────────────────────────────────── */}
+      {/* ── Tab Bar ──────────────────────────────────────────────────── */}
       <nav
-        className="flex gap-2 rounded-xl bg-white p-1.5 shadow-sm"
-        style={{ border: `1px solid ${BORDER}` }}
-        aria-label="Clinical workspace tabs"
+        className="flex gap-1 border-b"
+        style={{ borderColor: BORDER }}
+        aria-label="Action workspace tabs"
       >
-        <button
-          type="button"
-          onClick={() => setActiveTab('progress')}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
-            activeTab === 'progress'
-              ? 'bg-[#1E2B5E] text-white shadow-sm'
-              : 'text-[#6B7494] hover:bg-slate-50 hover:text-[#1A2447]'
-          }`}
-        >
-          <CheckCircle2 className="h-4 w-4" />
-          <span>Progress & Execution</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('evidence')}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
-            activeTab === 'evidence'
-              ? 'bg-[#1E2B5E] text-white shadow-sm'
-              : 'text-[#6B7494] hover:bg-slate-50 hover:text-[#1A2447]'
-          }`}
-        >
-          <Upload className="h-4 w-4" />
-          <span>Evidence & Audit Trail</span>
-          {item.evidence && item.evidence.length > 0 && (
-            <span
-              className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                activeTab === 'evidence' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
-              }`}
-            >
-              {item.evidence.length}
-            </span>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('support')}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
-            activeTab === 'support'
-              ? 'bg-[#1E2B5E] text-white shadow-sm'
-              : 'text-[#6B7494] hover:bg-slate-50 hover:text-[#1A2447]'
-          }`}
-        >
-          <ShieldCheck className="h-4 w-4" />
-          <span>Clinical Decision Support</span>
-        </button>
+        {([
+          { key: 'progress', label: 'Progress' },
+          { key: 'evidence', label: 'Evidence & audit' },
+          { key: 'support', label: 'Decision support' },
+        ] as const).map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => setActiveTab(tab.key)}
+            className={`px-5 py-2.5 text-sm font-semibold transition cursor-pointer rounded-t-lg ${
+              activeTab === tab.key
+                ? 'bg-[#1E2B5E] text-white'
+                : 'text-[#6B7494] hover:bg-slate-100 hover:text-[#1A2447]'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </nav>
 
-      {/* ── TAB 1: PROGRESS (THE MAIN EXECUTION TAB) ────────────────────── */}
+      {/* ── TAB 1: PROGRESS ──────────────────────────────────────────── */}
       {activeTab === 'progress' && (
         <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-          {/* Main Execution Card */}
+          {/* Progress Update Card */}
           <section
-            className="rounded-2xl bg-white p-6 shadow-sm space-y-5"
-            style={{ border: `1.5px solid ${BORDER}` }}
+            className="rounded-2xl bg-white p-6 space-y-5"
+            style={{ border: `1px solid ${BORDER}` }}
           >
             <div>
-              <h2 className="text-lg font-bold text-[#1A2447]">Corrective Action Execution</h2>
+              <h2 className="text-lg font-bold text-[#1A2447]">Progress update</h2>
               <p className="text-xs text-[#6B7494] mt-0.5">
-                Record your operational remediation details. Transitioning to Completed requires formal verification notes.
+                Record a meaningful update. Completion requires an evidence-oriented verification note.
               </p>
             </div>
 
-            {/* Status Selector */}
-            <div>
-              <label
-                htmlFor="action-status-select"
-                className="block text-xs font-bold uppercase tracking-wider text-[#1A2447] mb-2"
-              >
-                Action Lifecycle Status
-              </label>
-              <select
-                id="action-status-select"
-                disabled={isLocked}
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ActionStatus)}
-                className="w-full rounded-xl border border-[#D8DCE8] bg-white px-4 py-3 text-sm font-semibold text-[#1A2447] outline-none transition focus:border-[#2952C4] focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100 disabled:cursor-not-allowed"
-              >
-                <option value="OPEN">Not started</option>
-                <option value="IN_PROGRESS">In progress</option>
-                <option value="COMPLETED">Completed — submit for verification</option>
-              </select>
-            </div>
-
-            {/* Progress Note Textarea */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label
-                  htmlFor="progress-note"
-                  className="text-xs font-bold uppercase tracking-wider text-[#1A2447]"
+            {/* Status + Verification Notes Row */}
+            <div className="flex flex-wrap items-end gap-4">
+              <div>
+                <select
+                  id="action-status-select"
+                  disabled={isLocked}
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as ActionStatus)}
+                  className="rounded-lg border border-[#D8DCE8] bg-white px-3 py-2 text-sm font-semibold text-[#1A2447] outline-none transition focus:border-[#2952C4] focus:ring-2 focus:ring-blue-100 disabled:bg-slate-100 disabled:cursor-not-allowed"
                 >
-                  Progress Note
-                </label>
-                <span
-                  className={`text-xs font-medium ${
-                    progressNote.trim().length >= 5 ? 'text-emerald-700' : 'text-amber-700'
-                  }`}
-                >
-                  {progressNote.trim().length} / 5 chars min
-                </span>
+                  <option value="OPEN">Not started</option>
+                  <option value="IN_PROGRESS">In progress</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
               </div>
-              <textarea
-                id="progress-note"
-                disabled={isLocked}
-                rows={4}
-                value={progressNote}
-                onChange={(e) => setProgressNote(e.target.value)}
-                placeholder="Detail current operational progress, key milestones reached, or any blockers encountered..."
-                className="w-full rounded-xl border border-[#D8DCE8] bg-slate-50/50 p-4 text-sm text-[#1A2447] outline-none transition focus:border-[#2952C4] focus:bg-white focus:ring-2 focus:ring-blue-100 resize-none disabled:bg-slate-100 disabled:cursor-not-allowed"
-              />
+              {isCompleting && (
+                <span className="text-xs text-[#6B7494]">submit for verification</span>
+              )}
             </div>
 
-            {/* Verification Notes Textarea (Conditionally visible & mandatory on Completed) */}
+            {/* Verification Notes (shown when completing) */}
             {isCompleting && (
-              <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="verification-notes"
-                    className="text-xs font-bold uppercase tracking-wider text-[#1E2B5E]"
-                  >
-                    Evidence-Based Verification Notes (Mandatory for Completion)
-                  </label>
-                  <span
-                    className={`text-xs font-medium ${
-                      verificationNotes.trim().length >= 10
-                        ? 'text-emerald-700'
-                        : 'text-amber-700'
-                    }`}
-                  >
-                    {verificationNotes.trim().length} / 10 chars min
-                  </span>
-                </div>
+              <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4">
                 <textarea
                   id="verification-notes"
                   disabled={isLocked}
-                  rows={4}
+                  rows={3}
                   value={verificationNotes}
                   onChange={(e) => setVerificationNotes(e.target.value)}
-                  placeholder="Describe the physical outcome, test readings, protocol changes, and how the manager can verify completion..."
-                  className="w-full rounded-xl border border-blue-200 bg-white p-4 text-sm text-[#1A2447] outline-none transition focus:border-[#2952C4] focus:ring-2 focus:ring-blue-100 resize-none disabled:bg-slate-100 disabled:cursor-not-allowed"
+                  placeholder="Mandatory independent dual-verification checklist implemented across all ICU nursing shifts..."
+                  className="w-full rounded-lg border border-blue-200 bg-white p-3 text-sm text-[#1A2447] outline-none transition focus:border-[#2952C4] focus:ring-2 focus:ring-blue-100 resize-none disabled:bg-slate-100 disabled:cursor-not-allowed"
                 />
-                <p className="text-[11px] text-[#6B7494]">
-                  Clinical governance requires explicit verification notes before an action can enter the two-person manager review queue.
-                </p>
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-3 pt-2">
+            {/* Progress Note */}
+            <div>
+              <textarea
+                id="progress-note"
+                disabled={isLocked}
+                rows={3}
+                value={progressNote}
+                onChange={(e) => setProgressNote(e.target.value)}
+                placeholder="Mandatory independent dual-verification checklist implemented across all ICU nursing shifts. Bedside briefing completed for 100% on-duty nursing staff and 48-hour compliance audit confirmed zero protocol bypass."
+                className="w-full rounded-lg border border-[#D8DCE8] bg-white p-3 text-sm text-[#1A2447] outline-none transition focus:border-[#2952C4] focus:ring-2 focus:ring-blue-100 resize-none disabled:bg-slate-100 disabled:cursor-not-allowed"
+              />
+              <p className="mt-1 text-[11px] text-[#6B7494]">
+                Progress note: minimum 5 characters • Verification note on complete: 10 characters
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <div>
               <button
                 type="button"
                 onClick={handleSaveProgress}
@@ -584,106 +485,99 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
                   progressNote.trim().length < 5 ||
                   (isCompleting && verificationNotes.trim().length < 10)
                 }
-                className={`rounded-xl px-6 py-3 text-sm font-bold text-white transition shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                  isCompleting
-                    ? 'bg-emerald-700 hover:bg-emerald-800'
-                    : 'bg-[#1E2B5E] hover:bg-[#152048]'
-                }`}
+                className="rounded-lg px-5 py-2.5 text-sm font-bold text-white transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-700 hover:bg-emerald-800"
               >
                 {updateProgressMutation.isPending || resubmitMutation.isPending
-                  ? 'Saving to Audit Trail...'
+                  ? 'Saving...'
                   : isReturned && isCompleting
-                  ? 'Resubmit for Verification'
-                  : isCompleting
-                  ? 'Submit for Verification'
-                  : 'Save Progress'}
+                  ? 'Resubmit for verification'
+                  : 'Submit for verification'}
               </button>
-
-              {isLocked && (
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                  <Lock className="h-4 w-4" />
-                  Locked following Manager verification
-                </div>
-              )}
             </div>
           </section>
 
-          {/* Due-Date Risk Indicator Card */}
+          {/* Due-Date Risk Card */}
           <aside
-            className="rounded-2xl bg-white p-6 shadow-sm space-y-4"
-            style={{ border: `1.5px solid ${BORDER}` }}
+            className="rounded-2xl bg-white p-6 space-y-4"
+            style={{ border: `1px solid ${BORDER}` }}
           >
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#6B7494]">
-                Due-Date Risk Indicator
-              </h3>
+              <h3 className="text-lg font-bold text-[#1A2447]">Due-date risk</h3>
               <p className="text-xs text-[#6B7494] mt-0.5">
-                Rule-based clinical completion SLA assessment.
+                Rule-based planning aid. It never changes work-flow status.
               </p>
             </div>
 
-            <div className="rounded-xl border border-[#D8DCE8] bg-slate-50 p-5 text-center">
+            {/* Risk Score */}
+            <div className="py-2">
               <span
                 className={`text-4xl font-extrabold ${
                   item.completionRisk.level === 'HIGH'
-                    ? 'text-red-700'
+                    ? 'text-red-600'
                     : item.completionRisk.level === 'MEDIUM'
-                    ? 'text-amber-700'
-                    : 'text-emerald-700'
+                    ? 'text-amber-600'
+                    : 'text-emerald-600'
                 }`}
               >
                 {item.completionRisk.score}%
               </span>
-              <p className="mt-1 text-xs font-bold uppercase tracking-wider text-slate-700">
-                {item.completionRisk.level} Risk Rating
+              <p className="text-xs font-bold uppercase tracking-wider text-[#6B7494] mt-1">
+                {item.completionRisk.level} completion risk
               </p>
             </div>
 
-            <div>
-              <p className="text-xs font-bold text-[#1A2447] mb-2">Evaluated Risk Drivers:</p>
-              <ul className="space-y-1.5 text-xs text-[#6B7494]">
-                {item.completionRisk.factors.map((factor, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-                    <span>{factor}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Risk Factors */}
+            <ul className="space-y-1.5 text-xs text-[#6B7494]">
+              {item.completionRisk.factors.map((factor, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#6B7494] shrink-0" />
+                  <span>{factor}</span>
+                </li>
+              ))}
+            </ul>
 
-            <div className="rounded-lg bg-blue-50/70 p-3 text-[11px] text-blue-900 border border-blue-100">
-              <p className="font-semibold">Governance SLA Rule:</p>
-              <p className="mt-0.5 text-blue-800">
-                Critical/High actions approaching within 3 days are elevated to proactive supervision in the Department Manager oversight dashboard.
-              </p>
+            {/* Accuracy feedback */}
+            <div className="flex items-center gap-3 pt-2 text-xs text-[#6B7494]">
+              <span
+                className="font-semibold text-[#2952C4] cursor-pointer hover:underline"
+              >
+                Accurate
+              </span>
+              <span
+                className="font-semibold text-[#6B7494] cursor-pointer hover:underline"
+              >
+                Not useful
+              </span>
             </div>
           </aside>
         </div>
       )}
 
-      {/* ── TAB 2: EVIDENCE & AUDIT TRAIL ──────────────────────────────── */}
+      {/* ── TAB 2: EVIDENCE & AUDIT ──────────────────────────────────── */}
       {activeTab === 'evidence' && (
         <div className="grid gap-6 xl:grid-cols-2">
-          {/* File Evidence Upload Card */}
+          {/* Secure Evidence Upload */}
           <section
-            className="rounded-2xl bg-white p-6 shadow-sm space-y-5"
-            style={{ border: `1.5px solid ${BORDER}` }}
+            className="rounded-2xl bg-white p-6 space-y-5"
+            style={{ border: `1px solid ${BORDER}` }}
           >
             <div>
-              <h2 className="text-lg font-bold text-[#1A2447]">Clinical Evidence Upload</h2>
+              <h2 className="text-lg font-bold text-[#1A2447]">Secure evidence</h2>
               <p className="text-xs text-[#6B7494] mt-0.5">
-                Attach certified inspection reports, calibration certificates, training sign-offs, or photos (JPG, PNG, PDF up to 5MB).
+                JPG, PNG, or PDF up to 5 MB. Access is restricted to author and workflow users.
               </p>
             </div>
 
-            {/* Dropzone / File Picker */}
-            <div
-              className={`rounded-xl border-2 border-dashed p-6 text-center transition ${
-                isLocked
-                  ? 'border-slate-200 bg-slate-50 opacity-60'
-                  : 'border-[#D8DCE8] bg-slate-50 hover:bg-slate-100/70'
-              }`}
-            >
+            {/* File Picker Row */}
+            <div className="flex items-center gap-3">
+              <label
+                htmlFor="evidence-file-input"
+                className={`rounded-lg border border-[#D8DCE8] bg-slate-50 px-4 py-2 text-sm font-medium text-[#6B7494] cursor-pointer hover:bg-slate-100 transition ${
+                  isLocked ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                Choose File
+              </label>
               <input
                 id="evidence-file-input"
                 type="file"
@@ -692,58 +586,46 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                 className="hidden"
               />
-              <label
-                htmlFor="evidence-file-input"
-                className={`flex flex-col items-center justify-center cursor-pointer ${
-                  isLocked ? 'cursor-not-allowed' : ''
-                }`}
-              >
-                <Upload className="h-8 w-8 text-[#2952C4]" />
-                <span className="mt-2 text-xs font-bold text-[#1A2447]">
-                  {selectedFile ? selectedFile.name : 'Choose file or click to select'}
-                </span>
-                <span className="text-[11px] text-[#6B7494] mt-0.5">
-                  JPG, PNG, or PDF • Up to 5 MB
-                </span>
-              </label>
+              <span className="text-sm text-[#6B7494]">
+                {selectedFile ? selectedFile.name : 'No file chosen'}
+              </span>
 
               {selectedFile && (
-                <div className="mt-4 flex items-center justify-center gap-3">
-                  <span className="text-xs font-semibold text-slate-600">
-                    {Math.round(selectedFile.size / 1024)} KB
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      selectedFile && uploadEvidenceMutation.mutate(selectedFile)
-                    }
-                    disabled={uploadEvidenceMutation.isPending || isLocked}
-                    className="rounded-lg bg-[#1E2B5E] px-4 py-1.5 text-xs font-bold text-white hover:bg-[#152048] cursor-pointer"
-                  >
-                    {uploadEvidenceMutation.isPending ? 'Uploading...' : 'Confirm Upload'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedFile(null)}
-                    className="text-xs font-semibold text-red-600 hover:underline cursor-pointer"
-                  >
-                    Remove
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => selectedFile && uploadEvidenceMutation.mutate(selectedFile)}
+                  disabled={uploadEvidenceMutation.isPending || isLocked}
+                  className="ml-auto rounded-lg bg-[#1E2B5E] px-4 py-2 text-sm font-bold text-white hover:bg-[#152048] cursor-pointer disabled:opacity-50"
+                >
+                  <div className="flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    {uploadEvidenceMutation.isPending ? 'Uploading...' : 'Upload evidence'}
+                  </div>
+                </button>
+              )}
+
+              {!selectedFile && (
+                <button
+                  type="button"
+                  disabled
+                  className="ml-auto rounded-lg bg-[#1E2B5E] px-4 py-2 text-sm font-bold text-white opacity-50 cursor-not-allowed"
+                >
+                  <div className="flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    Upload evidence
+                  </div>
+                </button>
               )}
             </div>
 
-            {/* Attached Evidence List */}
+            {/* Evidence List */}
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#1A2447] mb-3">
-                Attached Audit Evidence ({item.evidence?.length ?? 0})
-              </h3>
               {!item.evidence?.length ? (
-                <p className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-xs text-[#6B7494]">
-                  No evidence files attached yet. Upload documentation to support closure verification.
+                <p className="rounded-lg border border-[#D8DCE8] bg-slate-50 p-6 text-center text-sm text-[#6B7494]">
+                  No evidence has been uploaded.
                 </p>
               ) : (
-                <div className="divide-y divide-[#D8DCE8] rounded-xl border border-[#D8DCE8] bg-white">
+                <div className="divide-y divide-[#D8DCE8] rounded-lg border border-[#D8DCE8] bg-white">
                   {item.evidence.map((file) => (
                     <div
                       key={file.id}
@@ -752,10 +634,10 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
                       <div className="flex items-center gap-3 min-w-0">
                         <FileText className="h-5 w-5 text-[#2952C4] shrink-0" />
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-[#1A2447] truncate">
+                          <p className="text-sm font-semibold text-[#1A2447] truncate">
                             {file.fileName}
                           </p>
-                          <p className="text-[10px] text-[#6B7494]">
+                          <p className="text-[11px] text-[#6B7494]">
                             {Math.round(file.fileSize / 1024)} KB • {formatDate(file.uploadedAt)}
                           </p>
                         </div>
@@ -775,41 +657,42 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
             </div>
           </section>
 
-          {/* Chronological Audit Trail Timeline */}
+          {/* Action History & Audit Trail */}
           <section
-            className="rounded-2xl bg-white p-6 shadow-sm space-y-4"
-            style={{ border: `1.5px solid ${BORDER}` }}
+            className="rounded-2xl bg-white p-6 space-y-4"
+            style={{ border: `1px solid ${BORDER}` }}
           >
             <div>
-              <h2 className="text-lg font-bold text-[#1A2447]">Chronological Audit Trail</h2>
+              <h2 className="text-lg font-bold text-[#1A2447]">Action history and audit trail</h2>
               <p className="text-xs text-[#6B7494] mt-0.5">
-                Tamper-evident record of assignment, progress changes, resubmissions, and manager sign-offs.
+                Progress, evidence, return, resubmission, and verification events.
               </p>
             </div>
 
             {!item.history?.length ? (
-              <p className="text-xs text-[#6B7494]">No audit entries recorded.</p>
+              <p className="text-sm text-[#6B7494]">No audit entries recorded.</p>
             ) : (
-              <div className="space-y-4 max-h-[460px] overflow-y-auto pr-2">
+              <div className="space-y-5 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {item.history.map((event, idx) => (
-                  <div key={event.id || idx} className="relative pl-6 pb-2 border-l-2 border-blue-200">
-                    <span className="absolute -left-[7px] top-0 h-3 w-3 rounded-full bg-[#2952C4] border-2 border-white" />
+                  <div key={event.id || idx} className="relative pl-5 border-l-2 border-blue-200">
+                    <span className="absolute -left-[5px] top-0.5 h-2.5 w-2.5 rounded-full bg-[#2952C4] border-2 border-white" />
                     <div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-bold text-[#1A2447]">
-                          {event.eventType.replaceAll('_', ' ')}
-                        </span>
-                        <span className="text-[10px] text-[#6B7494]">
-                          {formatDateTime(event.createdAt)}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
-                        Actor: <span className="font-semibold text-slate-700">{event.actor?.name || 'System'}</span>
-                        {event.actor?.role && ` (${event.actor.role})`}
+                      <p className="text-xs font-bold uppercase tracking-wider text-[#1A2447]">
+                        {event.eventType.replaceAll('_', ' ')}
                       </p>
-                      {event.note && (
-                        <p className="mt-1 rounded-lg bg-slate-50 p-2.5 text-xs text-[#1A2447] border border-[#D8DCE8]">
-                          {event.note}
+                      <p className="text-[11px] text-[#6B7494] mt-0.5">
+                        {formatDateTime(event.createdAt)}
+                        {event.actor && (
+                          <span>
+                            {' '}
+                            • {event.actor.role && `${event.actor.role}: `}
+                            {event.actor.name}
+                          </span>
+                        )}
+                      </p>
+                      {(event.note || event.notes) && (
+                        <p className="mt-1.5 text-sm text-[#3B4565] leading-relaxed">
+                          {event.note || event.notes}
                         </p>
                       )}
                     </div>
@@ -821,51 +704,46 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
         </div>
       )}
 
-      {/* ── TAB 3: CLINICAL DECISION SUPPORT ────────────────────────────── */}
+      {/* ── TAB 3: DECISION SUPPORT ──────────────────────────────────── */}
       {activeTab === 'support' && (
         <div className="grid gap-6 xl:grid-cols-2">
-          {/* Similar Past Corrective Actions */}
+          {/* Related Action History */}
           <section
-            className="rounded-2xl bg-white p-6 shadow-sm space-y-4"
-            style={{ border: `1.5px solid ${BORDER}` }}
+            className="rounded-2xl bg-white p-6 space-y-4"
+            style={{ border: `1px solid ${BORDER}` }}
           >
             <div>
-              <h2 className="text-lg font-bold text-[#1A2447]">
-                Hospital Verified Similar Actions
-              </h2>
+              <h2 className="text-lg font-bold text-[#1A2447]">Related action history</h2>
               <p className="text-xs text-[#6B7494] mt-0.5">
-                Past corrective actions from similar incidents verified effective by clinical leadership.
+                Authorized historical matches for reference; use professional judgement.
               </p>
             </div>
 
             {!insights?.similarActions?.length ? (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-xs text-[#6B7494]">
-                <HelpCircle className="mx-auto h-8 w-8 text-slate-300 mb-2" />
-                No similar historical actions met the correlation threshold for this incident context.
-              </div>
+              <p className="text-sm text-[#6B7494]">
+                No authorized related actions were found.
+              </p>
             ) : (
               <div className="space-y-3">
                 {insights.similarActions.map((sim) => (
                   <div
                     key={sim.id}
-                    className="rounded-xl border border-[#D8DCE8] bg-slate-50/70 p-4 space-y-1.5"
+                    className="rounded-lg border border-[#D8DCE8] bg-slate-50/70 p-4 space-y-1.5"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-xs font-bold text-[#2952C4]">
                         ACT-{String(sim.id).padStart(4, '0')}
                       </span>
                       <span className="rounded bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-[#1E2B5E]">
-                        {Math.round(sim.similarityScore * 100)}% Semantic Match
+                        {Math.round(sim.similarityScore * 100)}% Match
                       </span>
                     </div>
-
-                    <h4 className="text-xs font-bold text-[#1A2447]">{sim.title}</h4>
+                    <h4 className="text-sm font-bold text-[#1A2447]">{sim.title}</h4>
                     <p className="text-xs text-[#6B7494] line-clamp-2 leading-relaxed">
                       {sim.description}
                     </p>
-
-                    <div className="flex items-center justify-between pt-1 text-[11px] text-slate-500">
-                      <span>Source Incident #{sim.incident.id}</span>
+                    <div className="flex items-center justify-between pt-1 text-[11px] text-[#6B7494]">
+                      <span>Incident #{sim.incident.id}</span>
                       <span className="font-semibold text-emerald-700">
                         {sim.effectiveness || 'Verified Effective'}
                       </span>
@@ -876,34 +754,31 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
             )}
           </section>
 
-          {/* Best Practice Clinical Recommendations */}
+          {/* Recommended Approaches */}
           <section
-            className="rounded-2xl bg-white p-6 shadow-sm space-y-4"
-            style={{ border: `1.5px solid ${BORDER}` }}
+            className="rounded-2xl bg-white p-6 space-y-4"
+            style={{ border: `1px solid ${BORDER}` }}
           >
             <div>
-              <h2 className="text-lg font-bold text-[#1A2447]">
-                Clinical Governance Recommendations
-              </h2>
+              <h2 className="text-lg font-bold text-[#1A2447]">Recommended approaches</h2>
               <p className="text-xs text-[#6B7494] mt-0.5">
-                Standardized recommendations drawn from high-scoring historical remediations.
+                Drawn from manager-verified actions; recommendations do not replace approval.
               </p>
             </div>
 
             {!insights?.recommendations?.length ? (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 text-center text-xs text-[#6B7494]">
-                <ShieldCheck className="mx-auto h-8 w-8 text-slate-300 mb-2" />
-                Recommendations will display once historical verified remediation patterns are recorded.
-              </div>
+              <p className="text-sm text-[#6B7494]">
+                Recommendations will appear when verified effective actions are available.
+              </p>
             ) : (
               <div className="space-y-3">
                 {insights.recommendations.map((rec) => (
                   <div
                     key={rec.key}
-                    className="rounded-xl border border-[#D8DCE8] bg-white p-4 space-y-2 shadow-xs"
+                    className="rounded-lg border border-[#D8DCE8] bg-white p-4 space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-[#1A2447]">{rec.title}</h4>
+                      <h4 className="text-sm font-bold text-[#1A2447]">{rec.title}</h4>
                       {rec.effectivenessScore != null && (
                         <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
                           {rec.effectivenessScore}% Effectiveness
@@ -913,8 +788,8 @@ export const ActionOwnerIncidentDetails: React.FC = () => {
                     <p className="text-xs text-[#6B7494] leading-relaxed">
                       {rec.description}
                     </p>
-                    <p className="text-[11px] text-slate-400">
-                      Validated in source Incident #{rec.sourceIncident.id}: {rec.sourceIncident.title}
+                    <p className="text-[11px] text-[#9BA4BC]">
+                      Source: Incident #{rec.sourceIncident.id} – {rec.sourceIncident.title}
                     </p>
                   </div>
                 ))}
