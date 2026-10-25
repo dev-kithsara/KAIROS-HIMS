@@ -389,9 +389,15 @@ export class ManagerService {
   }
 
   /**
-   * Delegate/Update Department Staff Role
+   * Delegate/Update Department Staff Role with Healthcare Compliance Audit Trail
    */
-  async updateTeamRole(departmentId: number, targetUserId: number, newRole: string) {
+  async updateTeamRole(
+    departmentId: number,
+    targetUserId: number, 
+    newRole: string,
+    actorUserId?: number, 
+    reason?: string
+  ) {
     const user = await prisma.user.findFirst({
       where: { id: targetUserId, departmentId },
     });
@@ -404,11 +410,33 @@ export class ManagerService {
       throw new AppError('Administrative users cannot be re-delegated by departmental managers.', 403);
     }
 
+     const previousRole = user.role;
+
+    // Execute User Role update
     const updatedUser = await prisma.user.update({
       where: { id: targetUserId },
       data: { role: newRole },
       select: { id: true, name: true, email: true, role: true },
     });
+
+    // Healthcare Compliance: Record immutable audit trail of role change
+    if (actorUserId && previousRole !== newRole) {
+      await prisma.userAuditLog.create({
+        data: {
+          userId: targetUserId,
+          actorId: actorUserId,
+          action: 'ROLE_DELEGATION_CHANGED',
+          oldRole: previousRole,
+          newRole: newRole,
+          reason: reason || 'Departmental governance role reassignment',
+          details: JSON.stringify({
+            targetUserName: user.name,
+            departmentId,
+            timestamp: new Date().toISOString(),
+          }),
+        },
+      });
+    }
 
     return updatedUser;
   }

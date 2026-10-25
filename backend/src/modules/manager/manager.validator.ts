@@ -87,4 +87,6 @@ export const updateTeamRoleSchema = z.object({
   role: z.enum(['STAFF', 'INVESTIGATOR', 'ACTION_OWNER'], {
     errorMap: () => ({ message: 'Role must be STAFF, INVESTIGATOR, or ACTION_OWNER' }),
   }),
+  // Optional clinical rationale for changing staff governance role
+  reason: z.string().optional(),
 });
