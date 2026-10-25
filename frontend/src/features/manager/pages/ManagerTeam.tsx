@@ -222,28 +222,30 @@ const getWorkloadBadge = (count: number): { label: string; classes: string; dot:
         </div>
       </div>
 
-      {/* ── Search & Filter Controls ─────────────────────────────────────── */}
+            {/* ── Search & Filter Controls (HIMS Deep Navy #1E2B58 Design Tokens) ── */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+          {/* Search Input: Styled with HIMS Official Deep Navy focus ring & border */}
           <input
             type="text"
             placeholder="Search team member by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#1E2B58] focus:ring-2 focus:ring-[#1E2B58]/20 transition-all shadow-xs"
           />
         </div>
 
+        {/* Role Filter Pills: Active filter uses HIMS Official Deep Navy (#1E2B58) */}
         <div className="flex items-center gap-2">
           {(['ALL', 'INVESTIGATOR', 'ACTION_OWNER', 'STAFF'] as const).map((role) => (
             <button
               key={role}
               onClick={() => setRoleFilter(role)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs ${
                 roleFilter === role
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-[#1E2B58] text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 border border-transparent'
               }`}
             >
               {role.replace('_', ' ')}
