@@ -72,7 +72,13 @@ export const ManagerTeam: React.FC = () => {
 
     try {
       setUpdatingUserId(userId);
-      await managerApi.updateTeamRole(userId, newRole);
+      // Pass force: true and rationale to allow confirmed manager reassignment
+      await managerApi.updateTeamRole(
+        userId, 
+        newRole, 
+        true, 
+        'Reassigned by Department Manager via Confirmation Modal'
+      );
       toast.success(`Role successfully updated to ${newRole.replace('_', ' ')}.`);
       
       // Update local state

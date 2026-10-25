@@ -389,9 +389,17 @@ export class ManagerService {
   }
 
   /**
-   * Delegate/Update Department Staff Role
+   * Delegate/Update Department Staff Role with Healthcare Compliance Audit Trail 
+   * and Active Duty Guard to prevent orphaned investigations and unclosed CAPAs.
    */
-  async updateTeamRole(departmentId: number, targetUserId: number, newRole: string) {
+  async updateTeamRole(
+    departmentId: number,
+    targetUserId: number, 
+    newRole: string,
+    actorUserId?: number, 
+    reason?: string,
+    force: boolean = false
+  ) {
     const user = await prisma.user.findFirst({
       where: { id: targetUserId, departmentId },
     });
@@ -404,11 +412,78 @@ export class ManagerService {
       throw new AppError('Administrative users cannot be re-delegated by departmental managers.', 403);
     }
 
+     const previousRole = user.role;
+
+      // ------------------------------------------------------------------
+    // Active Duty Guard: Prevent or guard demoting an active Investigator
+    // ------------------------------------------------------------------
+    let activeDutyWarning: string | null = null;
+    if (previousRole === 'INVESTIGATOR' && newRole !== 'INVESTIGATOR') {
+      const activeInvestigationsCount = await prisma.incident.count({
+        where: {
+          departmentId,
+          investigatorId: targetUserId,
+          status: { notIn: ['CLOSED', 'REJECTED'] },
+        },
+      });
+      if (activeInvestigationsCount > 0) {
+        if (!force) {
+          throw new AppError(
+            `Active Duty Guard: Cannot demote investigator ${user.name}. They currently have ${activeInvestigationsCount} active clinical investigation(s). Please reassign their cases before changing their governance role, or confirm manager override.`,
+            409
+          );
+        }
+        activeDutyWarning = `Investigator demoted with ${activeInvestigationsCount} active unclosed investigations remaining (Manager Override).`;
+      }
+    }
+    // ------------------------------------------------------------------
+    // Active Duty Guard: Prevent or guard demoting an active Action Owner
+    // ------------------------------------------------------------------
+    if (previousRole === 'ACTION_OWNER' && newRole !== 'ACTION_OWNER') {
+      const activeCapasCount = await prisma.capaAction.count({
+        where: {
+          actionOwnerId: targetUserId,
+          status: { not: 'COMPLETED' },
+        },
+      });
+      if (activeCapasCount > 0) {
+        if (!force) {
+          throw new AppError(
+            `Active Duty Guard: Cannot demote Action Owner ${user.name}. They currently have ${activeCapasCount} pending CAPA action(s). Please reassign their actions before changing their governance role, or confirm manager override.`,
+            409
+          );
+        }
+        activeDutyWarning = `Action Owner demoted with ${activeCapasCount} pending CAPA actions remaining (Manager Override).`;
+      }
+    }
+
+    // Execute User Role update
     const updatedUser = await prisma.user.update({
       where: { id: targetUserId },
       data: { role: newRole },
       select: { id: true, name: true, email: true, role: true },
     });
+
+    // Healthcare Compliance: Record immutable audit trail of role change
+    if (actorUserId && previousRole !== newRole) {
+      await prisma.userAuditLog.create({
+        data: {
+          userId: targetUserId,
+          actorId: actorUserId,
+          action: 'ROLE_DELEGATION_CHANGED',
+          oldRole: previousRole,
+          newRole: newRole,
+          reason: reason || activeDutyWarning || 'Departmental governance role reassignment',
+          details: JSON.stringify({
+            targetUserName: user.name,
+            departmentId,
+            timestamp: new Date().toISOString(),
+            forcedOverride: force,
+            activeDutyWarning,
+          }),
+        },
+      });
+    }
 
     return updatedUser;
   }
