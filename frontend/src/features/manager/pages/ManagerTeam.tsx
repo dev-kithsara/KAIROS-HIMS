@@ -13,6 +13,7 @@ import {
   Briefcase,
   Mail,
   RefreshCw,
+  AlertTriangle,
 } from 'lucide-react';
 
 export const ManagerTeam: React.FC = () => {
@@ -28,6 +29,63 @@ export const ManagerTeam: React.FC = () => {
     'ALL'
   );
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null);
+
+    // ---------------------------------------------------------
+  // State: Holds pending role assignment awaiting manager confirmation
+  // ---------------------------------------------------------
+  const [pendingRoleChange, setPendingRoleChange] = useState<{
+    userId: number;
+    userName: string;
+    currentRole: string;
+    newRole: 'STAFF' | 'INVESTIGATOR' | 'ACTION_OWNER';
+    investigatedCount: number;
+    ownedActionsCount: number;
+  } | null>(null);
+
+  // ---------------------------------------------------------
+  // Step 1: Intercept dropdown change and trigger confirmation dialog
+  // ---------------------------------------------------------
+  const initiateRoleChange = (
+    member: (typeof team)[0],
+    newRole: 'STAFF' | 'INVESTIGATOR' | 'ACTION_OWNER'
+  ) => {
+    // If selecting the exact same role, do nothing
+    if (member.role === newRole) return;
+
+    setPendingRoleChange({
+      userId: member.id,
+      userName: member.name,
+      currentRole: member.role,
+      newRole,
+      investigatedCount: member._count?.investigatedIncidents ?? 0,
+      ownedActionsCount: member._count?.assignedCapaActions ?? 0,
+    });
+  };
+
+  // ---------------------------------------------------------
+  // Step 2: Confirm and execute the role change via API
+  // ---------------------------------------------------------
+  const confirmRoleChange = async () => {
+    if (!pendingRoleChange) return;
+
+    const { userId, newRole } = pendingRoleChange;
+
+    try {
+      setUpdatingUserId(userId);
+      await managerApi.updateTeamRole(userId, newRole);
+      toast.success(`Role successfully updated to ${newRole.replace('_', ' ')}.`);
+      
+      // Update local state
+      setTeam((prev) =>
+        prev.map((member) => (member.id === userId ? { ...member, role: newRole } : member))
+      );
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Role update rejected by server.');
+    } finally {
+      setUpdatingUserId(null);
+      setPendingRoleChange(null); // Close dialog
+    }
+  };
 
   const loadTeamData = async () => {
     try {
@@ -45,23 +103,6 @@ export const ManagerTeam: React.FC = () => {
     loadTeamData();
   }, []);
 
-  const handleRoleChange = async (
-    userId: number,
-    newRole: 'STAFF' | 'INVESTIGATOR' | 'ACTION_OWNER'
-  ) => {
-    try {
-      setUpdatingUserId(userId);
-      await managerApi.updateTeamRole(userId, newRole);
-      toast.success(`Role updated to ${newRole.replace('_', ' ')}.`);
-      setTeam((prev) =>
-        prev.map((member) => (member.id === userId ? { ...member, role: newRole } : member))
-      );
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Role update rejected.');
-    } finally {
-      setUpdatingUserId(null);
-    }
-  };
 
   // Metrics
   const counts = useMemo(() => {
@@ -84,6 +125,36 @@ export const ManagerTeam: React.FC = () => {
       return u.role === roleFilter;
     });
   }, [team, searchTerm, roleFilter]);
+
+  // ---------------------------------------------------------
+// Helper: Determine workload saturation level for an investigator
+// based on the number of incidents they have investigated.
+// Returns label, color classes, and icon for the badge.
+// ---------------------------------------------------------
+const getWorkloadBadge = (count: number): { label: string; classes: string; dot: string } => {
+  if (count >= 10) {
+    // Heavy Load: Clinically risky — may cause investigation delays
+    return {
+      label: `Investigated: ${count} (Heavy Load ⚠️)`,
+      classes: 'text-red-700 bg-red-50 border border-red-200 rounded-full px-2 py-0.5',
+      dot: 'bg-red-500',
+    };
+  } else if (count >= 5) {
+    // Moderate Load: Approaching capacity
+    return {
+      label: `Investigated: ${count} (Moderate Load)`,
+      classes: 'text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5',
+      dot: 'bg-amber-500',
+    };
+  } else {
+    // Available: Safe capacity
+    return {
+      label: `Investigated: ${count}`,
+      classes: 'text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5',
+      dot: 'bg-emerald-500',
+    };
+  }
+};
 
   const roleBadgeClasses: Record<string, string> = {
     STAFF: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -151,28 +222,30 @@ export const ManagerTeam: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Search & Filter Controls ─────────────────────────────────────── */}
+            {/* ── Search & Filter Controls (HIMS Deep Navy #1E2B58 Design Tokens) ── */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+          {/* Search Input: Styled with HIMS Official Deep Navy focus ring & border */}
           <input
             type="text"
             placeholder="Search team member by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#1E2B58] focus:ring-2 focus:ring-[#1E2B58]/20 transition-all shadow-xs"
           />
         </div>
 
+        {/* Role Filter Pills: Active filter uses HIMS Official Deep Navy (#1E2B58) */}
         <div className="flex items-center gap-2">
           {(['ALL', 'INVESTIGATOR', 'ACTION_OWNER', 'STAFF'] as const).map((role) => (
             <button
               key={role}
               onClick={() => setRoleFilter(role)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs ${
                 roleFilter === role
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-[#1E2B58] text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 border border-transparent'
               }`}
             >
               {role.replace('_', ' ')}
@@ -223,22 +296,29 @@ export const ManagerTeam: React.FC = () => {
                       </span>
                     </td>
 
-                    <td className="p-4 text-slate-600">
-                      <div className="space-y-0.5 text-[11px]">
-                        <p>
-                          Investigated:{' '}
-                          <span className="font-semibold text-slate-800">
-                            {member._count?.investigatedIncidents ?? 0}
-                          </span>
-                        </p>
-                        <p>
-                          Owned Actions:{' '}
-                          <span className="font-semibold text-slate-800">
-                            {member._count?.assignedCapaActions ?? 0}
-                          </span>
-                        </p>
-                      </div>
-                    </td>
+              <td className="p-4">
+              <div className="space-y-1.5 text-[11px]">
+                {/* Workload Saturation Badge — color-coded by investigation count */}
+                {(() => {
+                  const invCount = member._count?.investigatedIncidents ?? 0;
+                  const badge = getWorkloadBadge(invCount);
+                  return (
+                    <span className={`inline-flex items-center gap-1.5 font-semibold ${badge.classes}`}>
+                      {/* Colored dot showing saturation status */}
+                      <span className={`w-1.5 h-1.5 rounded-full ${badge.dot} shrink-0`} />
+                      {badge.label}
+                    </span>
+                  );
+                })()}
+                {/* CAPA Action count — plain text (no threshold for now) */}
+                <p className="text-slate-500">
+                  Owned Actions:{' '}
+                  <span className="font-semibold text-slate-700">
+                    {member._count?.assignedCapaActions ?? 0}
+                  </span>
+                </p>
+              </div>
+            </td>
 
                     <td className="p-4">
                       <span
@@ -258,12 +338,12 @@ export const ManagerTeam: React.FC = () => {
                           disabled={updatingUserId === member.id}
                           value={member.role}
                           onChange={(e) =>
-                            handleRoleChange(
-                              member.id,
+                            initiateRoleChange(
+                              member,
                               e.target.value as 'STAFF' | 'INVESTIGATOR' | 'ACTION_OWNER'
                             )
                           }
-                          className="px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white text-slate-800 font-medium focus:ring-2 focus:ring-indigo-500"
+                          className="px-3 py-1.5 border border-slate-300 rounded-lg text-xs bg-white text-slate-800 font-medium focus:ring-2 focus:ring-indigo-500 cursor-pointer"
                         >
                           <option value="STAFF">Clinical Staff (Reporter)</option>
                           <option value="INVESTIGATOR">Lead Investigator</option>
@@ -277,8 +357,91 @@ export const ManagerTeam: React.FC = () => {
             </table>
           </div>
         )}
-      </div>
     </div>
+
+          {/* ── Role Reassignment Confirmation Modal ───────────────────────── */}
+      {pendingRoleChange && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden p-6 space-y-5 animate-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900">
+                  Confirm Role Reassignment
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Clinical governance delegation check
+                </p>
+              </div>
+            </div>
+
+            {/* Target Personnel & Role Transition */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Personnel:</span>
+                <span className="font-bold text-slate-900">{pendingRoleChange.userName}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500">Current Role:</span>
+                <span className="font-semibold text-slate-700">
+                  {pendingRoleChange.currentRole.replace('_', ' ')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center border-t border-slate-200 pt-2">
+                <span className="text-slate-500">New Proposed Role:</span>
+                <span className="font-black text-indigo-700">
+                  {pendingRoleChange.newRole.replace('_', ' ')}
+                </span>
+              </div>
+            </div>
+
+            {/* Orphaned Duty Warning Banner (Triggered if active duties exist) */}
+            {(pendingRoleChange.investigatedCount > 0 || pendingRoleChange.ownedActionsCount > 0) && (
+              <div className="bg-rose-50 border border-rose-200 rounded-xl p-3.5 text-xs text-rose-800 space-y-1.5">
+                <p className="font-bold flex items-center gap-1.5 text-rose-900">
+                  <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                  Active Duties Warning
+                </p>
+                <p className="text-[11px] leading-relaxed text-rose-700">
+                  <strong>{pendingRoleChange.userName}</strong> currently has{' '}
+                  {pendingRoleChange.investigatedCount > 0 && (
+                    <span><strong>{pendingRoleChange.investigatedCount}</strong> active investigation(s)</span>
+                  )}
+                  {pendingRoleChange.investigatedCount > 0 && pendingRoleChange.ownedActionsCount > 0 && ' and '}
+                  {pendingRoleChange.ownedActionsCount > 0 && (
+                    <span><strong>{pendingRoleChange.ownedActionsCount}</strong> CAPA action(s)</span>
+                  )}
+                  . Demoting or changing their role may orphan open clinical governance cases.
+                </p>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled={updatingUserId !== null}
+                onClick={() => setPendingRoleChange(null)}
+                className="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={updatingUserId !== null}
+                onClick={confirmRoleChange}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm transition-colors flex items-center gap-1.5"
+              >
+                {updatingUserId !== null ? 'Updating...' : 'Yes, Reassign Role'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+   </div>
   );
 };
 

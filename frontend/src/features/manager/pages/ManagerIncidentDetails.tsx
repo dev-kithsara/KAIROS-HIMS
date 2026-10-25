@@ -1465,9 +1465,7 @@ export const ManagerIncidentDetails: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <span className="self-start sm:self-auto inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/80">
-                Swiss Cheese Barrier Defense
-              </span>
+              
             </div>
             {/* Barrier Form */}
             <form onSubmit={handleCreateControl} className="space-y-4">
