@@ -186,7 +186,10 @@ export const Sidebar: React.FC = () => {
         {links.map((link) => {
           const isActive =
             location.pathname === link.path ||
-            (link.path !== '/' && location.pathname.startsWith(link.path));
+            (link.path !== '/' && location.pathname.startsWith(link.path)) ||
+            (user?.role === 'INVESTIGATOR' &&
+              link.name === 'My Investigations' &&
+              location.pathname.startsWith('/investigator'));
 
           return (
             <button
