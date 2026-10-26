@@ -1,7 +1,18 @@
+# Backend Build Outputs & Dependencies
 node_modules/
 dist/
+*.tsbuildinfo
+
+# Secrets
 .env
-.DS_Store
+.env.*
+!.env.example
+
+# Uploaded Incident Evidence & Documents
+uploads/
+uploads/evidence/
+
+# Logs & System
+logs/
 *.log
-# Uploaded incident evidence
-backend/uploads/evidence/
+.DS_Store
