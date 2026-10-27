@@ -66,3 +66,11 @@ ehthumbs.db
 .codex-artifacts/
 .temp/
 .tmp/
+
+
+# Interim Evaluation Evidence (Local Examiner Proof Kit)
+Interim_Evidence/
+interim_evidence/
+
+Evidence/
+evidence/

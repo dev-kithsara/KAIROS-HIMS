@@ -102,52 +102,41 @@ The system enforces a strict **role-based access control (RBAC)** model across f
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          PRESENTATION LAYER                             │
-│                    React 19 + TypeScript + Vite 8                       │
-│         Dashboard │ Incidents │ Analytics Hub │ Lessons Library         │
-│              (TanStack React Query for server state)                    │
-└────────────────────────────┬────────────────────────────────────────────┘
-                             │  REST API (JSON over HTTP)
-                             │  http://localhost:5000/api/v1
-                             ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           API LAYER (Express.js)                        │
-│                     Route → Middleware → Controller                     │
-│              JWT Auth Guard │ Zod Validation │ catchAsync               │
-└────────────────────────────┬────────────────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         SERVICE + REPOSITORY LAYER                      │
-│               Business Logic │ Prisma ORM │ Repository Pattern          │
-└────────────────────────────┬────────────────────────────────────────────┘
-                             │  Prisma Client Queries
-                             ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                            DATABASE LAYER                               │
-│                        PostgreSQL 16 Database                           │
-│          User │ Department │ Incident │ IncidentAttachment              │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+The following diagram illustrates the complete end-to-end system architecture of KAIROS HIMS — from user interaction through the React frontend, across the REST API boundary, through the Express backend layers, down to the PostgreSQL database — including the Docker Compose deployment topology.
 
-### Role-Based Workflow
+![KAIROS HIMS System Architecture](docs/images/system-architecture.png)
+
+### Architecture Layer Summary
+
+| Layer | Technology | Responsibility |
+| :--- | :--- | :--- |
+| **Frontend** | React 19 + TypeScript + Vite | Role-specific portals, React Router protected routes, TanStack React Query for server-state caching, Axios API client with JWT attachment |
+| **Backend Gateway** | Express.js + TypeScript | CORS, JSON parsing, API route mounting |
+| **Feature Modules** | Express Router (Modular Monolith) | Auth · Staff · Manager · Investigations · Action Owner · Incidents · Analytics · Admin |
+| **Shared Middleware** | JWT + RBAC Middleware | Token verification, role-based access control |
+| **Controllers** | Express Controllers | HTTP request/response handling |
+| **Services** | TypeScript Service Layer | Business rules and clinical workflow logic |
+| **Repositories** | Prisma ORM Repository Pattern | Reusable, testable database queries |
+| **ORM** | Prisma Client | Type-safe database access & schema migrations |
+| **Database** | PostgreSQL 15 (3NF) | Users · Departments · Incidents · Attachments · Investigations · Actions |
+| **Deployment** | Docker Compose | NGINX (Frontend) · Backend Container · PostgreSQL Container |
+
+### Role-Based Clinical Workflow
 
 ```
 [Staff] → Submit Incident
               ↓
-[Manager] → Accept / Reject
+[Manager] → Triage: Accept / Reject
               ↓ (if accepted)
 [Manager] → Assign Investigator
               ↓
-[Investigator] → Submit Root Cause Analysis
+[Investigator] → Submit Root Cause Analysis (RCA)
               ↓
-[Manager] → Assign Action Owner
+[Manager] → Review RCA → Create CAPA Actions
               ↓
-[Action Owner] → Submit Corrective Action
+[Action Owner] → Implement Corrective Action
               ↓
-[Manager] → Review → Close ✅
+[Manager] → Verify CAPA → Management Review → Close ✅
 ```
 
 ---
@@ -398,8 +387,13 @@ model Incident {
 
 ## 👥 Team
 
-| Name | Role |
-| ---- | ---- |
+| Name | Role | Responsibilities |
+| :--- | :--- | :--- |
+| **Vedeshen** | 📋 Business Analyst | Requirements gathering, system design, documentation & stakeholder communication |
+| **Kithsara** | 💻 Lead Developer | Full-stack architecture, backend API, frontend feature modules, DevOps & CI/CD |
+| **Kasun** | 💻 Developer | Staff incident submission, investigator workspace & frontend UI contributions |
+| **Chandupa** | 💻 Developer | Supporting development, frontend components & integration |
+| **Yoshadhi** | 🧪 QA Engineer | Test planning, quality assurance & defect reporting |
 
 ---
 
