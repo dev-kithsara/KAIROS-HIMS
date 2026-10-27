@@ -381,19 +381,19 @@ model Incident {
 - [x] **Docker Compose Deployment**: Full containerized deployment (Frontend + Backend + PostgreSQL)
 - [x] **JWT Authentication & RBAC**: Secure login, role guards, and middleware protection
 - [ ] **Feature 7 — AI Incident Analytics**: Severity prediction & vector similarity search (Phase 2)
-- [ ] **Feature 8 — Lessons Library**: Knowledge base from past incidents
+- [x] **Feature 8 — Lessons Library**: Knowledge base from past incidents
 
 ---
 
 ## 👥 Team
 
-| Name | Role | Responsibilities |
-| :--- | :--- | :--- |
-| **Vedeshen** | 📋 Business Analyst | Requirements gathering, system design, documentation & stakeholder communication |
-| **Kithsara** | 💻 Lead Developer | Full-stack architecture, backend API, frontend feature modules, DevOps & CI/CD |
-| **Kasun** | 💻 Developer | Staff incident submission, investigator workspace & frontend UI contributions |
-| **Chandupa** | 💻 Developer | Supporting development, frontend components & integration |
-| **Yoshadhi** | 🧪 QA Engineer | Test planning, quality assurance & defect reporting |
+| Name | Role | 
+| :--- | :--- |
+| **Vedeshen** | 📋 Business Analyst | 
+| **Kithsara** | 💻 Lead Developer | 
+| **Kasun** | 💻 Developer |
+| **Chandupa** | 💻 Developer |
+| **Yoshadhi** | 🧪 QA Engineer |
 
 ---
 
