@@ -390,7 +390,7 @@ model Incident {
 | Name | Role | 
 | :--- | :--- |
 | **Vedeshen** | 📋 Business Analyst | 
-| **Kithsara** | 💻 Lead Developer | 
+| **Kithsara** | 💻 Developer | 
 | **Kasun** | 💻 Developer |
 | **Chandupa** | 💻 Developer |
 | **Yoshadhi** | 🧪 QA Engineer |
