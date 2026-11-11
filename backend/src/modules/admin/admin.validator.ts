@@ -20,7 +20,11 @@ export const createDepartmentSchema = z.object({
 export const adminUpdateRoleSchema = z.object({
   role: z.enum(['ADMIN', 'MANAGER', 'INVESTIGATOR', 'ACTION_OWNER', 'STAFF'], {
     errorMap: () => ({
-      message: 'Role must be ADMIN, MANAGER, INVESTIGATOR, ACTION_OWNER, or STAFF',
+      message: 'Invalid system role provided'
     }),
   }),
 });
+
+// TypeScript Types derive  (Static Type Inference)
+export type CreateDepartmentInput = z.infer<typeof createDepartmentSchema>;
+export type AdminUpdateRoleInput = z.infer<typeof adminUpdateRoleSchema>;

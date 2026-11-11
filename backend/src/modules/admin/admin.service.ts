@@ -13,12 +13,14 @@ export class AdminService {
    * Fetch high-level enterprise command metrics across all hospital departments.
    */
   async getSystemDashboard() {
+    // Parallel Prisma queries 7ක් එකවර execute කිරීම
     const [
       totalIncidents,
       openIncidents,
       criticalIncidents,
       totalUsers,
       totalDepartments,
+      departments,
       recentAuditLogs,
     ] = await Promise.all([
       prisma.incident.count(),
@@ -26,6 +28,13 @@ export class AdminService {
       prisma.incident.count({ where: { severity: 'CRITICAL', status: { not: 'CLOSED' } } }),
       prisma.user.count(),
       prisma.department.count(),
+      prisma.department.findMany({
+        include: {
+          _count: {
+            select: { incidents: true },
+          },
+        },
+      }),
       prisma.incidentAuditLog.findMany({
         take: 10,
         orderBy: { createdAt: 'desc' },
@@ -36,6 +45,15 @@ export class AdminService {
       }),
     ]);
 
+    // Departments summary array mapping (Type Annotation මඟින් TS7006 error එක විසඳා ඇත)
+    const departmentSummaries = departments.map(
+        (dept: { id: number; name: string; _count: { incidents: number } }) => ({
+          id: dept.id,
+          name: dept.name,
+          incidentCount: dept._count.incidents,
+        })
+    );
+
     return {
       kpis: {
         totalIncidents,
@@ -44,6 +62,7 @@ export class AdminService {
         registeredPersonnel: totalUsers,
         activeDepartments: totalDepartments,
       },
+      departmentSummaries,
       recentActivity: recentAuditLogs,
     };
   }
