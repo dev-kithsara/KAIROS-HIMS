@@ -8,6 +8,10 @@ import {
   getDepartmentTeam,
   updateTeamRole,
   getManagerIncidentDetails,
+  getIncidentRiskAssessment,
+  setIncidentRiskOverride,
+  clearIncidentRiskOverride,
+  searchLessons,
   triageIncident,
   correctIncidentRecord,
   assignInvestigator,
@@ -33,6 +37,12 @@ router.patch('/team/:userId/role', updateTeamRole);
 
 // Incident Details & 4-Stage Governance Workflow
 router.get('/incidents/:id', getManagerIncidentDetails);
+router.get('/incidents/:id/risk-assessment', getIncidentRiskAssessment);
+router.put('/incidents/:id/risk-override', setIncidentRiskOverride);
+router.delete('/incidents/:id/risk-override', clearIncidentRiskOverride);
+
+// Lessons Learned library (search across the organisation)
+router.get('/lessons/search', searchLessons);
 router.post('/incidents/:id/triage', triageIncident);
 router.patch('/incidents/:id/correction', correctIncidentRecord);
 router.post('/incidents/:id/investigator', assignInvestigator);

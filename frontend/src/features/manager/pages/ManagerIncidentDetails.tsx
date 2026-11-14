@@ -27,6 +27,7 @@ import type {
 } from '../api/manager.api';
 // Toast notification library – used for success / error feedback messages
 import toast from 'react-hot-toast';
+import { RiskAssessmentCard } from '../components/RiskAssessmentCard';
 // Lucide icon components used throughout the UI
 import {
   CheckCircle,   // Green tick – used for success/verified states
@@ -900,6 +901,9 @@ export const ManagerIncidentDetails: React.FC = () => {
       {/* Stage 2 Governance: Role-guarded investigator delegation and root-cause analysis (RCA) review */}
       {activeTab === 'investigation' && (
         <div className="space-y-6">
+          {/* AI Risk Assessment: shown before the Lead Investigator is assigned */}
+          <RiskAssessmentCard incidentId={incidentId} />
+
           {/* Panel A: Lead Investigator Assignment & Delegation Card */}
           <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">

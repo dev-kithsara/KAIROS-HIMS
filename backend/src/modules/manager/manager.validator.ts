@@ -92,3 +92,22 @@ export const updateTeamRoleSchema = z.object({
   // Explicit manager override flag to bypass Active Duty Guard when intentional
   force: z.boolean().optional().default(false),
 });
+
+export const riskOverrideSchema = z.object({
+  level: z.enum(['Low', 'Medium', 'High', 'Critical'], {
+    errorMap: () => ({ message: 'Risk level must be Low, Medium, High or Critical' }),
+  }),
+  reason: z
+    .string()
+    .trim()
+    .min(10, { message: 'Reason for changing the risk level must be at least 10 characters long' })
+    .max(500, { message: 'Reason for changing the risk level must be at most 500 characters long' }),
+});
+
+export const lessonsSearchSchema = z.object({
+  q: z
+    .string()
+    .trim()
+    .min(2, { message: 'Search text must be at least 2 characters long' })
+    .max(200, { message: 'Search text must be at most 200 characters long' }),
+});

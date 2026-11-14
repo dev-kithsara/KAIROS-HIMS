@@ -85,6 +85,7 @@ model User {
   verifiedCapaActions   CapaAction[]        @relation("ActionVerifier")
   managementReviews     ManagementReview[]  @relation("ReviewAuthor")
   closedIncidents       Incident[]          @relation("IncidentCloser")
+  riskOverriddenIncidents Incident[]        @relation("RiskOverrider")
   auditLogs             IncidentAuditLog[]
 
   // Structured Investigation Relations
@@ -95,6 +96,10 @@ model User {
   assignedActionItems   ActionItem[]              @relation("ActionItemOwner")
   actionHistories       ActionHistory[]           @relation("ActionHistoryActor")
   actionNotifications   ActionNotification[]      @relation("ActionNotificationUser")
+
+  // User Governance Audit Trail Relations
+  userAudits            UserAuditLog[]            @relation("UserAudited")
+  authoredUserAudits    UserAuditLog[]            @relation("UserAuditActor")
 
   createdAt             DateTime   @default(now())
   updatedAt             DateTime   @updatedAt
@@ -143,6 +148,16 @@ model Incident {
   closureSummary    String?
   closedById        Int?
   closedBy          User?          @relation("IncidentCloser", fields: [closedById], references: [id])
+
+  // AI Risk Prediction: manager's human override. The AI score itself is never stored; we keep
+  // only the manager's decision, plus a snapshot of what the AI said at that moment (for audit).
+  riskOverrideLevel      String?    // Low | Medium | High | Critical
+  riskOverrideReason     String?
+  riskOverriddenAt       DateTime?
+  riskOverriddenById     Int?
+  riskOverriddenBy       User?      @relation("RiskOverrider", fields: [riskOverriddenById], references: [id])
+  aiRiskLevelAtOverride  String?
+  aiRiskScoreAtOverride  Int?
 
   // Clinical Governance Sub-Entities
   attachments       IncidentAttachment[]
@@ -514,4 +529,26 @@ model ActionNotification {
   @@unique([actionItemId, userId, type])
   @@index([userId, readAt, createdAt])
 }
+
+// ==========================================
+// Administrative & User Governance Audit Trail
+// ==========================================
+model UserAuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int      // The user whose role was modified
+  actorId    Int      // The Manager or Admin who performed the modification
+  action     String   // e.g., "ROLE_DELEGATION_CHANGED"
+  oldRole    String
+  newRole    String
+  reason     String?
+  details    String?  // Serialized metadata (timestamp, department, etc.)
+  createdAt  DateTime @default(now())
+
+  user       User     @relation("UserAudited", fields: [userId], references: [id], onDelete: Cascade)
+  actor      User     @relation("UserAuditActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([actorId, createdAt])
+}
+
 
